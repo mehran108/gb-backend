@@ -20,6 +20,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IAccountApplication, AccountApplication>();
 builder.Services.AddTransient<IAccountInfrastructure, AccountInfrastructure>();
+builder.Services.AddTransient<IProductInfrastructure, ProductInfrastructure>();
+builder.Services.AddTransient<IProductApplication, ProductApplication>();
 builder.Services.AddTransient<IApplicationUserApplication, ApplicationUserApplication>();
 builder.Services.AddTransient<IApplicationUserInfrastructure, ApplicationUserInfrastructure>();
 builder.Services.AddTransient<ICustomerApplication, CustomerApplication>();
