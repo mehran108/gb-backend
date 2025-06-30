@@ -1,5 +1,5 @@
-﻿using Bidding.Infrastructure.Extension;
-using Bidding.Models;
+﻿using GoldBank.Infrastructure.Extension;
+using GoldBank.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
-using static Bidding.Models.Users;
+using static GoldBank.Models.User;
 
-namespace Bidding.Infrastructure
+namespace GoldBank.Infrastructure
 {
     public class AccountInfrastructure : BaseInfrastructure, IAccountInfrastructure
     {
@@ -22,15 +22,15 @@ namespace Bidding.Infrastructure
 
         private const string GetUserByEmailStoredProcedureName = "GetUserByEmail";
         private const string GetUserByIdStoredProcedureName = "GetUserById";
-        private const string GetUsersListStoredProcedureName = "GetUsersList";
-        private const string RegisterUserStoredProcedureName = "RegisterUser";
-        private const string UpdateUserStoredProcedureName = "UpdateUser";
+        private const string GetUserListStoredProcedureName = "GetUserList";
+        private const string RegisterUsertoredProcedureName = "RegisterUser";
+        private const string UpdateUsertoredProcedureName = "UpdateUser";
         private const string PasswordResetStoredProcedureName = "PasswordReset";
         private const string ActiveNonActivStoredProcedureName = "UpdateActive";
         private const string GetUserpaginationStoredProcedureName = "GetUserpagination";
         private const string GetUserBySearchingStoredProcedureName = "GetUserBySearching";
 
-        private const string UserSortingStoredProcedureName = "SortingUser";
+        private const string UserortingStoredProcedureName = "SortingUser";
 
 
         //Column names
@@ -65,7 +65,7 @@ namespace Bidding.Infrastructure
         private const string TotalCountParameterName = "@PTotalCount";
         private const string TargetTextParameterName = "PTarget";
         private const string OrderParameterName = "@POrder";
-        private const string ColomnParameterName = "@PColomn";
+        private const string ColumnParameterName = "@PColumn";
 
         #endregion
 
@@ -76,9 +76,9 @@ namespace Bidding.Infrastructure
 
 
 
-        public async Task<Users> GetUserByEmail(string email)
+        public async Task<User> GetUserByEmail(string email)
         {
-            Users user = new Users();
+            User user = new User();
 
             var parameters = new List<DbParameter>
             {
@@ -91,7 +91,7 @@ namespace Bidding.Infrastructure
                 {
                     if (dataReader.Read())
                     {
-                        user = new Users
+                        user = new User
                         {
                             UserId = dataReader.GetIntegerValue(AccountInfrastructure.UserIdColumnName),
                             Email = dataReader.GetStringValue(AccountInfrastructure.EmailColumnName),
@@ -113,9 +113,9 @@ namespace Bidding.Infrastructure
             return user;
         }
 
-        public async Task<Users> GetUserById(int UserId)
+        public async Task<User> GetUserById(int UserId)
         {
-            Users user = new Users();
+            User user = new User();
 
             var parameters = new List<DbParameter>
             {
@@ -128,7 +128,7 @@ namespace Bidding.Infrastructure
                 {
                     if (dataReader.Read())
                     {
-                        user = new Users
+                        user = new User
                         {
                             UserId = dataReader.GetIntegerValue(AccountInfrastructure.UserIdColumnName),
                             Email = dataReader.GetStringValue(AccountInfrastructure.EmailColumnName),
@@ -151,23 +151,23 @@ namespace Bidding.Infrastructure
             return user;
         }
 
-        public async Task<List<Users>> GetUsersList()
+        public async Task<List<User>> GetUserList()
         {
-            List<Users> userList = new List<Users>();
-            Users user = new Users();
+            List<User> userList = new List<User>();
+            User user = new User();
 
             var parameters = new List<DbParameter>
             {
                 // base.GetParameter(AccountInfrastructure.PageNoParameterName, )
             };
 
-            using (var dataReader = await base.ExecuteReader(parameters, AccountInfrastructure.GetUsersListStoredProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await base.ExecuteReader(parameters, AccountInfrastructure.GetUserListStoredProcedureName, CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
                     while (dataReader.Read())
                     {
-                        user = new Users
+                        user = new User
                         {
                             UserId = dataReader.GetIntegerValue(AccountInfrastructure.UserIdColumnName),
                             Email = dataReader.GetStringValue(AccountInfrastructure.EmailColumnName),
@@ -192,51 +192,51 @@ namespace Bidding.Infrastructure
             return userList;
         }
 
-        public async Task<int> RegisterUser(Users users)
+        public async Task<int> RegisterUser(User User)
         {
-            var applicationUserIdParamter = base.GetParameterOut(AccountInfrastructure.UserIdParameterName, SqlDbType.Int, users.UserId);
+            var applicationUserIdParamter = base.GetParameterOut(AccountInfrastructure.UserIdParameterName, SqlDbType.Int, User.UserId);
 
             var parameters = new List<DbParameter>
             {
                 applicationUserIdParamter,
-                base.GetParameter(AccountInfrastructure.EmailParameterName, users.Email),
-                base.GetParameter(AccountInfrastructure.FirstNameParameterName, users.FirstName),
-                base.GetParameter(AccountInfrastructure.LastNameParameterName, users.LastName),
-                base.GetParameter(AccountInfrastructure.PasswordHashParameterName, users.PasswordHash),
-                base.GetParameter(AccountInfrastructure.IdentificationNumberParameterName, users.IdentificationNumber),
-                //base.GetParameter(AccountInfrastructure.PhoneNumberParameterName, users.PhoneNumber),
-                base.GetParameter(AccountInfrastructure.Address1ParameterName, users.Address1),
-                //base.GetParameter(AccountInfrastructure.PostalCodeParameterName, users.PostalCode)
+                base.GetParameter(AccountInfrastructure.EmailParameterName, User.Email),
+                base.GetParameter(AccountInfrastructure.FirstNameParameterName, User.FirstName),
+                base.GetParameter(AccountInfrastructure.LastNameParameterName, User.LastName),
+                base.GetParameter(AccountInfrastructure.PasswordHashParameterName, User.PasswordHash),
+                base.GetParameter(AccountInfrastructure.IdentificationNumberParameterName, User.IdentificationNumber),
+                //base.GetParameter(AccountInfrastructure.PhoneNumberParameterName, User.PhoneNumber),
+                base.GetParameter(AccountInfrastructure.Address1ParameterName, User.Address1),
+                //base.GetParameter(AccountInfrastructure.PostalCodeParameterName, User.PostalCode)
             };
-            await base.ExecuteNonQuery(parameters, AccountInfrastructure.RegisterUserStoredProcedureName, CommandType.StoredProcedure);
-            users.UserId = Convert.ToInt32(applicationUserIdParamter.Value);
+            await base.ExecuteNonQuery(parameters, AccountInfrastructure.RegisterUsertoredProcedureName, CommandType.StoredProcedure);
+            User.UserId = Convert.ToInt32(applicationUserIdParamter.Value);
 
-            return users.UserId;
+            return User.UserId;
 
         }
 
-        public async Task<bool> UpdateUser(Users users)
+        public async Task<bool> UpdateUser(User User)
         {
             var parameters = new List<DbParameter>
             {
-                base.GetParameter(AccountInfrastructure.UserIdParameterName, users.UserId),
-                base.GetParameter(AccountInfrastructure.EmailParameterName, users.Email),
-                base.GetParameter(AccountInfrastructure.FirstNameParameterName, users.FirstName),
-                base.GetParameter(AccountInfrastructure.LastNameParameterName, users.LastName)
+                base.GetParameter(AccountInfrastructure.UserIdParameterName, User.UserId),
+                base.GetParameter(AccountInfrastructure.EmailParameterName, User.Email),
+                base.GetParameter(AccountInfrastructure.FirstNameParameterName, User.FirstName),
+                base.GetParameter(AccountInfrastructure.LastNameParameterName, User.LastName)
             };
 
-            var result = await base.ExecuteNonQuery(parameters, AccountInfrastructure.UpdateUserStoredProcedureName, CommandType.StoredProcedure);
+            var result = await base.ExecuteNonQuery(parameters, AccountInfrastructure.UpdateUsertoredProcedureName, CommandType.StoredProcedure);
 
 
             return true;
         }
 
-        public async Task<bool> PasswordReset(Users users)
+        public async Task<bool> PasswordReset(User User)
         {
             var parameters = new List<DbParameter>
             {
-                base.GetParameter(AccountInfrastructure.UserIdParameterName, users.UserId),
-                base.GetParameter(AccountInfrastructure.PasswordHashParameterName, users.PasswordHash),
+                base.GetParameter(AccountInfrastructure.UserIdParameterName, User.UserId),
+                base.GetParameter(AccountInfrastructure.PasswordHashParameterName, User.PasswordHash),
             };
 
             var result = await base.ExecuteNonQuery(parameters, AccountInfrastructure.PasswordResetStoredProcedureName, CommandType.StoredProcedure);
@@ -244,12 +244,12 @@ namespace Bidding.Infrastructure
 
             return true;
         }
-        public async Task<bool> ChangePassword(Users users)
+        public async Task<bool> ChangePassword(User User)
         {
             var parameters = new List<DbParameter>
             {
-                base.GetParameter(AccountInfrastructure.UserIdParameterName, users.UserId),
-                base.GetParameter(AccountInfrastructure.PasswordHashParameterName, users.PasswordHash),
+                base.GetParameter(AccountInfrastructure.UserIdParameterName, User.UserId),
+                base.GetParameter(AccountInfrastructure.PasswordHashParameterName, User.PasswordHash),
             };
 
             var result = await base.ExecuteNonQuery(parameters, AccountInfrastructure.PasswordResetStoredProcedureName, CommandType.StoredProcedure);
@@ -258,12 +258,12 @@ namespace Bidding.Infrastructure
             return true;
         }
 
-        public async Task<bool> ActiveNonActive(Users users)
+        public async Task<bool> ActiveNonActive(User User)
         {
             var parameters = new List<DbParameter>
             {
-                 base.GetParameter(AccountInfrastructure.UserIdParameterName, users.UserId),
-                base.GetParameter(AccountInfrastructure.ActiveCodeParameterName, users.Active),
+                 base.GetParameter(AccountInfrastructure.UserIdParameterName, User.UserId),
+                base.GetParameter(AccountInfrastructure.ActiveCodeParameterName, User.Active),
 
             };
 
@@ -272,23 +272,23 @@ namespace Bidding.Infrastructure
 
             return true;
         }
-        public async Task<List<Users>> GetUsersListPagination()
+        public async Task<List<User>> GetUserListPagination()
         {
-            List<Users> userList = new List<Users>();
-            Users user = new Users();
+            List<User> userList = new List<User>();
+            User user = new User();
 
             var parameters = new List<DbParameter>
             {
                 //base.GetParameter(AccountInfrastructure.UserIdParameterName, UserId)
             };
 
-            using (var dataReader = await base.ExecuteReader(parameters, AccountInfrastructure.GetUsersListStoredProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await base.ExecuteReader(parameters, AccountInfrastructure.GetUserListStoredProcedureName, CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
                     while (dataReader.Read())
                     {
-                        user = new Users
+                        user = new User
                         {
                             UserId = dataReader.GetIntegerValue(AccountInfrastructure.UserIdColumnName),
                             Email = dataReader.GetStringValue(AccountInfrastructure.EmailColumnName),
@@ -315,20 +315,20 @@ namespace Bidding.Infrastructure
 
 
 
-        public async Task<Request<Users>> GetUserPagination(Request<Users> request)
+        public async Task<Request<User>> GetUserPagination(Request<User> request)
 
         {
-            Request<Users> result = new Request<Users>();
-            result.itemList = new List<Users>();
+            Request<User> result = new Request<User>();
+            result.ItemList = new List<User>();
 
             result.TotalCount = 0;
             var TotalCountParamter = base.GetParameterOut(AccountInfrastructure.TotalCountParameterName, SqlDbType.Int, request.TotalCount);
             var parameters = new List<DbParameter>
             {
                 TotalCountParamter,
-                base.GetParameter(AccountInfrastructure.ColomnParameterName, request.Colomn),
+                base.GetParameter(AccountInfrastructure.ColumnParameterName, request.Column),
                 base.GetParameter(AccountInfrastructure.TargetTextParameterName, request.Target),
-                base.GetParameter(AccountInfrastructure.LimitParameterName, request.limit),
+                base.GetParameter(AccountInfrastructure.LimitParameterName, request.Limit),
                 base.GetParameter(AccountInfrastructure.PageNoParameterName, request.PageNo),
                 base.GetParameter(AccountInfrastructure.OrderParameterName, request.Order),
                 // base.GetParameter(ProspectInfrasutructure.TotalCountParameterName,SqlDbType.Int, request.TotalCount),
@@ -342,7 +342,7 @@ namespace Bidding.Infrastructure
                     while (dataReader.Read())
                     {
 
-                        var user = new Users
+                        var user = new User
                         {
                             UserId = dataReader.GetIntegerValue(AccountInfrastructure.UserIdColumnName),
                             Email = dataReader.GetStringValue(AccountInfrastructure.EmailColumnName),
@@ -353,7 +353,7 @@ namespace Bidding.Infrastructure
                         };
 
 
-                        result.itemList.Add(user);
+                        result.ItemList.Add(user);
 
                     }
                     if (!dataReader.IsClosed)
@@ -370,10 +370,10 @@ namespace Bidding.Infrastructure
             
         }
 
-        public async Task<List<Users>> UserSearching(string Target)
+        public async Task<List<User>> Userearching(string Target)
         {
-            List<Users> UserList = new List<Users>();
-            Users user = new Users();
+            List<User> UserList = new List<User>();
+            User user = new User();
 
             var parameters = new List<DbParameter>
             {
@@ -386,7 +386,7 @@ namespace Bidding.Infrastructure
                 {
                     while (dataReader.Read())
                     {
-                        user = new Users
+                        user = new User
                         {
                             UserId = dataReader.GetIntegerValue(AccountInfrastructure.UserIdColumnName),
                             Email = dataReader.GetStringValue(AccountInfrastructure.EmailColumnName),
@@ -409,23 +409,23 @@ namespace Bidding.Infrastructure
 
             return UserList;
         }
-        public async Task<Request<Users>> UserSorting(Request<Users> request)
+        public async Task<Request<User>> Userorting(Request<User> request)
 
         {
-            Request<Users> result = new Request<Users>();
-            result.itemList = new List<Users>();
+            Request<User> result = new Request<User>();
+            result.ItemList = new List<User>();
 
             result.TotalCount = 0;
             var TotalCountParamter = base.GetParameterOut(AccountInfrastructure.TotalCountParameterName, SqlDbType.Int, request.TotalCount);
             var parameters = new List<DbParameter>
             {
                 TotalCountParamter,
-                base.GetParameter(AccountInfrastructure.LimitParameterName, request.limit),
+                base.GetParameter(AccountInfrastructure.LimitParameterName, request.Limit),
                 base.GetParameter(AccountInfrastructure.OrderParameterName, request.Order),
-                base.GetParameter(AccountInfrastructure.ColomnParameterName, request.Colomn),
+                base.GetParameter(AccountInfrastructure.ColumnParameterName, request.Column),
                 base.GetParameter(AccountInfrastructure.PageNoParameterName, request.PageNo)
             };
-            using (var dataReader = await base.ExecuteReader(parameters, AccountInfrastructure.UserSortingStoredProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await base.ExecuteReader(parameters, AccountInfrastructure.UserortingStoredProcedureName, CommandType.StoredProcedure))
 
             {
                 if (dataReader != null && dataReader.HasRows)
@@ -433,7 +433,7 @@ namespace Bidding.Infrastructure
                     while (dataReader.Read())
                     {
 
-                        var user = new Users
+                        var user = new User
                         {
                             UserId = dataReader.GetIntegerValue(AccountInfrastructure.UserIdColumnName),
                             Email = dataReader.GetStringValue(AccountInfrastructure.EmailColumnName),
@@ -443,7 +443,7 @@ namespace Bidding.Infrastructure
                         };
 
 
-                        result.itemList.Add(user);
+                        result.ItemList.Add(user);
 
                     }
                     if (!dataReader.IsClosed)

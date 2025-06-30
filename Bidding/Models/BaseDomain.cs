@@ -1,6 +1,6 @@
-﻿namespace Bidding.Models
+﻿namespace GoldBank.Models
 {
-    public class Base
+    public class BaseDomain
     {
         public int CurrentUserId { get; set; }
     }

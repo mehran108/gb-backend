@@ -1,12 +1,12 @@
-﻿using Bidding.Connector;
-using Bidding.Infrastructure;
-using Bidding.Models;
+﻿using GoldBank.Connector;
+using GoldBank.Infrastructure;
+using GoldBank.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Bidding.Application
+namespace GoldBank.Application
 {
     public class AccountApplication : IAccountApplication
     {
@@ -20,19 +20,19 @@ namespace Bidding.Application
         public IAccountInfrastructure AccountInfrastructure { get; set; }
         public IServiceConnector ServiceConnector { get; set; }
        
-        public async Task<Users> GetUserByEmail(string email)
+        public async Task<User> GetUserByEmail(string email)
         {
             return await AccountInfrastructure.GetUserByEmail(email);
         }
 
-        public async Task<Users> GetUserById(int UserId)
+        public async Task<User> GetUserById(int UserId)
         {
             return await AccountInfrastructure.GetUserById(UserId);
         }
 
         public async Task<bool> ForgotPassword(string email)
         {
-            Users user = await AccountInfrastructure.GetUserByEmail(email);
+            User user = await AccountInfrastructure.GetUserByEmail(email);
             if (user != null)
             {
                 Email message = new Email();
@@ -50,45 +50,45 @@ namespace Bidding.Application
 
         }
 
-        public async Task<List<Users>> GetUsersList()
+        public async Task<List<User>> GetUserList()
         {
-            return await AccountInfrastructure.GetUsersList();
+            return await AccountInfrastructure.GetUserList();
 
         }
 
-        public async Task<int> RegisterUser(Users User)
+        public async Task<int> RegisterUser(User User)
         {
             return await AccountInfrastructure.RegisterUser(User);
         }
 
-        public async Task<bool> UpdateUser(Users User)
+        public async Task<bool> UpdateUser(User User)
         {
             return await AccountInfrastructure.UpdateUser(User);
         }
 
-        public async Task<bool> PasswordReset(Users users)
+        public async Task<bool> PasswordReset(User User)
         {
-            return await AccountInfrastructure.PasswordReset(users);
+            return await AccountInfrastructure.PasswordReset(User);
         }
-        public async Task<bool> ChangePassword([FromBody] Users users)
+        public async Task<bool> ChangePassword([FromBody] User User)
         {
-            return await this.AccountInfrastructure.ChangePassword(users);
+            return await this.AccountInfrastructure.ChangePassword(User);
         }
-        public async Task<bool> ActiveNonActive([FromBody] Users users)
+        public async Task<bool> ActiveNonActive([FromBody] User User)
         {
-            return await this.AccountInfrastructure.ActiveNonActive(users);
+            return await this.AccountInfrastructure.ActiveNonActive(User);
         }
-        public async Task<Request<Users>> GetUserPagination([FromBody] Request<Users> request)
+        public async Task<Request<User>> GetUserPagination([FromBody] Request<User> request)
         {
             return await this.AccountInfrastructure.GetUserPagination(request);
         }
-        public async Task<Request<Users>> UserSorting([FromBody] Request<Users> request)
+        public async Task<Request<User>> Userorting([FromBody] Request<User> request)
         {
-             return await this.AccountInfrastructure.UserSorting(request);
+             return await this.AccountInfrastructure.Userorting(request);
         }
-         public async Task<List<Users>> UserSearching(string Target)
+         public async Task<List<User>> Userearching(string Target)
         {         
-           return await AccountInfrastructure.UserSearching(Target);           
+           return await AccountInfrastructure.Userearching(Target);           
         }
     }
 }

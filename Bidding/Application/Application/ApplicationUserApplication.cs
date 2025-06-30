@@ -1,11 +1,11 @@
-﻿using Bidding.Application.IApplication;
-using Bidding.Connector;
-using Bidding.Infrastructure;
-using Bidding.Infrastructure.IInfrastructure;
-using Bidding.Infrastructure.Infrastructure;
-using Bidding.Models;
+﻿using GoldBank.Application.IApplication;
+using GoldBank.Connector;
+using GoldBank.Infrastructure;
+using GoldBank.Infrastructure.IInfrastructure;
+using GoldBank.Infrastructure.Infrastructure;
+using GoldBank.Models;
 
-namespace Bidding.Application.Application
+namespace GoldBank.Application.Application
 {
     public class ApplicationUserApplication : IApplicationUserApplication
     {

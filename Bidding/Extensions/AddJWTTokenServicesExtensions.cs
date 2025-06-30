@@ -1,7 +1,7 @@
-﻿using Bidding.Models;
+﻿using GoldBank.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-namespace Bidding.Extensions
+namespace GoldBank.Extensions
 {
     public static class AddJWTTokenServicesExtensions
     {

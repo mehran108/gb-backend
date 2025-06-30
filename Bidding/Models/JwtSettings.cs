@@ -1,4 +1,4 @@
-﻿namespace Bidding.Models
+﻿namespace GoldBank.Models
 {
     public class JwtSettings
     {

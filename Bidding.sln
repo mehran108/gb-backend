@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bidding", "Bidding\Bidding.csproj", "{994B2F4E-8FD8-4516-98B2-A32D07178023}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoldBank", "Bidding\GoldBank.csproj", "{994B2F4E-8FD8-4516-98B2-A32D07178023}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

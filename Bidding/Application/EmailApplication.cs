@@ -1,9 +1,9 @@
-﻿using Bidding.Connector;
-using Bidding.Infrastructure;
-using Bidding.Models;
+﻿using GoldBank.Connector;
+using GoldBank.Infrastructure;
+using GoldBank.Models;
 using Microsoft.Extensions.Configuration;
 
-namespace Bidding.Application
+namespace GoldBank.Application
 {
     public class EmailApplication : IEmailApplication
     {

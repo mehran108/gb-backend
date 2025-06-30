@@ -1,6 +1,6 @@
-﻿using Bidding.Models;
+﻿using GoldBank.Models;
 
-namespace Bidding.Infrastructure.IInfrastructure
+namespace GoldBank.Infrastructure.IInfrastructure
 {
     public interface ICustomerInfrastructure
     {

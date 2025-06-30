@@ -1,9 +1,9 @@
-﻿using Bidding.Models;
+﻿using GoldBank.Models;
 using System.Data.Common;
 using System.Data;
-using Bidding.Infrastructure.Extension;
+using GoldBank.Infrastructure.Extension;
 
-namespace Bidding.Infrastructure
+namespace GoldBank.Infrastructure
 {
     public class EmailInfrasutructure : BaseInfrastructure ,IEmailInfrasutructure
     {

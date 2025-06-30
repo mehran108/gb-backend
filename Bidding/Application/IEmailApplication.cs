@@ -1,6 +1,6 @@
-﻿using Bidding.Models;
+﻿using GoldBank.Models;
 
-namespace Bidding.Application
+namespace GoldBank.Application
 {
     public interface IEmailApplication
     {

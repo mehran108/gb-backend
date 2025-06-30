@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -6,7 +7,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
-namespace Bidding.Infrastructure
+namespace GoldBank.Infrastructure
 {
     public abstract class BaseInfrastructure
     {
@@ -38,14 +39,13 @@ namespace Bidding.Infrastructure
         protected const string CurrentUserIdParameterName = "@PCurrentUserId";
         protected const string AgentIdParameterName = "PAgentId";
 
-        protected const string IsActiveParameterName = "PActive";
+        protected const string ActiveParameterName = "PActive";
         protected const string OffsetParameterName = "POffset";
         protected const string PageSizeParameterName = "PPageSize";
         protected const string TotalRecordParameterName = "PTotalRecord";
         protected const string SortColumnParameterName = "PSortColumn";
         protected const string SortAscendingParameterName = "PSortAscending";
         protected const string FilterColumnIdParameterName = "PFilterColumnId";
-        protected const string ActiveParameterName = "PActive";
         protected const string ActiveForCustomerParameterName = "PActiveForCustomer";
         protected const string NotificationCodeParamaterName = "PNotificationCode";
         protected const string SearchTextParameterName = "PSearchText";
@@ -91,7 +91,7 @@ namespace Bidding.Infrastructure
         private DbConnection GetConnection()
         {
             
-            DbConnection connection = new SqlConnection(this.ConnectionString);
+            DbConnection connection = new MySqlConnection(this.ConnectionString);
             if (connection.State != ConnectionState.Open)
             {
                 connection.Open();
@@ -131,7 +131,7 @@ namespace Bidding.Infrastructure
         /// <returns></returns>
         protected DbParameter GetParameter(string parameterName, object parameterValue)
         {
-            DbParameter parameterObject = new SqlParameter(parameterName, parameterValue ?? DBNull.Value);
+            DbParameter parameterObject = new MySqlParameter(parameterName, parameterValue ?? DBNull.Value);
 
             parameterObject.Direction = ParameterDirection.Input;
 
@@ -148,7 +148,7 @@ namespace Bidding.Infrastructure
         /// <returns></returns>
         protected DbParameter GetParameterOut(string parameterName, SqlDbType type, object parameterValue = null, ParameterDirection parameterDirection = ParameterDirection.InputOutput)
         {
-            DbParameter parameterObject = new SqlParameter(parameterName, type);
+            DbParameter parameterObject = new MySqlParameter(parameterName, type);
 
             if (type == SqlDbType.NVarChar ||
                 type == SqlDbType.VarChar ||

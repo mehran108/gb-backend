@@ -1,8 +1,8 @@
-﻿//using Bidding.Application;
-//using Bidding.Infrastructure;
-//using Bidding.Models;
+﻿//using GoldBank.Application;
+//using GoldBank.Infrastructure;
+//using GoldBank.Models;
 
-//namespace Bidding.BackgroundJobs
+//namespace GoldBank.BackgroundJobs
 //{
 //    public class BackgroundJobs : BackgroundService
 //   {

@@ -1,8 +1,8 @@
-﻿namespace Bidding.Models
+﻿namespace GoldBank.Models
 {
  
-        public class Customer: Base
-        {
+        public class Customer: BaseDomain
+    {
             public int CustomerId { get; set; }
             public string UserName { get; set; }
             public string Email { get; set; }

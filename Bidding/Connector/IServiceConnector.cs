@@ -1,6 +1,6 @@
-﻿using Bidding.Models;
+﻿using GoldBank.Models;
 
-namespace Bidding.Connector
+namespace GoldBank.Connector
 {
     public interface IServiceConnector
     {

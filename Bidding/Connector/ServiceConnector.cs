@@ -1,8 +1,8 @@
-﻿using Bidding.Models;
+﻿using GoldBank.Models;
 using System.Net;
 using System.Net.Mail;
 
-namespace Bidding.Connector
+namespace GoldBank.Connector
 {
     public class ServiceConnector : IServiceConnector
     {

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
-namespace Bidding.Models
+﻿
+namespace GoldBank.Models
 {
-    public class Users
+    public class User
     {
         public Guid Id { get; set; }
         public int UserId { get; set; }
@@ -17,8 +14,8 @@ namespace Bidding.Models
         public string PasswordHash { get; set; }
         public string PhoneNumber { get; set; }
         public bool Active { get; set; }
-        public string oldpw { get; set; }
-        public string newpw { get; set; }
+        public string OldPwd { get; set; }
+        public string NewPwd { get; set; }
 
     }
 }

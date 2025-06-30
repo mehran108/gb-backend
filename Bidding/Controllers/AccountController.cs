@@ -1,6 +1,6 @@
-using Bidding.Application;
-using Bidding.Extensions;
-using Bidding.Models;
+using GoldBank.Application;
+using GoldBank.Extensions;
+using GoldBank.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Bidding.Controllers
+namespace GoldBank.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -108,7 +108,7 @@ namespace Bidding.Controllers
 
 
         [HttpPost("RegisterUser")]
-        public async Task<ActionResult<int>> RegisterUser([FromBody] Users user)
+        public async Task<ActionResult<int>> RegisterUser([FromBody] User user)
         {
          
               var resultuser = await this.AccountApplication.GetUserByEmail(user.Email);
@@ -125,7 +125,7 @@ namespace Bidding.Controllers
         }
 
         [HttpPut("UpdateUser")]
-        public async Task<ActionResult<bool>> UpdateUser([FromBody] Users user)
+        public async Task<ActionResult<bool>> UpdateUser([FromBody] User user)
         {
             var resultuser = await this.AccountApplication.GetUserById(user.UserId);
             var reultuseremail = await this.AccountApplication.GetUserByEmail(user.Email);
@@ -141,22 +141,22 @@ namespace Bidding.Controllers
 
 
         [HttpGet("GetUserByEmail")]
-        public async Task<Users> GetUserByEmail([FromQuery] string email)
+        public async Task<User> GetUserByEmail([FromQuery] string email)
         {
             return await this.AccountApplication.GetUserByEmail(email);
         }
 
         [HttpGet("GetUserById")]
-        public async Task<Users> GetUserById([FromQuery] int UserId)
+        public async Task<User> GetUserById([FromQuery] int UserId)
         {
              //await this.EmailApplication.EmailTemplateCreateaccount(UserId);
             return await this.AccountApplication.GetUserById(UserId);
         }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpGet("GetUsersList")]
-        public async Task<List<Users>> GetUsersList()
+        [HttpGet("GetUserList")]
+        public async Task<List<User>> GetUserList()
         {
-            return await this.AccountApplication.GetUsersList();
+            return await this.AccountApplication.GetUserList();
         }
 
         [HttpPut("ForgotPassword")]
@@ -166,24 +166,24 @@ namespace Bidding.Controllers
         }
 
         [HttpPut("PasswordReset")]
-        public async Task<bool> PasswordReset([FromBody] Users users)
+        public async Task<bool> PasswordReset([FromBody] User User)
         {
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword(users.PasswordHash);
-            users.PasswordHash = passwordHash;
-            return await this.AccountApplication.PasswordReset(users);
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(User.PasswordHash);
+            User.PasswordHash = passwordHash;
+            return await this.AccountApplication.PasswordReset(User);
         }
         [HttpPut("ChangePassword")]
-        public async Task<ActionResult<bool>> ChangePassword([FromBody]Users users)
+        public async Task<ActionResult<bool>> ChangePassword([FromBody]User User)
         {
-            var resultUser = await this.AccountApplication.GetUserById(users.UserId);
+            var resultUser = await this.AccountApplication.GetUserById(User.UserId);
            
-            bool verified = BCrypt.Net.BCrypt.Verify(users.oldpw,resultUser.PasswordHash);
+            bool verified = BCrypt.Net.BCrypt.Verify(User.OldPwd,resultUser.PasswordHash);
             if (verified)
             {
-                string newpassword = BCrypt.Net.BCrypt.HashPassword(users.newpw);
-                users.PasswordHash = newpassword;
+                string newpassword = BCrypt.Net.BCrypt.HashPassword(User.NewPwd);
+                User.PasswordHash = newpassword;
                 Response.Redirect("https://localhost:7051/api/Account/Login");
-                await this.AccountApplication.ChangePassword(users);
+                await this.AccountApplication.ChangePassword(User);
               return Ok(true);
             }
            // Console.WriteLine(resultUser.UserId);
@@ -192,10 +192,10 @@ namespace Bidding.Controllers
         }
 
         [HttpPut("Activate")]
-        public async Task<ActionResult<bool>> ActiveNonActive([FromBody] Users users)
+        public async Task<ActionResult<bool>> ActiveNonActive([FromBody] User User)
         {
             
-            bool result= await this.AccountApplication.ActiveNonActive(users);
+            bool result= await this.AccountApplication.ActiveNonActive(User);
             if (result == true)
             {
                 return Ok(true);
@@ -203,29 +203,29 @@ namespace Bidding.Controllers
             else
                 return BadRequest("Not Updated");
         }
-        //[HttpGet("GetUsersListPagination")]
-        //public async Task<List<Users>> GetUsersListPagination( )
+        //[HttpGet("GetUserListPagination")]
+        //public async Task<List<User>> GetUserListPagination( )
         //{
-        //    return await this.AccountApplication.GetUsersListPagination();
+        //    return await this.AccountApplication.GetUserListPagination();
         //}
 
         [HttpPost("UserPagination")]
-        public async Task<Request<Users>> GetUserPagination([FromBody] Request<Users> request)
+        public async Task<Request<User>> GetUserPagination([FromBody] Request<User> request)
         {
 
             return await this.AccountApplication.GetUserPagination(request);
         }
-        [HttpGet("UserSearching")]
-        public async Task<List<Users>> UserSearching([FromQuery] string Target)
+        [HttpGet("Userearching")]
+        public async Task<List<User>> Userearching([FromQuery] string Target)
         {
-            return await this.AccountApplication.UserSearching(Target);
+            return await this.AccountApplication.Userearching(Target);
         }
 
         [HttpPost("Sorting")]
-        public async Task<Request<Users>> UserSorting([FromBody] Request<Users> request)
+        public async Task<Request<User>> Userorting([FromBody] Request<User> request)
         {
 
-            return await this.AccountApplication.UserSorting(request);
+            return await this.AccountApplication.Userorting(request);
         }
 
     }

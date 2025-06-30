@@ -1,10 +1,10 @@
-﻿using Bidding.Models;
+﻿using GoldBank.Models;
 using System.Data.Common;
 using System.Data;
-using Bidding.Infrastructure.IInfrastructure;
-using Bidding.Infrastructure.Extension;
+using GoldBank.Infrastructure.IInfrastructure;
+using GoldBank.Infrastructure.Extension;
 
-namespace Bidding.Infrastructure.Infrastructure
+namespace GoldBank.Infrastructure.Infrastructure
 {
     public class ApplicationUserInfrastructure : BaseInfrastructure, IApplicationUserInfrastructure
     {

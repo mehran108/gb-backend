@@ -1,7 +1,7 @@
-using Bidding.Application;
-using Bidding.Application.IApplication;
-using Bidding.Extensions;
-using Bidding.Models;
+using GoldBank.Application;
+using GoldBank.Application.IApplication;
+using GoldBank.Extensions;
+using GoldBank.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Bidding.Controllers
+namespace GoldBank.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -30,7 +30,7 @@ namespace Bidding.Controllers
         [HttpPost("Add")]
         public async Task<int> Add([FromBody]Customer Customer)
         {
-            string pwd = "Bidding@1234";
+            string pwd = "GoldBank@1234";
            
             Customer.PasswordHash = BCrypt.Net.BCrypt.HashPassword(pwd);
             return await this.customerApplication.Add(Customer);

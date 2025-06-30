@@ -1,11 +1,11 @@
-using Bidding.Extensions;
-using Bidding.Application;
-using Bidding.Infrastructure;
-using Bidding.Connector;
-using Bidding.Application.IApplication;
-using Bidding.Infrastructure.IInfrastructure;
-using Bidding.Application.Application;
-using Bidding.Infrastructure.Infrastructure;
+using GoldBank.Extensions;
+using GoldBank.Application;
+using GoldBank.Infrastructure;
+using GoldBank.Connector;
+using GoldBank.Application.IApplication;
+using GoldBank.Infrastructure.IInfrastructure;
+using GoldBank.Application.Application;
+using GoldBank.Infrastructure.Infrastructure;
 
 var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 
@@ -18,8 +18,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//builder.Services.AddHostedService<BackgroundJobs>();
-//builder.Services.AddHostedService<ActiveBackgroundJob>();
 builder.Services.AddTransient<IAccountApplication, AccountApplication>();
 builder.Services.AddTransient<IAccountInfrastructure, AccountInfrastructure>();
 builder.Services.AddTransient<IApplicationUserApplication, ApplicationUserApplication>();

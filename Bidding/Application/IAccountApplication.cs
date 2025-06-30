@@ -1,24 +1,24 @@
-﻿using Bidding.Models;
+﻿using GoldBank.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static Bidding.Models.Users;
+using static GoldBank.Models.User;
 
-namespace Bidding.Application
+namespace GoldBank.Application
 {
     public interface IAccountApplication
     {
         Task<bool> ForgotPassword(string email);
-        Task<Users> GetUserByEmail(string email);
-        Task<Users> GetUserById(int UserId);
-        Task<List<Users>> GetUsersList();
-        Task<int> RegisterUser(Users User);
-        Task<bool> UpdateUser(Users User);
-        Task<bool> PasswordReset(Users users);
-        Task<bool> ChangePassword(Users users);
-        Task<bool> ActiveNonActive(Users users);
-        Task<Request<Users>> GetUserPagination(Request<Users> request);
-        Task<List<Users>> UserSearching(string Target);
-        Task<Request<Users>> UserSorting(Request<Users> request);
+        Task<User> GetUserByEmail(string email);
+        Task<User> GetUserById(int UserId);
+        Task<List<User>> GetUserList();
+        Task<int> RegisterUser(User User);
+        Task<bool> UpdateUser(User User);
+        Task<bool> PasswordReset(User User);
+        Task<bool> ChangePassword(User User);
+        Task<bool> ActiveNonActive(User User);
+        Task<Request<User>> GetUserPagination(Request<User> request);
+        Task<List<User>> Userearching(string Target);
+        Task<Request<User>> Userorting(Request<User> request);
     }
 }

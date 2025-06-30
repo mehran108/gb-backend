@@ -1,6 +1,6 @@
-﻿using Bidding.Models;
+﻿using GoldBank.Models;
 
-namespace Bidding.Application.IApplication
+namespace GoldBank.Application.IApplication
 {
     public interface IApplicationUserApplication
     {
