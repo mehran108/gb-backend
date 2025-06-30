@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using GoldBank.Application;
+using GoldBank.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 
@@ -18,5 +20,13 @@ namespace GoldBank.Controllers
 
         #endregion
 
+        [HttpPost("add")]
+        //[AllowAnonymous]
+        public async Task<int> Add([FromBody] LookupValue entity)
+        {
+
+            var Id = await this.LookupApplication.AddLookupValue(entity);
+            return Id;
+        }
     }
 }

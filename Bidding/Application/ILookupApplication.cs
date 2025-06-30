@@ -5,10 +5,10 @@ namespace GoldBank.Application
     public interface ILookupApplication
     {
 
-        Task<List<LookupValue>> AddLookupValue(LookupValue entity);
-        Task<List<LookupValue>> UpdateLookupValue(LookupValue entity);
-        Task<List<LookupValue>> GetLookupsAll(LookupValue entity);
-        Task<List<LookupValue>> GetLookupByCode(LookupValue entity);
+        Task<int> AddLookupValue(LookupValue entity);
+        Task<int> UpdateLookupValue(LookupValue entity);
+        Task<int> GetLookupsAll(LookupValue entity);
+        Task<int> GetLookupByCode(LookupValue entity);
         
     }
 }
