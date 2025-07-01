@@ -3,7 +3,7 @@ using GoldBank.Models.Product;
 
 namespace GoldBank.Application.IApplication
 {
-    public interface IProductApplication : IBaseApplication<ProductGb>
+    public interface IProductApplication : IBaseApplication<Product>
     {
         Task<int> UploadImage(CommonCode commonCode);
 

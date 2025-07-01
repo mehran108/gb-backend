@@ -22,21 +22,27 @@ namespace GoldBank.Controllers
 
 
         [HttpPost("Add")]
-        public async Task<int> Add(ProductGb product)
+        public async Task<int> Add(Product product)
         { 
             return await ProductApplication.Add(product);
         }
 
         [HttpPost("Update")]
-        public async Task<bool> Update(ProductGb product)
+        public async Task<bool> Update(Product product)
         { 
             return await ProductApplication.Update(product);
         }
         [HttpGet("Get")]
-        public async Task<ProductGb> GetById([FromQuery]int productId)
+        public async Task<Product> GetById([FromQuery]int productId)
         {
-            var product = new ProductGb { ProductId = productId };
+            var product = new Product { ProductId = productId };
             return await ProductApplication.Get(product);
+        }
+        [HttpGet("GetList")]
+        public async Task<List<Product>> GetList()
+        {
+            var product = new Product ();
+            return await ProductApplication.GetList(product);
         }
         [HttpPost("UploadImage")]
         public async Task<int> UploadImage(CommonCode commonCode)

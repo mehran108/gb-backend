@@ -1,8 +1,8 @@
 ﻿namespace GoldBank.Models.Product
 {
-    public class VendorGb : BaseDomain
+    public class WeightType : BaseDomain
     {
-        public int VendorId { get; set; }
+        public int WeightTypeId { get; set; }
         public string? Description { get; set; }
     }
 }
