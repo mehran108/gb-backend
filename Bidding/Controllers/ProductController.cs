@@ -31,7 +31,7 @@ namespace GoldBank.Controllers
         [HttpGet("Get")]
         public async Task<Product> GetById([FromQuery]int productId)
         {
-            var product = new Product { Id = productId };
+            var product = new Product { ProductId = productId };
             return await ProductApplication.Get(product);
         }
     }
