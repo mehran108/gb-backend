@@ -1,4 +1,4 @@
-﻿using GoldBank.Application;
+﻿using GoldBank.Application.IApplication;
 using GoldBank.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,8 +25,14 @@ namespace GoldBank.Controllers
         public async Task<int> Add([FromBody] LookupValue entity)
         {
 
-            var Id = await this.LookupApplication.AddLookupValue(entity);
+            var Id = await this.LookupApplication.Add(entity);
             return Id;
+        }
+        [HttpPost("GetLookupByCode")]
+        //[AllowAnonymous]
+        public async Task<List<LookupValue>> GetLookupByCode([FromBody] LookupValue entity)
+        {
+            return await this.LookupApplication.GetLookupByCode(entity);
         }
     }
 }
