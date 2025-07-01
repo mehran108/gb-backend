@@ -1,4 +1,5 @@
-﻿using GoldBank.Application.IApplication;
+﻿using GoldBank.Application.Application;
+using GoldBank.Application.IApplication;
 using GoldBank.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,11 +10,13 @@ namespace GoldBank.Controllers
     public class ProductController : ControllerBase
     {
         public IProductApplication ProductApplication { get; }
+        public ICommonCodeApplication CommonCodeApplication { get; }
         public ILogger logger { get; set; }
-        public ProductController(IConfiguration configuration, ILogger<ProductController> logger, IProductApplication productApplication)
+        public ProductController(IConfiguration configuration, ILogger<ProductController> logger, IProductApplication productApplication, ICommonCodeApplication CommonCodeApplication)
         {
             this.ProductApplication = productApplication;
             this.logger = logger;
+            this.CommonCodeApplication = CommonCodeApplication;
         }
 
 
@@ -33,6 +36,11 @@ namespace GoldBank.Controllers
         {
             var product = new Product { ProductId = productId };
             return await ProductApplication.Get(product);
+        }
+        [HttpPost("UploadImage")]
+        public async Task<int> UploadImage(CommonCode commonCode)
+        {
+            return await ProductApplication.UploadImage(commonCode);
         }
     }
 }

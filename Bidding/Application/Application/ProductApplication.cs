@@ -6,12 +6,14 @@ namespace GoldBank.Application.Application
 {
     public class ProductApplication : IBaseApplication<Product>, IProductApplication
     {
-        public ProductApplication(IProductInfrastructure ProductInfrastructure, IConfiguration configuration, ILogger<Product> logger)
+        public ProductApplication(IProductInfrastructure ProductInfrastructure, IConfiguration configuration, ILogger<Product> logger, ICommonCodeApplication commonCodeApplication)
         {
             this.ProductInfrastructure = ProductInfrastructure;
+            CommonCodeApplication = commonCodeApplication;
         }
 
         public IProductInfrastructure ProductInfrastructure { get;}
+        public ICommonCodeApplication CommonCodeApplication { get;}
         public async Task<bool> Activate(Product entity)
         {
             return await ProductInfrastructure.Activate(entity);
@@ -36,5 +38,10 @@ namespace GoldBank.Application.Application
         {
             return await ProductInfrastructure.Update(entity);
         }
+        public async Task<int> UploadImage(CommonCode commonCode)
+        {
+            return await CommonCodeApplication.UploadImage(commonCode);            
+        }
+
     }
 }

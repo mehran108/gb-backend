@@ -33,8 +33,8 @@ namespace GoldBank.Infrastructure.Infrastructure
             var IdParamter = base.GetParameterOut(ProductInfrastructure.ProductIdParameterName, SqlDbType.Int, entity.ProductId);
             var parameters = new List<DbParameter>
             {
-                IdParamter,
-                base.GetParameter(ProductInfrastructure.ImageURLParameterName, entity.ImageURL)
+                IdParamter
+                //base.GetParameter(ProductInfrastructure.ImageURLParameterName, entity.ImageURL)
             };
             await base.ExecuteNonQuery(parameters, ProductInfrastructure.AddProductProcedureName, CommandType.StoredProcedure);
             entity.ProductId = Convert.ToInt32(IdParamter.Value);
