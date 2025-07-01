@@ -1,8 +1,8 @@
-﻿using GoldBank.Models;
-using System.Data.Common;
+﻿using System.Data.Common;
 using System.Data;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Infrastructure.Extension;
+using GoldBank.Models;
 
 namespace GoldBank.Infrastructure.Infrastructure
 {

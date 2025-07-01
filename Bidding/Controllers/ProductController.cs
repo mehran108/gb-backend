@@ -1,6 +1,7 @@
 ﻿using GoldBank.Application.Application;
 using GoldBank.Application.IApplication;
 using GoldBank.Models;
+using GoldBank.Models.Product;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GoldBank.Controllers
@@ -21,20 +22,20 @@ namespace GoldBank.Controllers
 
 
         [HttpPost("Add")]
-        public async Task<int> Add(Product product)
+        public async Task<int> Add(ProductGb product)
         { 
             return await ProductApplication.Add(product);
         }
 
         [HttpPost("Update")]
-        public async Task<bool> Update(Product product)
+        public async Task<bool> Update(ProductGb product)
         { 
             return await ProductApplication.Update(product);
         }
         [HttpGet("Get")]
-        public async Task<Product> GetById([FromQuery]int productId)
+        public async Task<ProductGb> GetById([FromQuery]int productId)
         {
-            var product = new Product { ProductId = productId };
+            var product = new ProductGb { ProductId = productId };
             return await ProductApplication.Get(product);
         }
         [HttpPost("UploadImage")]
