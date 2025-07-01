@@ -2,9 +2,8 @@
 
 namespace GoldBank.Application.IApplication
 {
-    public interface IProductApplication : IBaseApplication<Product>
+    public interface ICommonCodeApplication : IBaseApplication<CommonCode>
     {
         Task<int> UploadImage(CommonCode commonCode);
-
     }
 }
