@@ -1,8 +1,8 @@
 ﻿namespace GoldBank.Models.Product
 {
-    public class StoneWeightTypeGb : BaseDomain
+    public class StoneType : BaseDomain
     {
-        public int StoneWeightTypeId { get; set; }
+        public int StoneTypeId { get; set; }
         public string? Description { get; set; }
     }
 }

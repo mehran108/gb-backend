@@ -1,8 +1,8 @@
 ﻿namespace GoldBank.Models.Product
 {
-    public class MetalColorGb : BaseDomain
+    public class Occasion : BaseDomain
     {
-        public int MetalColorId { get; set; }
+        public int OccasionId { get; set; }
         public string? Description { get; set; }
     }
 }

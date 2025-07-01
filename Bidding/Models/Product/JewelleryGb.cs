@@ -1,6 +1,6 @@
 ﻿namespace GoldBank.Models.Product
 {
-    public class JewelleryGb : BaseDomain
+    public class Jewellery : BaseDomain
     {
         public int JewelleryId { get; set; }
         public string? PrimaryCategoryIds { get; set; }

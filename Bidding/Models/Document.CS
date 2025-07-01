@@ -1,6 +1,6 @@
 ﻿namespace GoldBank.Models
 {
-    public class DocumentGb : BaseDomain
+    public class Document : BaseDomain
     {
         public int DocumentId { get; set; }
         public string? Url { get; set; }
