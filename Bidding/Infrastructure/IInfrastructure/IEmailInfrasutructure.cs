@@ -1,6 +1,6 @@
 ﻿using GoldBank.Models;
 
-namespace GoldBank.Infrastructure
+namespace GoldBank.Infrastructure.IInfrastructure
 {
     public interface IEmailInfrasutructure
     {

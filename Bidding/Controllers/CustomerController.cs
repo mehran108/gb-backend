@@ -1,4 +1,3 @@
-using GoldBank.Application;
 using GoldBank.Application.IApplication;
 using GoldBank.Extensions;
 using GoldBank.Models;

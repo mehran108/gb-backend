@@ -2,10 +2,11 @@
 using System.Data.Common;
 using System.Data;
 using GoldBank.Infrastructure.Extension;
+using GoldBank.Infrastructure.IInfrastructure;
 
-namespace GoldBank.Infrastructure
+namespace GoldBank.Infrastructure.Infrastructure
 {
-    public class EmailInfrasutructure : BaseInfrastructure ,IEmailInfrasutructure
+    public class EmailInfrasutructure : BaseInfrastructure, IEmailInfrasutructure
     {
         public EmailInfrasutructure(IConfiguration configuration) : base(configuration)
         {
@@ -51,10 +52,10 @@ namespace GoldBank.Infrastructure
 
             var parameters = new List<DbParameter>
             {
-                base.GetParameter(EmailInfrasutructure.CodeParameterName, code)
+                GetParameter(CodeParameterName, code)
             };
 
-            using (var dataReader = await base.ExecuteReader(parameters, EmailInfrasutructure.EmailTemplateCodeStoredProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await ExecuteReader(parameters, EmailTemplateCodeStoredProcedureName, CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
@@ -62,9 +63,9 @@ namespace GoldBank.Infrastructure
                     {
                         emailT = new EmailT
                         {
-                            Subject = dataReader.GetStringValue(EmailInfrasutructure.SubjectColumnName),
-                            Body = dataReader.GetStringValue(EmailInfrasutructure.BodyColumnName),
-                            Active = dataReader.GetBooleanValue(EmailInfrasutructure.ActiveColumnName)
+                            Subject = dataReader.GetStringValue(SubjectColumnName),
+                            Body = dataReader.GetStringValue(BodyColumnName),
+                            Active = dataReader.GetBooleanValue(ActiveColumnName)
                         };
                     }
                     if (!dataReader.IsClosed)
@@ -82,17 +83,17 @@ namespace GoldBank.Infrastructure
         {
             var parameters = new List<DbParameter>
             {
-                base.GetParameter(EmailInfrasutructure.EmailstatusidParameterName, EmailStatusId )
+                GetParameter(EmailstatusidParameterName, EmailStatusId )
             };
 
-            using (var dataReader = await base.ExecuteReader(parameters, EmailInfrasutructure.EmailcodeByEmailstatusidCodeStoredProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await ExecuteReader(parameters, EmailcodeByEmailstatusidCodeStoredProcedureName, CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
                     if (dataReader.Read())
                     {
-                    
-                       code = dataReader.GetStringValue(EmailInfrasutructure.EmailCodeColoumName);
+
+                        code = dataReader.GetStringValue(EmailCodeColoumName);
                     }
                     if (!dataReader.IsClosed)
                     {

@@ -1,15 +1,7 @@
-using GoldBank.Application;
 using GoldBank.Application.IApplication;
 using GoldBank.Extensions;
 using GoldBank.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace GoldBank.Controllers
 {
@@ -50,7 +42,7 @@ namespace GoldBank.Controllers
             ApplicationUser applicationUser = new ApplicationUser();
             applicationUser.ApplicationUserId = ApplicationUserId ?? 0;
             applicationUser.Email = Email;
-            return await applicationUserApplication.GetById(applicationUser);
+            return await applicationUserApplication.Get(applicationUser);
         }
 
 
@@ -59,7 +51,7 @@ namespace GoldBank.Controllers
         {
             ApplicationUser applicationUser = new ApplicationUser();
 
-            return await applicationUserApplication.GetAll(applicationUser);
+            return await applicationUserApplication.GetList(applicationUser);
         }
 
         [HttpPut("Activate")]
@@ -75,7 +67,7 @@ namespace GoldBank.Controllers
             ApplicationUser applicationUser = new ApplicationUser();
 
             applicationUser.Email = user.Email;
-            var resultUser = await this.applicationUserApplication.GetById(applicationUser);
+            var resultUser = await this.applicationUserApplication.Get(applicationUser);
 
             if (resultUser.Email != null && resultUser.Active != false)
 

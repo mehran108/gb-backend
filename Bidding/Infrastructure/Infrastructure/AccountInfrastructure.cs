@@ -1,4 +1,5 @@
 ﻿using GoldBank.Infrastructure.Extension;
+using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +10,7 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using static GoldBank.Models.User;
 
-namespace GoldBank.Infrastructure
+namespace GoldBank.Infrastructure.Infrastructure
 {
     public class AccountInfrastructure : BaseInfrastructure, IAccountInfrastructure
     {
@@ -43,7 +44,7 @@ namespace GoldBank.Infrastructure
         private const string IdentificationNumberColumnName = "IdentificationNumber";
         private const string Address1NumberColumnName = "Address1";
         private const string PostalCodeNumberColumnName = "PostalCode";
-        
+
 
 
 
@@ -82,10 +83,10 @@ namespace GoldBank.Infrastructure
 
             var parameters = new List<DbParameter>
             {
-                base.GetParameter(AccountInfrastructure.EmailParameterName, email)
+                GetParameter(EmailParameterName, email)
             };
 
-            using (var dataReader = await base.ExecuteReader(parameters, AccountInfrastructure.GetUserByEmailStoredProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await ExecuteReader(parameters, GetUserByEmailStoredProcedureName, CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
@@ -93,12 +94,12 @@ namespace GoldBank.Infrastructure
                     {
                         user = new User
                         {
-                            UserId = dataReader.GetIntegerValue(AccountInfrastructure.UserIdColumnName),
-                            Email = dataReader.GetStringValue(AccountInfrastructure.EmailColumnName),
-                            FirstName = dataReader.GetStringValue(AccountInfrastructure.FirstNameColumnName),
-                            LastName = dataReader.GetStringValue(AccountInfrastructure.LastNameColumnName),
-                            PasswordHash = dataReader.GetStringValue(AccountInfrastructure.PasswordHashColumnName),
-                            Active = dataReader.GetBooleanValue(AccountInfrastructure.ActiveColumnName)
+                            UserId = dataReader.GetIntegerValue(UserIdColumnName),
+                            Email = dataReader.GetStringValue(EmailColumnName),
+                            FirstName = dataReader.GetStringValue(FirstNameColumnName),
+                            LastName = dataReader.GetStringValue(LastNameColumnName),
+                            PasswordHash = dataReader.GetStringValue(PasswordHashColumnName),
+                            Active = dataReader.GetBooleanValue(ActiveColumnName)
                         };
                     }
                     if (!dataReader.IsClosed)
@@ -119,10 +120,10 @@ namespace GoldBank.Infrastructure
 
             var parameters = new List<DbParameter>
             {
-                base.GetParameter(AccountInfrastructure.UserIdParameterName, UserId)
+                GetParameter(UserIdParameterName, UserId)
             };
 
-            using (var dataReader = await base.ExecuteReader(parameters, AccountInfrastructure.GetUserByIdStoredProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await ExecuteReader(parameters, GetUserByIdStoredProcedureName, CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
@@ -130,12 +131,12 @@ namespace GoldBank.Infrastructure
                     {
                         user = new User
                         {
-                            UserId = dataReader.GetIntegerValue(AccountInfrastructure.UserIdColumnName),
-                            Email = dataReader.GetStringValue(AccountInfrastructure.EmailColumnName),
-                            FirstName = dataReader.GetStringValue(AccountInfrastructure.FirstNameColumnName),
-                            LastName = dataReader.GetStringValue(AccountInfrastructure.LastNameColumnName),
-                            PasswordHash = dataReader.GetStringValue(AccountInfrastructure.PasswordHashColumnName),
-                            Active = dataReader.GetBooleanValue(AccountInfrastructure.ActiveColumnName)
+                            UserId = dataReader.GetIntegerValue(UserIdColumnName),
+                            Email = dataReader.GetStringValue(EmailColumnName),
+                            FirstName = dataReader.GetStringValue(FirstNameColumnName),
+                            LastName = dataReader.GetStringValue(LastNameColumnName),
+                            PasswordHash = dataReader.GetStringValue(PasswordHashColumnName),
+                            Active = dataReader.GetBooleanValue(ActiveColumnName)
 
                         };
                     }
@@ -161,7 +162,7 @@ namespace GoldBank.Infrastructure
                 // base.GetParameter(AccountInfrastructure.PageNoParameterName, )
             };
 
-            using (var dataReader = await base.ExecuteReader(parameters, AccountInfrastructure.GetUserListStoredProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await ExecuteReader(parameters, GetUserListStoredProcedureName, CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
@@ -169,12 +170,12 @@ namespace GoldBank.Infrastructure
                     {
                         user = new User
                         {
-                            UserId = dataReader.GetIntegerValue(AccountInfrastructure.UserIdColumnName),
-                            Email = dataReader.GetStringValue(AccountInfrastructure.EmailColumnName),
-                            FirstName = dataReader.GetStringValue(AccountInfrastructure.FirstNameColumnName),
-                            LastName = dataReader.GetStringValue(AccountInfrastructure.LastNameColumnName),
-                            PasswordHash = dataReader.GetStringValue(AccountInfrastructure.PasswordHashColumnName),
-                            Active = dataReader.GetBooleanValue(AccountInfrastructure.ActiveColumnName)
+                            UserId = dataReader.GetIntegerValue(UserIdColumnName),
+                            Email = dataReader.GetStringValue(EmailColumnName),
+                            FirstName = dataReader.GetStringValue(FirstNameColumnName),
+                            LastName = dataReader.GetStringValue(LastNameColumnName),
+                            PasswordHash = dataReader.GetStringValue(PasswordHashColumnName),
+                            Active = dataReader.GetBooleanValue(ActiveColumnName)
                         };
 
                         userList.Add(user);
@@ -194,21 +195,21 @@ namespace GoldBank.Infrastructure
 
         public async Task<int> RegisterUser(User User)
         {
-            var applicationUserIdParamter = base.GetParameterOut(AccountInfrastructure.UserIdParameterName, SqlDbType.Int, User.UserId);
+            var applicationUserIdParamter = GetParameterOut(UserIdParameterName, SqlDbType.Int, User.UserId);
 
             var parameters = new List<DbParameter>
             {
                 applicationUserIdParamter,
-                base.GetParameter(AccountInfrastructure.EmailParameterName, User.Email),
-                base.GetParameter(AccountInfrastructure.FirstNameParameterName, User.FirstName),
-                base.GetParameter(AccountInfrastructure.LastNameParameterName, User.LastName),
-                base.GetParameter(AccountInfrastructure.PasswordHashParameterName, User.PasswordHash),
-                base.GetParameter(AccountInfrastructure.IdentificationNumberParameterName, User.IdentificationNumber),
+                GetParameter(EmailParameterName, User.Email),
+                GetParameter(FirstNameParameterName, User.FirstName),
+                GetParameter(LastNameParameterName, User.LastName),
+                GetParameter(PasswordHashParameterName, User.PasswordHash),
+                GetParameter(IdentificationNumberParameterName, User.IdentificationNumber),
                 //base.GetParameter(AccountInfrastructure.PhoneNumberParameterName, User.PhoneNumber),
-                base.GetParameter(AccountInfrastructure.Address1ParameterName, User.Address1),
+                GetParameter(Address1ParameterName, User.Address1),
                 //base.GetParameter(AccountInfrastructure.PostalCodeParameterName, User.PostalCode)
             };
-            await base.ExecuteNonQuery(parameters, AccountInfrastructure.RegisterUsertoredProcedureName, CommandType.StoredProcedure);
+            await ExecuteNonQuery(parameters, RegisterUsertoredProcedureName, CommandType.StoredProcedure);
             User.UserId = Convert.ToInt32(applicationUserIdParamter.Value);
 
             return User.UserId;
@@ -219,13 +220,13 @@ namespace GoldBank.Infrastructure
         {
             var parameters = new List<DbParameter>
             {
-                base.GetParameter(AccountInfrastructure.UserIdParameterName, User.UserId),
-                base.GetParameter(AccountInfrastructure.EmailParameterName, User.Email),
-                base.GetParameter(AccountInfrastructure.FirstNameParameterName, User.FirstName),
-                base.GetParameter(AccountInfrastructure.LastNameParameterName, User.LastName)
+                GetParameter(UserIdParameterName, User.UserId),
+                GetParameter(EmailParameterName, User.Email),
+                GetParameter(FirstNameParameterName, User.FirstName),
+                GetParameter(LastNameParameterName, User.LastName)
             };
 
-            var result = await base.ExecuteNonQuery(parameters, AccountInfrastructure.UpdateUsertoredProcedureName, CommandType.StoredProcedure);
+            var result = await ExecuteNonQuery(parameters, UpdateUsertoredProcedureName, CommandType.StoredProcedure);
 
 
             return true;
@@ -235,11 +236,11 @@ namespace GoldBank.Infrastructure
         {
             var parameters = new List<DbParameter>
             {
-                base.GetParameter(AccountInfrastructure.UserIdParameterName, User.UserId),
-                base.GetParameter(AccountInfrastructure.PasswordHashParameterName, User.PasswordHash),
+                GetParameter(UserIdParameterName, User.UserId),
+                GetParameter(PasswordHashParameterName, User.PasswordHash),
             };
 
-            var result = await base.ExecuteNonQuery(parameters, AccountInfrastructure.PasswordResetStoredProcedureName, CommandType.StoredProcedure);
+            var result = await ExecuteNonQuery(parameters, PasswordResetStoredProcedureName, CommandType.StoredProcedure);
 
 
             return true;
@@ -248,11 +249,11 @@ namespace GoldBank.Infrastructure
         {
             var parameters = new List<DbParameter>
             {
-                base.GetParameter(AccountInfrastructure.UserIdParameterName, User.UserId),
-                base.GetParameter(AccountInfrastructure.PasswordHashParameterName, User.PasswordHash),
+                GetParameter(UserIdParameterName, User.UserId),
+                GetParameter(PasswordHashParameterName, User.PasswordHash),
             };
 
-            var result = await base.ExecuteNonQuery(parameters, AccountInfrastructure.PasswordResetStoredProcedureName, CommandType.StoredProcedure);
+            var result = await ExecuteNonQuery(parameters, PasswordResetStoredProcedureName, CommandType.StoredProcedure);
 
 
             return true;
@@ -262,12 +263,12 @@ namespace GoldBank.Infrastructure
         {
             var parameters = new List<DbParameter>
             {
-                 base.GetParameter(AccountInfrastructure.UserIdParameterName, User.UserId),
-                base.GetParameter(AccountInfrastructure.ActiveCodeParameterName, User.Active),
+                 GetParameter(UserIdParameterName, User.UserId),
+                GetParameter(ActiveCodeParameterName, User.Active),
 
             };
 
-            var result = await base.ExecuteNonQuery(parameters, AccountInfrastructure.ActiveNonActivStoredProcedureName, CommandType.StoredProcedure);
+            var result = await ExecuteNonQuery(parameters, ActiveNonActivStoredProcedureName, CommandType.StoredProcedure);
 
 
             return true;
@@ -282,7 +283,7 @@ namespace GoldBank.Infrastructure
                 //base.GetParameter(AccountInfrastructure.UserIdParameterName, UserId)
             };
 
-            using (var dataReader = await base.ExecuteReader(parameters, AccountInfrastructure.GetUserListStoredProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await ExecuteReader(parameters, GetUserListStoredProcedureName, CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
@@ -290,11 +291,11 @@ namespace GoldBank.Infrastructure
                     {
                         user = new User
                         {
-                            UserId = dataReader.GetIntegerValue(AccountInfrastructure.UserIdColumnName),
-                            Email = dataReader.GetStringValue(AccountInfrastructure.EmailColumnName),
-                            FirstName = dataReader.GetStringValue(AccountInfrastructure.FirstNameColumnName),
-                            LastName = dataReader.GetStringValue(AccountInfrastructure.LastNameColumnName),
-                            PasswordHash = dataReader.GetStringValue(AccountInfrastructure.PasswordHashColumnName)
+                            UserId = dataReader.GetIntegerValue(UserIdColumnName),
+                            Email = dataReader.GetStringValue(EmailColumnName),
+                            FirstName = dataReader.GetStringValue(FirstNameColumnName),
+                            LastName = dataReader.GetStringValue(LastNameColumnName),
+                            PasswordHash = dataReader.GetStringValue(PasswordHashColumnName)
 
                         };
 
@@ -322,19 +323,19 @@ namespace GoldBank.Infrastructure
             result.ItemList = new List<User>();
 
             result.TotalCount = 0;
-            var TotalCountParamter = base.GetParameterOut(AccountInfrastructure.TotalCountParameterName, SqlDbType.Int, request.TotalCount);
+            var TotalCountParamter = GetParameterOut(TotalCountParameterName, SqlDbType.Int, request.TotalCount);
             var parameters = new List<DbParameter>
             {
                 TotalCountParamter,
-                base.GetParameter(AccountInfrastructure.ColumnParameterName, request.Column),
-                base.GetParameter(AccountInfrastructure.TargetTextParameterName, request.Target),
-                base.GetParameter(AccountInfrastructure.LimitParameterName, request.Limit),
-                base.GetParameter(AccountInfrastructure.PageNoParameterName, request.PageNo),
-                base.GetParameter(AccountInfrastructure.OrderParameterName, request.Order),
+                GetParameter(ColumnParameterName, request.Column),
+                GetParameter(TargetTextParameterName, request.Target),
+                GetParameter(LimitParameterName, request.Limit),
+                GetParameter(PageNoParameterName, request.PageNo),
+                GetParameter(OrderParameterName, request.Order),
                 // base.GetParameter(ProspectInfrasutructure.TotalCountParameterName,SqlDbType.Int, request.TotalCount),
               
             };
-            using (var dataReader = await base.ExecuteReader(parameters, AccountInfrastructure.GetUserpaginationStoredProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await ExecuteReader(parameters, GetUserpaginationStoredProcedureName, CommandType.StoredProcedure))
 
             {
                 if (dataReader != null && dataReader.HasRows)
@@ -344,12 +345,12 @@ namespace GoldBank.Infrastructure
 
                         var user = new User
                         {
-                            UserId = dataReader.GetIntegerValue(AccountInfrastructure.UserIdColumnName),
-                            Email = dataReader.GetStringValue(AccountInfrastructure.EmailColumnName),
-                            FirstName = dataReader.GetStringValue(AccountInfrastructure.FirstNameColumnName),
-                            LastName = dataReader.GetStringValue(AccountInfrastructure.LastNameColumnName),
-                            PasswordHash = dataReader.GetStringValue(AccountInfrastructure.PasswordHashColumnName),
-                            Active = dataReader.GetBooleanValue(AccountInfrastructure.ActiveColumnName)
+                            UserId = dataReader.GetIntegerValue(UserIdColumnName),
+                            Email = dataReader.GetStringValue(EmailColumnName),
+                            FirstName = dataReader.GetStringValue(FirstNameColumnName),
+                            LastName = dataReader.GetStringValue(LastNameColumnName),
+                            PasswordHash = dataReader.GetStringValue(PasswordHashColumnName),
+                            Active = dataReader.GetBooleanValue(ActiveColumnName)
                         };
 
 
@@ -367,7 +368,7 @@ namespace GoldBank.Infrastructure
 
             }
 
-            
+
         }
 
         public async Task<List<User>> Userearching(string Target)
@@ -377,10 +378,10 @@ namespace GoldBank.Infrastructure
 
             var parameters = new List<DbParameter>
             {
-                base.GetParameter(AccountInfrastructure.TargetTextParameterName,Target)
+                GetParameter(TargetTextParameterName,Target)
             };
 
-            using (var dataReader = await base.ExecuteReader(parameters, AccountInfrastructure.GetUserBySearchingStoredProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await ExecuteReader(parameters, GetUserBySearchingStoredProcedureName, CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
@@ -388,11 +389,11 @@ namespace GoldBank.Infrastructure
                     {
                         user = new User
                         {
-                            UserId = dataReader.GetIntegerValue(AccountInfrastructure.UserIdColumnName),
-                            Email = dataReader.GetStringValue(AccountInfrastructure.EmailColumnName),
-                            FirstName = dataReader.GetStringValue(AccountInfrastructure.FirstNameColumnName),
-                            LastName = dataReader.GetStringValue(AccountInfrastructure.LastNameColumnName),
-                            Active = dataReader.GetBooleanValue(AccountInfrastructure.ActiveColumnName)
+                            UserId = dataReader.GetIntegerValue(UserIdColumnName),
+                            Email = dataReader.GetStringValue(EmailColumnName),
+                            FirstName = dataReader.GetStringValue(FirstNameColumnName),
+                            LastName = dataReader.GetStringValue(LastNameColumnName),
+                            Active = dataReader.GetBooleanValue(ActiveColumnName)
                         };
 
                         UserList.Add(user);
@@ -416,16 +417,16 @@ namespace GoldBank.Infrastructure
             result.ItemList = new List<User>();
 
             result.TotalCount = 0;
-            var TotalCountParamter = base.GetParameterOut(AccountInfrastructure.TotalCountParameterName, SqlDbType.Int, request.TotalCount);
+            var TotalCountParamter = GetParameterOut(TotalCountParameterName, SqlDbType.Int, request.TotalCount);
             var parameters = new List<DbParameter>
             {
                 TotalCountParamter,
-                base.GetParameter(AccountInfrastructure.LimitParameterName, request.Limit),
-                base.GetParameter(AccountInfrastructure.OrderParameterName, request.Order),
-                base.GetParameter(AccountInfrastructure.ColumnParameterName, request.Column),
-                base.GetParameter(AccountInfrastructure.PageNoParameterName, request.PageNo)
+                GetParameter(LimitParameterName, request.Limit),
+                GetParameter(OrderParameterName, request.Order),
+                GetParameter(ColumnParameterName, request.Column),
+                GetParameter(PageNoParameterName, request.PageNo)
             };
-            using (var dataReader = await base.ExecuteReader(parameters, AccountInfrastructure.UserortingStoredProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await ExecuteReader(parameters, UserortingStoredProcedureName, CommandType.StoredProcedure))
 
             {
                 if (dataReader != null && dataReader.HasRows)
@@ -435,11 +436,11 @@ namespace GoldBank.Infrastructure
 
                         var user = new User
                         {
-                            UserId = dataReader.GetIntegerValue(AccountInfrastructure.UserIdColumnName),
-                            Email = dataReader.GetStringValue(AccountInfrastructure.EmailColumnName),
-                            FirstName = dataReader.GetStringValue(AccountInfrastructure.FirstNameColumnName),
-                            LastName = dataReader.GetStringValue(AccountInfrastructure.LastNameColumnName),
-                            Active = dataReader.GetBooleanValue(AccountInfrastructure.ActiveColumnName)
+                            UserId = dataReader.GetIntegerValue(UserIdColumnName),
+                            Email = dataReader.GetStringValue(EmailColumnName),
+                            FirstName = dataReader.GetStringValue(FirstNameColumnName),
+                            LastName = dataReader.GetStringValue(LastNameColumnName),
+                            Active = dataReader.GetBooleanValue(ActiveColumnName)
                         };
 
 

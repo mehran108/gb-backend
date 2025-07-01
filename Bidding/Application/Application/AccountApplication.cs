@@ -1,12 +1,13 @@
-﻿using GoldBank.Connector;
-using GoldBank.Infrastructure;
+﻿using GoldBank.Application.IApplication;
+using GoldBank.Connector;
+using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace GoldBank.Application
+namespace GoldBank.Application.Application
 {
     public class AccountApplication : IAccountApplication
     {
@@ -19,7 +20,7 @@ namespace GoldBank.Application
         public IConfiguration Configuration { get; }
         public IAccountInfrastructure AccountInfrastructure { get; set; }
         public IServiceConnector ServiceConnector { get; set; }
-       
+
         public async Task<User> GetUserByEmail(string email)
         {
             return await AccountInfrastructure.GetUserByEmail(email);
@@ -38,10 +39,10 @@ namespace GoldBank.Application
                 Email message = new Email();
 
                 message.Subject = "Forget Password Email";
-                message.Body = "Please reset your password by clicking on this  " +this.Configuration["ResetPasswordUrl"] + " ";
+                message.Body = "Please reset your password by clicking on this  " + Configuration["ResetPasswordUrl"] + " ";
                 message.To = email;
 
-                return await this.ServiceConnector.sendEmail(message);               
+                return await ServiceConnector.sendEmail(message);
             }
             else
             {
@@ -72,23 +73,23 @@ namespace GoldBank.Application
         }
         public async Task<bool> ChangePassword([FromBody] User User)
         {
-            return await this.AccountInfrastructure.ChangePassword(User);
+            return await AccountInfrastructure.ChangePassword(User);
         }
         public async Task<bool> ActiveNonActive([FromBody] User User)
         {
-            return await this.AccountInfrastructure.ActiveNonActive(User);
+            return await AccountInfrastructure.ActiveNonActive(User);
         }
         public async Task<Request<User>> GetUserPagination([FromBody] Request<User> request)
         {
-            return await this.AccountInfrastructure.GetUserPagination(request);
+            return await AccountInfrastructure.GetUserPagination(request);
         }
         public async Task<Request<User>> Userorting([FromBody] Request<User> request)
         {
-             return await this.AccountInfrastructure.Userorting(request);
+            return await AccountInfrastructure.Userorting(request);
         }
-         public async Task<List<User>> Userearching(string Target)
-        {         
-           return await AccountInfrastructure.Userearching(Target);           
+        public async Task<List<User>> Userearching(string Target)
+        {
+            return await AccountInfrastructure.Userearching(Target);
         }
     }
 }
