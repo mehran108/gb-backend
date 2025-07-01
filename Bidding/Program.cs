@@ -29,6 +29,8 @@ builder.Services.AddTransient<ICustomerInfrastructure, CustomerInfrastructure>()
 builder.Services.AddTransient<IEmailApplication, EmailApplication>();
 builder.Services.AddTransient<IEmailInfrasutructure, EmailInfrasutructure>();
 builder.Services.AddTransient<IServiceConnector, ServiceConnector>();
+builder.Services.AddTransient<ILookupInfrastructure, LookupInfrastructure>();
+builder.Services.AddTransient<ILookupApplication, LookupApplication>();
 
 
 builder.Services.AddCors(options =>

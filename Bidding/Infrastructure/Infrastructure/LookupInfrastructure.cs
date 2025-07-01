@@ -4,6 +4,9 @@ using GoldBank.Models;
 using MySqlX.XDevAPI;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Infrastructure.Extension;
+using Amazon.Runtime.Documents;
+using GoldBank.Models.Product;
+using Collection = GoldBank.Models.Product.Collection;
 
 namespace GoldBank.Infrastructure.Infrastructure
 {
@@ -90,6 +93,289 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return lookupList;
         }
+
+        public async Task<IEnumerable<ProductType>> GetAllProductTypeGbAsync()
+        {
+            var list = new List<ProductType>();
+            using (var dataReader = await ExecuteReader(null, "GetAllProductTypeGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new ProductType
+                        {
+                            ProductTypeId = dataReader.GetIntegerValue("ProductTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<ProductSource>> GetAllProductSourceGbAsync()
+        {
+            var list = new List<ProductSource>();
+            using (var dataReader = await ExecuteReader(null, "GetAllProductSourceGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new ProductSource
+                        {
+                            ProductSourceId = dataReader.GetIntegerValue("ProductSourceId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<Vendor>> GetAllVendorGbAsync()
+        {
+            var list = new List<Vendor>();
+            using (var dataReader = await ExecuteReader(null, "GetAllVendorGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new Vendor
+                        {
+                            VendorId = dataReader.GetIntegerValue("VendorId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<MetalType>> GetAllMetalTypeGbAsync()
+        {
+            var list = new List<MetalType>();
+            using (var dataReader = await ExecuteReader(null, "GetAllMetalTypeGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new MetalType
+                        {
+                            MetalTypeId = dataReader.GetIntegerValue("MetalTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<MetalPurity>> GetAllMetalPurityGbAsync()
+        {
+            var list = new List<MetalPurity>();
+            using (var dataReader = await ExecuteReader(null, "GetAllMetalPurityGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new MetalPurity
+                        {
+                            MetalPurityId = dataReader.GetIntegerValue("MetalPurityId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<MetalColor>> GetAllMetalColorGbAsync()
+        {
+            var list = new List<MetalColor>();
+            using (var dataReader = await ExecuteReader(null, "GetAllMetalColorGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new MetalColor
+                        {
+                            MetalColorId = dataReader.GetIntegerValue("MetalColorId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<WeightType>> GetAllWeightTypeGbAsync()
+        {
+            var list = new List<WeightType>();
+            using (var dataReader = await ExecuteReader(null, "GetAllWeightTypeGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new WeightType
+                        {
+                            WeightTypeId = dataReader.GetIntegerValue("WeightTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<StoneType>> GetAllStoneTypeGbAsync()
+        {
+            var list = new List<StoneType>();
+            using (var dataReader = await ExecuteReader(null, "GetAllStoneTypeGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new StoneType
+                        {
+                            StoneTypeId = dataReader.GetIntegerValue("StoneTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<StoneWeightType>> GetAllStoneWeightTypeGbAsync()
+        {
+            var list = new List<StoneWeightType>();
+            using (var dataReader = await ExecuteReader(null, "GetAllStoneWeightTypeGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new StoneWeightType
+                        {
+                            StoneWeightTypeId = dataReader.GetIntegerValue("StoneWeightTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<StoneShape>> GetAllStoneShapeGbAsync()
+        {
+            var list = new List<StoneShape>();
+            using (var dataReader = await ExecuteReader(null, "GetAllStoneShapeGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new StoneShape
+                        {
+                            StoneShapeId = dataReader.GetIntegerValue("StoneShapeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<WearingType>> GetAllWearingTypeGbAsync()
+        {
+            var list = new List<WearingType>();
+            using (var dataReader = await ExecuteReader(null, "GetAllWearingTypeGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new WearingType
+                        {
+                            WearingTypeId = dataReader.GetIntegerValue("WearingTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<Collection>> GetAllCollectionGbAsync()
+        {
+            var list = new List<Collection>();
+            using (var dataReader = await ExecuteReader(null, "GetAllCollectionGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new Collection
+                        {
+                            CollectionId = dataReader.GetIntegerValue("CollectionId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<Occasion>> GetAllOccasionGbAsync()
+        {
+            var list = new List<Occasion>();
+            using (var dataReader = await ExecuteReader(null, "GetAllOccasionGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new Occasion
+                        {
+                            OccasionId = dataReader.GetIntegerValue("OccasionId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<GenderType>> GetAllGenderTypeGbAsync()
+        {
+            var list = new List<GenderType>();
+            using (var dataReader = await ExecuteReader(null, "GetAllGenderTypeGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new GenderType
+                        {
+                            GenderTypeId = dataReader.GetIntegerValue("GenderTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+
+
         public Task<bool> Update(LookupValue lookupValue)
         {
             throw new NotImplementedException();

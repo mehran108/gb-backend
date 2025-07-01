@@ -1,26 +1,85 @@
-﻿using GoldBank.Application.IApplication;
+﻿using Amazon.Runtime.Documents;
+using GoldBank.Application.IApplication;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
+using GoldBank.Models.Product;
+using static Amazon.S3.Util.S3EventNotification;
 
 namespace GoldBank.Application.Application
 {
     public class LookupApplication : IBaseApplication<LookupValue>, ILookupApplication
     {
-        public LookupApplication(IProductInfrastructure ProductInfrastructure, IConfiguration configuration, ILogger<Product> logger)
+        public LookupApplication(ILookupInfrastructure LookupInfrastructure, IConfiguration configuration, ILogger<LookupApplication> logger)
         {
-            LookupInfrastructure = LookupInfrastructure;
+            this.LookupInfrastructure = LookupInfrastructure;
         }
 
-        public ILookupInfrastructure LookupInfrastructure { get; }
+        public ILookupInfrastructure LookupInfrastructure;
         public async Task<int> Add(LookupValue entity)
         {
-            return await LookupInfrastructure.Add(entity);
+            return await this.LookupInfrastructure.Add(entity);
         }
         public async Task<List<LookupValue>> GetLookupByCode(LookupValue entity)
         {
-            return await LookupInfrastructure.GetLookupByCode(entity);
+            return await this.LookupInfrastructure.GetLookupByCode(entity);
         }
-
+        public async Task<IEnumerable<ProductType>> GetAllProductTypeGbAsync()
+        {
+            return await this.LookupInfrastructure.GetAllProductTypeGbAsync();
+        }
+        public async Task<IEnumerable<GenderType>> GetAllGenderTypeGbAsync()
+        {
+            return await this.LookupInfrastructure.GetAllGenderTypeGbAsync();
+        }
+        public async Task<IEnumerable<ProductSource>> GetAllProductSourceGbAsync()
+        {
+            return await this.LookupInfrastructure.GetAllProductSourceGbAsync();
+        }
+        public async Task<IEnumerable<Vendor>> GetAllVendorGbAsync()
+        {
+            return await this.LookupInfrastructure.GetAllVendorGbAsync();
+        }
+        public async Task<IEnumerable<MetalType>> GetAllMetalTypeGbAsync()
+        {
+            return await this.LookupInfrastructure.GetAllMetalTypeGbAsync();
+        }
+        public async Task<IEnumerable<MetalPurity>> GetAllMetalPurityGbAsync()
+        {
+            return await this.LookupInfrastructure.GetAllMetalPurityGbAsync();
+        }
+        public async Task<IEnumerable<MetalColor>> GetAllMetalColorGbAsync()
+        {
+            return await this.LookupInfrastructure.GetAllMetalColorGbAsync();
+        }
+        public async Task<IEnumerable<WeightType>> GetAllWeightTypeGbAsync()
+        {
+            return await this.LookupInfrastructure.GetAllWeightTypeGbAsync();
+        }
+        public async Task<IEnumerable<StoneType>> GetAllStoneTypeGbAsync()
+        {
+            return await this.LookupInfrastructure.GetAllStoneTypeGbAsync();
+        }
+        public async Task<IEnumerable<StoneWeightType>> GetAllStoneWeightTypeGbAsync()
+        {
+            return await this.LookupInfrastructure.GetAllStoneWeightTypeGbAsync();
+        }
+        public async Task<IEnumerable<StoneShape>> GetAllStoneShapeGbAsync()
+        {
+            return await this.LookupInfrastructure.GetAllStoneShapeGbAsync();
+        }
+        public async Task<IEnumerable<WearingType>> GetAllWearingTypeGbAsync()
+        {
+            return await this.LookupInfrastructure.GetAllWearingTypeGbAsync();
+        }
+        public async Task<IEnumerable<Collection>> GetAllCollectionGbAsync()
+        {
+            return await this.LookupInfrastructure.GetAllCollectionGbAsync();
+        }
+        public async Task<IEnumerable<Occasion>> GetAllOccasionGbAsync()
+        {
+            return await this.LookupInfrastructure.GetAllOccasionGbAsync();
+        }
+       
 
         public Task<bool> Activate(LookupValue entity)
         {
