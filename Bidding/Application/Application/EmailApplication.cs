@@ -1,9 +1,10 @@
-﻿using GoldBank.Connector;
-using GoldBank.Infrastructure;
+﻿using GoldBank.Application.IApplication;
+using GoldBank.Connector;
+using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using Microsoft.Extensions.Configuration;
 
-namespace GoldBank.Application
+namespace GoldBank.Application.Application
 {
     public class EmailApplication : IEmailApplication
     {
@@ -40,10 +41,10 @@ namespace GoldBank.Application
                 Email message = new Email();
 
                 message.Subject = "Forget Password Email";
-                message.Body = "Please reset your password by clicking on this  " + this.Configuration["ResetPasswordUrl"] + " ";
+                message.Body = "Please reset your password by clicking on this  " + Configuration["ResetPasswordUrl"] + " ";
                 message.To = email;
 
-                return await this.ServiceConnector.sendEmail(message);
+                return await ServiceConnector.sendEmail(message);
 
 
             }
@@ -54,17 +55,17 @@ namespace GoldBank.Application
         public async Task<bool> EmailTemplateCreateaccount(int id)
         {
 
-            var resultuser = await this.AccountInfrastructure.GetUserById(id);
+            var resultuser = await AccountInfrastructure.GetUserById(id);
 
-            var resulttemplate = await this.EmailInfrastructure.GetTemplateBycode(codetemplate_Createccount);
+            var resulttemplate = await EmailInfrastructure.GetTemplateBycode(codetemplate_Createccount);
             {
                 Email message = new Email();
 
                 message.Subject = resulttemplate.Subject;
-                message.Body = resulttemplate.Body.Replace(required_name, resultuser.FirstName).Replace(required_link, this.Configuration["ResetPasswordUrl"]);//"Please reset your password by clicking on this  " + this.Configuration["ResetPasswordUrl"] + " ";
+                message.Body = resulttemplate.Body.Replace(required_name, resultuser.FirstName).Replace(required_link, Configuration["ResetPasswordUrl"]);//"Please reset your password by clicking on this  " + this.Configuration["ResetPasswordUrl"] + " ";
                 message.To = resultuser.Email;
 
-                bool result = await this.ServiceConnector.sendEmail(message);
+                bool result = await ServiceConnector.sendEmail(message);
 
                 return result;
             }
@@ -76,17 +77,17 @@ namespace GoldBank.Application
         public async Task<bool> EmailTemplateResetPw(int id)
         {
 
-            var resultuser = await this.AccountInfrastructure.GetUserById(id);
+            var resultuser = await AccountInfrastructure.GetUserById(id);
 
-            var resulttemplate = await this.EmailInfrastructure.GetTemplateBycode(codetemplate_ResetPw);
+            var resulttemplate = await EmailInfrastructure.GetTemplateBycode(codetemplate_ResetPw);
             {
                 Email message = new Email();
 
                 message.Subject = resulttemplate.Subject;
-                message.Body = resulttemplate.Body.Replace(required_name, resultuser.FirstName).Replace(required_link, this.Configuration["ResetPasswordUrl"]);//"Please reset your password by clicking on this  " + this.Configuration["ResetPasswordUrl"] + " ";
+                message.Body = resulttemplate.Body.Replace(required_name, resultuser.FirstName).Replace(required_link, Configuration["ResetPasswordUrl"]);//"Please reset your password by clicking on this  " + this.Configuration["ResetPasswordUrl"] + " ";
                 message.To = resultuser.Email;
 
-                bool result = await this.ServiceConnector.sendEmail(message);
+                bool result = await ServiceConnector.sendEmail(message);
                 return result;
 
             }

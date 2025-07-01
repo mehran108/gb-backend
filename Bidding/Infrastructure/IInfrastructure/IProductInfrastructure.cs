@@ -2,7 +2,7 @@
 
 namespace GoldBank.Infrastructure.IInfrastructure
 {
-    public interface IProductInfrastructure : IBaseInfrastructuree<Product>
+    public interface IProductInfrastructure : IBaseInfrastructure<Product>
     {
     }
 }

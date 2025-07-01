@@ -1,6 +1,4 @@
 using GoldBank.Extensions;
-using GoldBank.Application;
-using GoldBank.Infrastructure;
 using GoldBank.Connector;
 using GoldBank.Application.IApplication;
 using GoldBank.Infrastructure.IInfrastructure;

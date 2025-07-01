@@ -1,6 +1,6 @@
 ﻿namespace GoldBank.Infrastructure.IInfrastructure
 {
-    public interface IBaseInfrastructuree<T>
+    public interface IBaseInfrastructure<T>
     {
         #region Interface Declarations
         /// <summary>

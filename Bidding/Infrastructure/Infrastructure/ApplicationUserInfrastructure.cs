@@ -13,7 +13,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         }
 
 
-        //************** INFRASTRUCTURES ****************
+        #region Constants
         private const string AddStoredProcedureName = "ApplicationUserAdd";
         private const string UpdateStoredProcedureName = "ApplicationUserUpdate";
         private const string ActivateStoredProcedureName = "ApplicationUserActivate";
@@ -42,6 +42,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         private const string ModifiedByIdParameterName = "@PModifiedById";
         private const string ActiveParameterName = "@PActive";
 
+        #endregion
         public async Task<int> Add(ApplicationUser ApplicationUser)
         {
             var ApplicationUserIdParameter = base.GetParameterOut(ApplicationUserInfrastructure.ApplicationUserIdParameterName, SqlDbType.BigInt, ApplicationUser.ApplicationUserId);
@@ -82,7 +83,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             return ReturnValue > 0;
         }
 
-        public async Task<ApplicationUser> GetById(ApplicationUser ApplicationUser)
+        public async Task<ApplicationUser> Get(ApplicationUser ApplicationUser)
         {
             ApplicationUser ApplicationUserItem = new ApplicationUser();
             var parameters = new List<DbParameter>
@@ -100,24 +101,14 @@ namespace GoldBank.Infrastructure.Infrastructure
                         ApplicationUserItem = new ApplicationUser
                         {
                             ApplicationUserId = dataReader.GetIntegerValue(ApplicationUserInfrastructure.ApplicationUserIdColumnName),
-                            UserName = dataReader.GetStringValue(ApplicationUserInfrastructure.UsernameColumnName)
-                        ,
-                            Email = dataReader.GetStringValue(ApplicationUserInfrastructure.EmailColumnName)
-                        ,
-                            FirstName = dataReader.GetStringValue(ApplicationUserInfrastructure.FirstnameColumnName)
-                        ,
-                            PasswordHash = dataReader.GetStringValue(ApplicationUserInfrastructure.PasswordHashColumnName),
-
-                            LastName = dataReader.GetStringValue(ApplicationUserInfrastructure.LastnameColumnName)
-                        ,
-                            CreatedDate = dataReader.GetDateTimeValue(ApplicationUserInfrastructure.CreatedDateColumnName)
-                        ,
-                            ModifiedDate = dataReader.GetDateTimeValue(ApplicationUserInfrastructure.ModifiedDateColumnName)
-                        ,
-                            CreatedById = dataReader.GetIntegerValue(ApplicationUserInfrastructure.CreatedByIdColumnName)
-                        ,
-                            ModifiedById = dataReader.GetIntegerValue(ApplicationUserInfrastructure.ModifiedByIdColumnName)
-                        ,
+                            UserName = dataReader.GetStringValue(ApplicationUserInfrastructure.UsernameColumnName),
+                            Email = dataReader.GetStringValue(ApplicationUserInfrastructure.EmailColumnName),
+                            FirstName = dataReader.GetStringValue(ApplicationUserInfrastructure.FirstnameColumnName),
+                            LastName = dataReader.GetStringValue(ApplicationUserInfrastructure.LastnameColumnName),
+                            CreatedDate = dataReader.GetDateTimeValue(ApplicationUserInfrastructure.CreatedDateColumnName),
+                            ModifiedDate = dataReader.GetDateTimeValue(ApplicationUserInfrastructure.ModifiedDateColumnName),
+                            CreatedById = dataReader.GetIntegerValue(ApplicationUserInfrastructure.CreatedByIdColumnName),
+                            ModifiedById = dataReader.GetIntegerValue(ApplicationUserInfrastructure.ModifiedByIdColumnName),
                             Active = dataReader.GetBooleanValue(ApplicationUserInfrastructure.ActiveColumnName)
 
                         };
@@ -133,7 +124,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
         }
 
-        public async Task<List<ApplicationUser>> GetAll(ApplicationUser ApplicationUser)
+        public async Task<List<ApplicationUser>> GetList(ApplicationUser ApplicationUser)
         {
             var ApplicationUserList = new List<ApplicationUser>();
             ApplicationUser ApplicationUserItem = null;
@@ -151,24 +142,15 @@ namespace GoldBank.Infrastructure.Infrastructure
                             ApplicationUserItem = new ApplicationUser
                             {
                                 ApplicationUserId = dataReader.GetIntegerValue(ApplicationUserInfrastructure.ApplicationUserIdColumnName),
-                                UserName = dataReader.GetStringValue(ApplicationUserInfrastructure.UsernameColumnName)
-                            ,
-                                Email = dataReader.GetStringValue(ApplicationUserInfrastructure.EmailColumnName)
-                            ,
-                                FirstName = dataReader.GetStringValue(ApplicationUserInfrastructure.FirstnameColumnName)
-                            ,
-                                LastName = dataReader.GetStringValue(ApplicationUserInfrastructure.LastnameColumnName)
-                            ,
-                                CreatedDate = dataReader.GetDateTimeValue(ApplicationUserInfrastructure.CreatedDateColumnName)
-                            ,
-                                ModifiedDate = dataReader.GetDateTimeValue(ApplicationUserInfrastructure.ModifiedDateColumnName)
-                            ,
-                                CreatedById = dataReader.GetIntegerValue(ApplicationUserInfrastructure.CreatedByIdColumnName)
-                            ,
-                                ModifiedById = dataReader.GetIntegerValue(ApplicationUserInfrastructure.ModifiedByIdColumnName)
-                            ,
+                                UserName = dataReader.GetStringValue(ApplicationUserInfrastructure.UsernameColumnName) ,
+                                Email = dataReader.GetStringValue(ApplicationUserInfrastructure.EmailColumnName),
+                                FirstName = dataReader.GetStringValue(ApplicationUserInfrastructure.FirstnameColumnName),
+                                LastName = dataReader.GetStringValue(ApplicationUserInfrastructure.LastnameColumnName),
+                                CreatedDate = dataReader.GetDateTimeValue(ApplicationUserInfrastructure.CreatedDateColumnName),
+                                ModifiedDate = dataReader.GetDateTimeValue(ApplicationUserInfrastructure.ModifiedDateColumnName),
+                                CreatedById = dataReader.GetIntegerValue(ApplicationUserInfrastructure.CreatedByIdColumnName),
+                                ModifiedById = dataReader.GetIntegerValue(ApplicationUserInfrastructure.ModifiedByIdColumnName),
                                 Active = dataReader.GetBooleanValue(ApplicationUserInfrastructure.ActiveColumnName)
-
                             };
                             ApplicationUserList.Add(ApplicationUserItem);
                         }
@@ -195,10 +177,6 @@ namespace GoldBank.Infrastructure.Infrastructure
             var returnValue = await base.ExecuteNonQuery(parameters, ApplicationUserInfrastructure.ActivateStoredProcedureName, CommandType.StoredProcedure);
             return returnValue > 0;
         }
-
-
-
-
 
     }
 }

@@ -7,7 +7,7 @@ using GoldBank.Models;
 
 namespace GoldBank.Application.Application
 {
-    public class ApplicationUserApplication : IApplicationUserApplication
+    public class ApplicationUserApplication : IBaseApplication<ApplicationUser>, IApplicationUserApplication
     {
         public ApplicationUserApplication(IConfiguration Configuration, IApplicationUserInfrastructure applicationUserInfrastructure) 
         {
@@ -30,14 +30,14 @@ namespace GoldBank.Application.Application
             return await ApplicationUserInfrastructure.Add(ApplicationUser);
         }
 
-        public async Task<ApplicationUser> GetById(ApplicationUser ApplicationUser)
+        public async Task<ApplicationUser> Get(ApplicationUser ApplicationUser)
         {
-            return await ApplicationUserInfrastructure.GetById(ApplicationUser);
+            return await ApplicationUserInfrastructure.Get(ApplicationUser);
         }
 
-        public async Task<List<ApplicationUser>> GetAll(ApplicationUser ApplicationUser)
+        public async Task<List<ApplicationUser>> GetList(ApplicationUser ApplicationUser)
         {
-            return await ApplicationUserInfrastructure.GetAll(ApplicationUser);
+            return await ApplicationUserInfrastructure.GetList(ApplicationUser);
         }
 
         public async Task<bool> Update(ApplicationUser ApplicationUser)
