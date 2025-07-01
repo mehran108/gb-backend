@@ -38,9 +38,10 @@ namespace GoldBank.Infrastructure.Infrastructure
         private const string UserIdColumnName = "UserId";
         private const string EmailColumnName = "Email";
         private const string FirstNameColumnName = "FirstName";
+        private const string NameColumnName = "Name";
         private const string LastNameColumnName = "LastName";
         private const string PasswordColumnName = "Password";
-        private const string PasswordHashColumnName = "PasswordHash";
+        private const string PasswordHashColumnName = "Password";
         private const string IdentificationNumberColumnName = "IdentificationNumber";
         private const string Address1NumberColumnName = "Address1";
         private const string PostalCodeNumberColumnName = "PostalCode";
@@ -51,6 +52,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 
         //Parameter names
         private const string UserIdParameterName = "PUserId";
+        private const string NameParameterName = "@PName";
         private const string EmailParameterName = "PEmail";
         private const string PasswordParameterName = "PPassword";
         private const string FirstNameParameterName = "PFirstName";
@@ -96,8 +98,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         {
                             UserId = dataReader.GetIntegerValue(UserIdColumnName),
                             Email = dataReader.GetStringValue(EmailColumnName),
-                            FirstName = dataReader.GetStringValue(FirstNameColumnName),
-                            LastName = dataReader.GetStringValue(LastNameColumnName),
+                            //FirstName = dataReader.GetStringValue(FirstNameColumnName),
+                            Name = dataReader.GetStringValue(NameColumnName),
+                            //LastName = dataReader.GetStringValue(LastNameColumnName),
                             PasswordHash = dataReader.GetStringValue(PasswordHashColumnName),
                             Active = dataReader.GetBooleanValue(ActiveColumnName)
                         };
@@ -201,13 +204,8 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                 applicationUserIdParamter,
                 GetParameter(EmailParameterName, User.Email),
-                GetParameter(FirstNameParameterName, User.FirstName),
-                GetParameter(LastNameParameterName, User.LastName),
-                GetParameter(PasswordHashParameterName, User.PasswordHash),
-                GetParameter(IdentificationNumberParameterName, User.IdentificationNumber),
-                //base.GetParameter(AccountInfrastructure.PhoneNumberParameterName, User.PhoneNumber),
-                GetParameter(Address1ParameterName, User.Address1),
-                //base.GetParameter(AccountInfrastructure.PostalCodeParameterName, User.PostalCode)
+                GetParameter(NameParameterName, User.FirstName),
+                GetParameter(PasswordHashParameterName, User.PasswordHash)
             };
             await ExecuteNonQuery(parameters, RegisterUsertoredProcedureName, CommandType.StoredProcedure);
             User.UserId = Convert.ToInt32(applicationUserIdParamter.Value);
