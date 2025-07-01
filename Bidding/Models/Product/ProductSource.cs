@@ -1,4 +1,4 @@
-﻿namespace GoldBank.Models
+﻿namespace GoldBank.Models.Product
 {
     public class ProductSource : BaseDomain
     {

@@ -1,5 +1,4 @@
-﻿
-namespace GoldBank.Models
+﻿namespace GoldBank.Models
 {
     public class User
     {

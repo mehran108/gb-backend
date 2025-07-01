@@ -1,8 +1,8 @@
-﻿using GoldBank.Models;
+﻿using GoldBank.Models.Product;
 
 namespace GoldBank.Infrastructure.IInfrastructure
 {
-    public interface IProductInfrastructure : IBaseInfrastructure<Product>
+    public interface IProductInfrastructure : IBaseInfrastructure<ProductGb>
     {
     }
 }

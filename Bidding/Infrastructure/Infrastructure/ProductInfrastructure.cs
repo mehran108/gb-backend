@@ -1,6 +1,6 @@
 ﻿using GoldBank.Infrastructure.Extension;
 using GoldBank.Infrastructure.IInfrastructure;
-using GoldBank.Models;
+using GoldBank.Models.Product;
 using System.Data;
 using System.Data.Common;
 
@@ -23,12 +23,12 @@ namespace GoldBank.Infrastructure.Infrastructure
         private const string GetProductListProcedureName = "GetProductList";
         #endregion
 
-        public Task<bool> Activate(Product entity)
+        public Task<bool> Activate(ProductGb entity)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<int> Add(Product entity)
+        public async Task<int> Add(ProductGb entity)
         {
             var IdParamter = base.GetParameterOut(ProductInfrastructure.ProductIdParameterName, SqlDbType.Int, entity.ProductId);
             var parameters = new List<DbParameter>
@@ -43,13 +43,13 @@ namespace GoldBank.Infrastructure.Infrastructure
 
         }
 
-        public async Task<Product> Get(Product entity)
+        public async Task<ProductGb> Get(ProductGb entity)
         {
             var parameters = new List<DbParameter>
             {
                 base.GetParameter(ProductInfrastructure.ProductIdParameterName, entity.ProductId)
             };
-            var res = new Product();
+            var res = new ProductGb();
             using (var dataReader = await base.ExecuteReader(parameters, ProductInfrastructure.GetProductByIdProcedureName, CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
@@ -63,20 +63,20 @@ namespace GoldBank.Infrastructure.Infrastructure
             return res;
         }
 
-        public async Task<List<Product>> GetList(Product entity)
+        public async Task<List<ProductGb>> GetList(ProductGb entity)
         {
             var parameters = new List<DbParameter>
             {
                 base.GetParameter(ProductInfrastructure.ProductIdParameterName, entity.ProductId)
             };
-            var result = new List<Product>();
+            var result = new List<ProductGb>();
             using (var dataReader = await base.ExecuteReader(parameters, ProductInfrastructure.GetProductListProcedureName, CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
                     if (dataReader.Read())
                     {
-                        var res = new Product();
+                        var res = new ProductGb();
                         res.ProductId = dataReader.GetIntegerValue(ProductInfrastructure.ProductIdColumnName);
                         result.Add(res);
                     }
@@ -85,7 +85,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             return result;
         }
 
-        public Task<bool> Update(Product entity)
+        public Task<bool> Update(ProductGb entity)
         {
             throw new NotImplementedException();
         }

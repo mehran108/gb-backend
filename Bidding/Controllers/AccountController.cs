@@ -110,14 +110,13 @@ namespace GoldBank.Controllers
         [HttpPost("RegisterUser")]
         public async Task<ActionResult<int>> RegisterUser([FromBody] User user)
         {
-         
-              var resultuser = await this.AccountApplication.GetUserByEmail(user.Email);
-                     if(resultuser.Email == null)
+
+            var resultuser = await this.AccountApplication.GetUserByEmail(user.Email);
+            if (resultuser.Email == null)
             {
-                string pwd = "Algo@1234";
-                string passwordHash = BCrypt.Net.BCrypt.HashPassword(pwd);
+                string passwordHash = BCrypt.Net.BCrypt.HashPassword(user.NewPwd);
                 user.PasswordHash = passwordHash;
-                int result= await this.AccountApplication.RegisterUser(user);
+                int result = await this.AccountApplication.RegisterUser(user);
                 return Ok(result);
             }
             else
@@ -173,20 +172,20 @@ namespace GoldBank.Controllers
             return await this.AccountApplication.PasswordReset(User);
         }
         [HttpPut("ChangePassword")]
-        public async Task<ActionResult<bool>> ChangePassword([FromBody]User User)
+        public async Task<ActionResult<bool>> ChangePassword([FromBody] User User)
         {
             var resultUser = await this.AccountApplication.GetUserById(User.UserId);
-           
-            bool verified = BCrypt.Net.BCrypt.Verify(User.OldPwd,resultUser.PasswordHash);
+
+            bool verified = BCrypt.Net.BCrypt.Verify(User.OldPwd, resultUser.PasswordHash);
             if (verified)
             {
                 string newpassword = BCrypt.Net.BCrypt.HashPassword(User.NewPwd);
                 User.PasswordHash = newpassword;
                 Response.Redirect("https://localhost:7051/api/Account/Login");
                 await this.AccountApplication.ChangePassword(User);
-              return Ok(true);
+                return Ok(true);
             }
-           // Console.WriteLine(resultUser.UserId);
+            // Console.WriteLine(resultUser.UserId);
             return BadRequest("Invalid Old Password");
 
         }

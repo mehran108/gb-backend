@@ -1,6 +1,7 @@
-﻿namespace GoldBank.Models
+﻿
+namespace GoldBank.Models.Product
 {
-    public class Product : BaseDomain
+    public class ProductGb : BaseDomain
     {
         public int ProductId { get; set; }
         public int? ProductTypeId { get; set; }

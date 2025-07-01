@@ -1,4 +1,5 @@
-﻿namespace GoldBank.Models
+﻿
+namespace GoldBank.Models.Product
 {
     public class StoneProductGb : BaseDomain
     {
