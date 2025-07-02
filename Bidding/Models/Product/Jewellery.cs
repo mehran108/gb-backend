@@ -8,19 +8,25 @@
         public int? CategoryId { get; set; }
         public Category? Category { get; set; }
         public int? SubCategoryId { get; set; }
+        public ProductType? ProductType { get; set; }
         public SubCategory? SubCategory { get; set; }
         public string? WearingTypeIds { get; set; }
         public ICollection<WearingType> WearingTypeList { get; set; } = new List<WearingType>();
         public string? CollectionIds { get; set; }
         public ICollection<Collection> CollectionList { get; set; } = new List<Collection>();
         public int? GenderId { get; set; }
+        public GenderType? GenderType { get; set; }
         public string? OccasionIds { get; set; }
         public ICollection<Occasion> OccasionList { get; set; } = new List<Occasion>();
         public string? Description { get; set; }
         public int? MetalTypeId { get; set; }
+        public MetalType? MetalType { get; set; }
         public int? MetalPurityTypeId { get; set; }
+        public MetalPurity? MetalPurity { get; set; }
         public int? MetalColorTypeId { get; set; }
+        public MetalColor? MetalColor { get; set; }
         public int? WeightTypeId { get; set; }
+        public WeightType? WeightType { get; set; }
         public decimal NetWeight { get; set; }
         public decimal WastageWeight { get; set; }
         public decimal WastagePct { get; set; }
