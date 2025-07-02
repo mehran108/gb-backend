@@ -88,7 +88,7 @@ namespace GoldBank.Infrastructure
         /// GetConnection initializes and return connection fro given connection string.
         /// </summary>
         /// <returns></returns>
-        private DbConnection GetConnection()
+        public DbConnection GetConnection()
         {
             
             DbConnection connection = new MySqlConnection(this.ConnectionString);
@@ -202,6 +202,47 @@ namespace GoldBank.Infrastructure
 
             return returnValue;
         }
+        protected async Task<int> ExecuteNonQuery(List<DbParameter> parameters,string commandText,CommandType commandType = CommandType.StoredProcedure,DbTransaction transaction = null,DbConnection connection = null)
+        {
+            int returnValue = -1;
+            try
+            {
+                // Use external or internal connection
+                bool useInternalConnection = connection == null;
+                connection ??= this.GetConnection();
+
+                // Open only if not already open
+                if (connection.State != ConnectionState.Open)
+                {
+                    await connection.OpenAsync();
+                }
+
+                var cmd = this.GetCommand(connection, commandText, commandType, parameters);
+
+                // Attach transaction if available
+                if (transaction != null)
+                {
+                    cmd.Transaction = transaction;
+                }
+
+                cmd.CommandTimeout = 0;
+                returnValue = await cmd.ExecuteNonQueryAsync();
+
+                // Only close if internally created connection
+                if (useInternalConnection && connection.State == ConnectionState.Open)
+                {
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                var dbException = this.GetException(this.GetType().FullName, "ExecuteNonQuery", ex, parameters, commandText, commandType);
+                throw dbException;
+            }
+
+            return returnValue;
+        }
+
 
         /// <summary>
         /// Executes the query and returns the first column of the first row in the result set returned by the query. All other
@@ -271,6 +312,46 @@ namespace GoldBank.Infrastructure
 
             return ds;
         }
+        protected async Task<DbDataReader> ExecuteReader(List<DbParameter> parameters,string commandText,CommandType commandType = CommandType.StoredProcedure,DbTransaction transaction = null,DbConnection connection = null)
+        {
+            DbDataReader reader;
+            try
+            {
+                // Use the passed connection or create a new one
+                bool useInternalConnection = connection == null;
+                connection ??= this.GetConnection();
+
+                // Open connection only if not already open
+                if (connection.State != ConnectionState.Open)
+                {
+                    await connection.OpenAsync();
+                }
+
+                // Create command
+                var cmd = this.GetCommand(connection, commandText, commandType, parameters);
+
+                // Attach transaction if provided
+                if (transaction != null)
+                {
+                    cmd.Transaction = transaction;
+                }
+
+                cmd.CommandTimeout = 0;
+
+                // If we're using an internal connection, ensure it's closed automatically
+                var behavior = useInternalConnection ? CommandBehavior.CloseConnection : CommandBehavior.Default;
+
+                reader = await cmd.ExecuteReaderAsync(behavior);
+            }
+            catch (Exception ex)
+            {
+                var dbException = this.GetException(this.GetType().FullName, "ExecuteReader", ex, parameters, commandText, commandType);
+                throw dbException;
+            }
+
+            return reader;
+        }
+
 
 
         #endregion
