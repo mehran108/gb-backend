@@ -14,27 +14,15 @@ namespace GoldBank.Infrastructure.Infrastructure
         }
         #region Constants
         private const string DocumentIdParameterName = "@PDocumentId";
-        private const string ImageURLParameterName = "@PImageURL";
 
         public const string DocumentIdColumnName = "DocumentId";
 
-        private const string AddDocumentProcedureName = "AddDocument";
-        private const string FileUploadProcedureName = "AddDocument";
         private const string GetDocumentByIdProcedureName = "GetDocumentById";
         private const string GetDocumentListProcedureName = "GetDocumentList";
 
-        private const string DocumentTypeIdColumnName = "DocumentTypeId";
-        private const string DocumentFileColumnName = "DocumentFile";
-        private const string DocumentNameColumnName = "DocumentName";
-        private const string DocumentExtensionColumnName = "DocumentExtension";
-        private const string DocumentPathColumnName = "DocumentPath";
-        
-        private const string DocumentTypeIdParameterName = "PDocumentTypeId";
-        private const string DocumentFileParameterName = "PDocumentFile";
         private const string DocumentNameParameterName = "PName";
         private const string DocumentExtensionParameterName = "PExtension";
         private const string DocumentPathParameterName = "PUrl";
-        private const string DocumentTypeParameterName = "PDocumentType";
 
         #endregion
 
@@ -52,13 +40,12 @@ namespace GoldBank.Infrastructure.Infrastructure
                 base.GetParameter(DocumentInfrastructure.DocumentNameParameterName, entity.Url),
                 base.GetParameter(DocumentInfrastructure.DocumentExtensionParameterName, entity.Extension),
                 base.GetParameter(DocumentInfrastructure.DocumentPathParameterName, entity.Url),
-                base.GetParameter(BaseInfrastructure.CurrentUserIdParameterName,    entity.CreatedBy),
                 base.GetParameter(BaseInfrastructure.ActiveParameterName, entity.IsActive),
                 base.GetParameter("PCreatedBy",entity.CreatedBy)
 
             };
 
-            await base.ExecuteNonQuery(parameters, DocumentInfrastructure.FileUploadProcedureName, CommandType.StoredProcedure);
+            await base.ExecuteNonQuery(parameters, "AddDocument_gb", CommandType.StoredProcedure);
 
             entity.DocumentId = Convert.ToInt32(DocumentIdParamter.Value);
 
