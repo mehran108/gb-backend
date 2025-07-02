@@ -1,11 +1,9 @@
 ﻿using GoldBank.Models;
-using GoldBank.Models.Product;
 
 namespace GoldBank.Application.IApplication
 {
-    public interface IProductApplication : IBaseApplication<Product>
+    public interface IDocumentApplication : IBaseApplication<Document>
     {
         Task<int> UploadImage(Document Document);
-
     }
 }

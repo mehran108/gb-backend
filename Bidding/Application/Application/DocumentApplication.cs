@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace GoldBank.Application.Application
 {
-    public class CommonCodeApplication : IBaseApplication<CommonCode>, ICommonCodeApplication
+    public class DocumentApplication : IBaseApplication<Document>, IDocumentApplication
     {
         private readonly IAmazonS3 _s3Client;
         private readonly string _bucketName;
@@ -17,9 +17,9 @@ namespace GoldBank.Application.Application
         private readonly string _accessKey;
         private readonly string _secretKey;
         private readonly string _publicKey;
-        public CommonCodeApplication(ICommonCodeInfrastructure CommonCodeInfrastructure, IConfiguration configuration, ILogger<CommonCode> logger)
+        public DocumentApplication(IDocumentInfrastructure DocumentInfrastructure, IConfiguration configuration, ILogger<Document> logger)
         {
-            this.CommonCodeInfrastructure = CommonCodeInfrastructure;
+            this.DocumentInfrastructure = DocumentInfrastructure;
             _bucketName = configuration["AWS:BucketName"];
             _bucketUrl = configuration["AWS:BucketUrl"];
             _accessKey = configuration["AWS:AccessKey"];
@@ -36,50 +36,50 @@ namespace GoldBank.Application.Application
 
         }
 
-        public ICommonCodeInfrastructure CommonCodeInfrastructure { get; }
-        public async Task<bool> Activate(CommonCode entity)
+        public IDocumentInfrastructure DocumentInfrastructure { get; }
+        public async Task<bool> Activate(Document entity)
         {
-            return await CommonCodeInfrastructure.Activate(entity);
+            return await DocumentInfrastructure.Activate(entity);
         }
 
-        public async Task<int> Add(CommonCode entity)
+        public async Task<int> Add(Document entity)
         {
-            return await CommonCodeInfrastructure.Add(entity);
+            return await DocumentInfrastructure.Add(entity);
         }
 
-        public async Task<CommonCode> Get(CommonCode entity)
+        public async Task<Document> Get(Document entity)
         {
-            return await CommonCodeInfrastructure.Get(entity);
+            return await DocumentInfrastructure.Get(entity);
         }
 
-        public async Task<List<CommonCode>> GetList(CommonCode entity)
+        public async Task<List<Document>> GetList(Document entity)
         {
-            return await CommonCodeInfrastructure.GetList(entity);
+            return await DocumentInfrastructure.GetList(entity);
         }
 
-        public async Task<bool> Update(CommonCode entity)
+        public async Task<bool> Update(Document entity)
         {
-            return await CommonCodeInfrastructure.Update(entity);
+            return await DocumentInfrastructure.Update(entity);
         }
-        public async Task<int> UploadImage(CommonCode commonCode)
+        public async Task<int> UploadImage(Document Document)
         {
             try
             {
-                string fileName = Path.GetFileNameWithoutExtension(commonCode.File.FileName);
-                string extension = Path.GetExtension(commonCode.File.FileName);
+                string fileName = Path.GetFileNameWithoutExtension(Document.File.FileName);
+                string extension = Path.GetExtension(Document.File.FileName);
                 var memoryStream = new MemoryStream();
-                await commonCode.File.CopyToAsync(memoryStream);
+                await Document.File.CopyToAsync(memoryStream);
 
-                commonCode.Image64String = Convert.ToBase64String(memoryStream.ToArray());
-                commonCode.Image64String = "data:image/png;base64," + Convert.ToBase64String(memoryStream.ToArray());
+                Document.Image64String = Convert.ToBase64String(memoryStream.ToArray());
+                Document.Image64String = "data:image/png;base64," + Convert.ToBase64String(memoryStream.ToArray());
 
 
-                if (string.IsNullOrWhiteSpace(commonCode.Image64String) || string.IsNullOrWhiteSpace(commonCode.FileName))
+                if (string.IsNullOrWhiteSpace(Document.Image64String) || string.IsNullOrWhiteSpace(Document.Name))
                 {
                     throw new InvalidOperationException("Missing base64File or filename");
                 }
 
-                var match = Regex.Match(commonCode.Image64String, @"^data:image\/(\w+);base64,(.+)$");
+                var match = Regex.Match(Document.Image64String, @"^data:image\/(\w+);base64,(.+)$");
                 if (!match.Success)
                 {
                     throw new InvalidOperationException("Invalid base64 file format");
@@ -93,7 +93,7 @@ namespace GoldBank.Application.Application
                 var putRequest = new PutObjectRequest
                 {
                     BucketName = _bucketName,
-                    Key = commonCode.FileName,
+                    Key = Document.Name,
                     InputStream = new MemoryStream(fileBytes),
                     ContentType = contentType,
                     AutoCloseStream = true
@@ -102,8 +102,8 @@ namespace GoldBank.Application.Application
                 try
                 {
                     var response = await _s3Client.PutObjectAsync(putRequest);
-                    commonCode.DocumentPath =  $"{_publicKey}/{_bucketName}/{commonCode.FileName}";
-                    return await CommonCodeInfrastructure.Add(commonCode);
+                    Document.Url =  $"{_publicKey}/{_bucketName}/{Document.Name}";
+                    return await DocumentInfrastructure.Add(Document);
                 }
                 catch (Exception ex)
                 {
@@ -114,7 +114,7 @@ namespace GoldBank.Application.Application
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error uploading commonCode.Image: {ex.Message}");
+                Console.WriteLine($"Error uploading Document.Image: {ex.Message}");
                 throw; 
             }
         }
