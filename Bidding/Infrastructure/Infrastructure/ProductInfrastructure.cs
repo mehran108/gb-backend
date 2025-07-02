@@ -1,8 +1,10 @@
 ﻿using GoldBank.Infrastructure.Extension;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models.Product;
+using MySql.Data.MySqlClient;
 using System.Data;
 using System.Data.Common;
+using Dapper;
 
 namespace GoldBank.Infrastructure.Infrastructure
 {
@@ -92,166 +94,137 @@ namespace GoldBank.Infrastructure.Infrastructure
         {
             throw new NotImplementedException();
         }
-
-        public async Task<int> Add(Product entity)
+        public async Task<int> Add(Product product)
         {
-            var IdParamter = base.GetParameterOut(ProductInfrastructure.ProductIdParameterName, SqlDbType.Int, entity.ProductId);
-            var parameters = new List<DbParameter>
-            {
-                IdParamter,
-                base.GetParameter(ProductInfrastructure.ProductTypeIdParameterName, entity.ProductTypeId),
-                base.GetParameter(ProductInfrastructure.SKUParameterName, entity.SKU),
-                base.GetParameter(ProductInfrastructure.ProductSourceIdParameterName, entity.ProductSourceId),
-                base.GetParameter(ProductInfrastructure.VendorIdParameterName, entity.VendorId),
-                base.GetParameter(ProductInfrastructure.JewelleryIdParameterName, entity.Jewellery.JewelleryId),
-                base.GetParameter(ProductInfrastructure.PrimaryCategoryIdsParameterName, entity.Jewellery.PrimaryCategoryIds),
-                base.GetParameter(ProductInfrastructure.CategoryIdsParameterName, entity.Jewellery.CategoryId),
-                base.GetParameter(ProductInfrastructure.SubCategoryIdsParameterName, entity.Jewellery.SubCategoryId),
-                base.GetParameter(ProductInfrastructure.WearingTypeIdsParameterName, entity.Jewellery.WearingTypeIds),
-                base.GetParameter(ProductInfrastructure.CollectionNameParameterName, entity.Jewellery.CollectionName),
-                base.GetParameter(ProductInfrastructure.GenderIdParameterName, entity.Jewellery.GenderId),
-                base.GetParameter(ProductInfrastructure.OccasionParameterName, entity.Jewellery.Occasion),
-                base.GetParameter(ProductInfrastructure.DescriptionParameterName, entity.Jewellery.Description),
-                base.GetParameter(ProductInfrastructure.MetalTypeIdParameterName, entity.Jewellery.MetalTypeId),
-                base.GetParameter(ProductInfrastructure.MetalPurityTypeIdParameterName, entity.Jewellery.MetalPurityTypeId),
-                base.GetParameter(ProductInfrastructure.MetalColorTypeIdParameterName, entity.Jewellery.MetalColorTypeId),
-                base.GetParameter(ProductInfrastructure.WeightTypeIdParameterName, entity.Jewellery.WeightTypeId),
-                base.GetParameter(ProductInfrastructure.NetWeightParameterName, entity.Jewellery.NetWeight),
-                base.GetParameter(ProductInfrastructure.WastageWeightParameterName, entity.Jewellery.WastageWeight),
-                base.GetParameter(ProductInfrastructure.WastagePctParameterName, entity.Jewellery.WastagePct),
-                base.GetParameter(ProductInfrastructure.TotalWeightParameterName, entity.Jewellery.TotalWeight),
-                base.GetParameter(ProductInfrastructure.WidthParameterName, entity.Jewellery.Width),
-                base.GetParameter(ProductInfrastructure.BandwidthParameterName, entity.Jewellery.Bandwidth),
-                base.GetParameter(ProductInfrastructure.ThicknessParameterName, entity.Jewellery.Thickness),
-                base.GetParameter(ProductInfrastructure.SizeParameterName, entity.Jewellery.Size),
-                base.GetParameter(ProductInfrastructure.IsEcommerceParameterName, entity.Jewellery.IsEcommerce),
-                base.GetParameter(ProductInfrastructure.IsEngravingAvailableParameterName, entity.Jewellery.IsEngravingAvailable),
-                base.GetParameter(ProductInfrastructure.IsSizeAlterationAvailableParameterName, entity.Jewellery.IsSizeAlterationAvailable),
-                base.GetParameter(ProductInfrastructure.LacquerPriceParameterName, entity.Jewellery.LacquerPrice),
-                base.GetParameter(ProductInfrastructure.MakingPriceParameterName, entity.Jewellery.MakingPrice),
-                base.GetParameter(ProductInfrastructure.TotalPriceParameterName, entity.Jewellery.TotalPrice),
-
-            };
-            await base.ExecuteNonQuery(parameters, ProductInfrastructure.AddProductProcedureName, CommandType.StoredProcedure);
-            entity.ProductId = Convert.ToInt32(IdParamter.Value);
-
-            return entity.ProductId;
-
-        }
-        public async Task<int> AddProductWithJewelleryAsync(Product product)
-        {
-            using var connection = base.GetConnection(); // Your method to get DbConnection
-            await connection.OpenAsync();
-
-            using var transaction = connection.BeginTransaction();
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
 
             try
             {
-                var parameters = new List<DbParameter>        
-                {
-                    GetParameter("@ProductTypeId", product.ProductTypeId),
-                    GetParameter("@SKU", product.SKU),
-                    GetParameter("@ProductSourceId", product.ProductSourceId),
-                    GetParameter("@VendorId", product.VendorId),
-                    GetParameter("@CreatedBy", product.CreatedBy),
-                    GetParameter("@PrimaryCategoryIds", product.Jewellery.PrimaryCategoryIds),
-                    GetParameter("@CategoryId", product.Jewellery.CategoryId),
-                    GetParameter("@SubCategoryId", product.Jewellery.SubCategoryId),
-                    GetParameter("@WearingTypeIds", product.Jewellery.WearingTypeIds),
-                    GetParameter("@CollectionIds", product.Jewellery.CollectionName),
-                    GetParameter("@GenderId", product.Jewellery.GenderId),
-                    GetParameter("@OccasionIds", product.Jewellery.Occasion),
-                    GetParameter("@Description", product.Jewellery.Description),
-                    GetParameter("@MetalTypeId", product.Jewellery.MetalTypeId),
-                    GetParameter("@MetalPurityTypeId", product.Jewellery.MetalPurityTypeId),
-                    GetParameter("@MetalColorTypeId", product.Jewellery.MetalColorTypeId),
-                    GetParameter("@WeightTypeId", product.Jewellery.WeightTypeId),
-                    GetParameter("@NetWeight", product.Jewellery.NetWeight),
-                    GetParameter("@WastageWeight", product.Jewellery.WastageWeight),
-                    GetParameter("@WastagePct", product.Jewellery.WastagePct),
-                    GetParameter("@TotalWeight", product.Jewellery.TotalWeight),
-                    GetParameter("@Width", product.Jewellery.Width),
-                    GetParameter("@Bandwidth", product.Jewellery.Bandwidth),
-                    GetParameter("@Thickness", product.Jewellery.Thickness),
-                    GetParameter("@Size", product.Jewellery.Size),
-                    GetParameter("@IsEcommerce", product.Jewellery.IsEcommerce),
-                    GetParameter("@IsEngravingAvailable", product.Jewellery.IsEngravingAvailable),
-                    GetParameter("@IsSizeAlterationAvailable", product.Jewellery.IsSizeAlterationAvailable),
-                    GetParameter("@LacquerPrice", product.Jewellery.LacquerPrice),
-                    GetParameter("@MakingPrice", product.Jewellery.MakingPrice),
-                    GetParameter("@TotalPrice", product.Jewellery.TotalPrice)
-                };
-
-                int newProductId = 0, newJewelleryId = 0;
-
-                using (var reader = await base.ExecuteReader(parameters, "AddProductWithJewelleryGb", CommandType.StoredProcedure, transaction, connection))
-                {
-                    if (reader != null && reader.Read())
+                // Step 1: Insert Product + Jewellery and get new IDs
+                var insertResult = await connection.QueryFirstOrDefaultAsync<(int ProductId, int JewelleryId)>(
+                    "AddProductWithJewelleryGb",
+                    new
                     {
-                        newProductId = reader.GetIntegerValue("NewProductId");
-                        newJewelleryId = reader.GetIntegerValue("NewJewelleryId");
+                        p_ProductTypeId = product.ProductTypeId,
+                        p_SKU = product.SKU,
+                        p_ProductSourceId = product.ProductSourceId,
+                        p_VendorId = product.VendorId,
+                        p_CreatedBy = product.CreatedBy,
+
+                        p_PrimaryCategoryIds = product.Jewellery.PrimaryCategoryIds,
+                        p_CategoryId = product.Jewellery.CategoryId,
+                        p_SubCategoryId = product.Jewellery.SubCategoryId,
+                        p_WearingTypeIds = product.Jewellery.WearingTypeIds,
+                        p_CollectionIds = product.Jewellery.CollectionName,
+                        p_GenderId = product.Jewellery.GenderId,
+                        p_OccasionIds = product.Jewellery.Occasion,
+                        p_Description = product.Jewellery.Description,
+                        p_MetalTypeId = product.Jewellery.MetalTypeId,
+                        p_MetalPurityTypeId = product.Jewellery.MetalPurityTypeId,
+                        p_MetalColorTypeId = product.Jewellery.MetalColorTypeId,
+                        p_WeightTypeId = product.Jewellery.WeightTypeId,
+                        p_NetWeight = product.Jewellery.NetWeight,
+                        p_WastageWeight = product.Jewellery.WastageWeight,
+                        p_WastagePct = product.Jewellery.WastagePct,
+                        p_TotalWeight = product.Jewellery.TotalWeight,
+                        p_Width = product.Jewellery.Width,
+                        p_Bandwidth = product.Jewellery.Bandwidth,
+                        p_Thickness = product.Jewellery.Thickness,
+                        p_Size = product.Jewellery.Size,
+                        p_IsEcommerce = product.Jewellery.IsEcommerce,
+                        p_IsEngravingAvailable = product.Jewellery.IsEngravingAvailable,
+                        p_IsSizeAlterationAvailable = product.Jewellery.IsSizeAlterationAvailable,
+                        p_LacquerPrice = product.Jewellery.LacquerPrice,
+                        p_MakingPrice = product.Jewellery.MakingPrice,
+                        p_TotalPrice = product.Jewellery.TotalPrice
+                    },
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int productId = insertResult.ProductId;
+                int jewelleryId = insertResult.JewelleryId;
+
+                if (productId <= 0 || jewelleryId <= 0)
+                {
+                    await transaction.RollbackAsync();
+                    return 0;
+                }
+
+                // Step 2: Add product documents
+                if (product.ProductDocuments?.Count > 0)
+                {
+                    foreach (var doc in product.ProductDocuments)
+                    {
+                        await connection.ExecuteAsync(
+                            "AddProductDocumentGb",
+                            new
+                            {
+                                p_ProductId = productId,
+                                p_DocumentId = doc.DocumentId,
+                                p_CreatedBy = product.CreatedBy,
+                                p_IsPrimary = doc.IsPrimary
+                            },
+                            transaction,
+                            commandType: CommandType.StoredProcedure
+                        );
                     }
                 }
-
-                foreach (var doc in product.Documents)
+                if(product.StoneProducts?.Count > 0)
                 {
-                    var docParams = new List<DbParameter>
-            {
-                GetParameter("@ProductId", newProductId),
-                GetParameter("@DocumentId", doc.DocumentId),
-                GetParameter("@CreatedBy", product.CreatedBy)
-            };
-
-                    await base.ExecuteNonQuery(docParams, "AddProductDocumentGb", CommandType.StoredProcedure, transaction, connection);
-                }
-
-                foreach (var stone in product.StoneProducts)
-                {
-                    var stoneParams = new List<DbParameter>
-            {
-                GetParameter("@ProductId", newProductId),
-                GetParameter("@StoneTypeId", stone.StoneTypeId),
-                GetParameter("@Quantity", stone.Quantity),
-                GetParameter("@StoneWeightTypeId", stone.StoneWeightTypeId),
-                GetParameter("@TotalPrice", stone.TotalPrice),
-                GetParameter("@StoneShapeId", stone.StoneShapeId),
-                GetParameter("@CreatedBy", product.CreatedBy)
-            };
-
-                    int stoneId = 0;
-
-                    using (var reader = await ExecuteReader(stoneParams, "AddStoneProductGb", CommandType.StoredProcedure, transaction, connection))
+                    // Step 3: Add stone products and their documents
+                    foreach (var stone in product.StoneProducts)
                     {
-                        if (reader != null && reader.Read())
+                        var stoneId = await connection.QuerySingleAsync<int>(
+                            "AddStoneProductGb",
+                            new
+                            {
+                                p_ProductId = productId,
+                                p_StoneTypeId = stone.StoneTypeId,
+                                p_Quantity = stone.Quantity,
+                                p_StoneWeightTypeId = stone.StoneWeightTypeId,
+                                p_TotalPrice = stone.TotalPrice,
+                                p_StoneShapeId = stone.StoneShapeId,
+                                p_CreatedBy = product.CreatedBy
+                            },
+                            transaction,
+                            commandType: CommandType.StoredProcedure
+                        );
+                        if(product.StoneDocuments?.Count > 0)
                         {
-                            stoneId = reader.GetIntegerValue("NewStoneId"); // Assumes this column name
+                            foreach (var doc in product.StoneDocuments)
+                            {
+                                await connection.ExecuteAsync(
+                                    "AddStoneDocumentGb",
+                                    new
+                                    {
+                                        p_StoneId = stoneId,
+                                        p_DocumentId = doc.DocumentId,
+                                        p_CreatedBy = product.CreatedBy,
+                                        p_IsPrimary = doc.IsPrimary
+                                    },
+                                    transaction,
+                                    commandType: CommandType.StoredProcedure
+                                );
+                            }
                         }
                     }
-
-                    foreach (var doc in stone.Documents)
-                    {
-                        var docParams = new List<DbParameter>
+                }
+                else
                 {
-                    GetParameter("@StoneId", stoneId),
-                    GetParameter("@DocumentId", doc.DocumentId),
-                    GetParameter("@CreatedBy", product.CreatedBy)
-                };
-
-                        await base.ExecuteNonQuery(docParams, "AddStoneDocumentGb", CommandType.StoredProcedure, transaction, connection);
-                    }
+                    //empty stone product;
                 }
 
-                transaction.Commit();
-
-                return (2); //TODO dynamic value return
+                await transaction.CommitAsync();
+                return 1;
             }
-            catch
+            catch(Exception ex)
             {
-                transaction.Rollback();
+                await transaction.RollbackAsync();
                 throw;
             }
         }
-
 
         public async Task<Product> Get(Product entity)
         {

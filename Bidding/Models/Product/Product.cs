@@ -10,6 +10,7 @@ namespace GoldBank.Models.Product
         public int? VendorId { get; set; }
         public Jewellery Jewellery { get; set; } = new Jewellery();
         public ICollection<StoneProduct> StoneProducts { get; set; } = new List<StoneProduct>();
-        public ICollection<Document> Documents { get; set; } = new List<Document>();
+        public ICollection<ProductDocument> ProductDocuments { get; set; } = new List<ProductDocument>();
+        public ICollection<StoneDocument> StoneDocuments { get; set; } = new List<StoneDocument>();
     }
 }
