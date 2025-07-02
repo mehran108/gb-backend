@@ -2,7 +2,7 @@
 
 namespace GoldBank.Infrastructure.IInfrastructure
 {
-    public interface ICommonCodeInfrastructure : IBaseInfrastructure<CommonCode>
+    public interface IDocumentInfrastructure : IBaseInfrastructure<Document>
     {
     }
 }

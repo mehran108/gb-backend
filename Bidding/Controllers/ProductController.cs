@@ -11,13 +11,13 @@ namespace GoldBank.Controllers
     public class ProductController : ControllerBase
     {
         public IProductApplication ProductApplication { get; }
-        public ICommonCodeApplication CommonCodeApplication { get; }
+        public IDocumentApplication DocumentApplication { get; }
         public ILogger logger { get; set; }
-        public ProductController(IConfiguration configuration, ILogger<ProductController> logger, IProductApplication productApplication, ICommonCodeApplication CommonCodeApplication)
+        public ProductController(IConfiguration configuration, ILogger<ProductController> logger, IProductApplication productApplication, IDocumentApplication DocumentApplication)
         {
             this.ProductApplication = productApplication;
             this.logger = logger;
-            this.CommonCodeApplication = CommonCodeApplication;
+            this.DocumentApplication = DocumentApplication;
         }
 
 
@@ -45,9 +45,9 @@ namespace GoldBank.Controllers
             return await ProductApplication.GetList(product);
         }
         [HttpPost("UploadImage")]
-        public async Task<int> UploadImage(CommonCode commonCode)
+        public async Task<int> UploadImage(Document Document)
         {
-            return await ProductApplication.UploadImage(commonCode);
+            return await ProductApplication.UploadImage(Document);
         }
     }
 }
