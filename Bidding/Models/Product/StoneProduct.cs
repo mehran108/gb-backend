@@ -10,9 +10,10 @@ namespace GoldBank.Models.Product
         public int? StoneWeightTypeId { get; set; }
         public StoneWeightType? StoneWeightType { get; set; }
         public decimal TotalPrice { get; set; }
+        public decimal TotalWeight { get; set; }
         public int? StoneShapeId { get; set; }
+        public ICollection<StoneDocument> StoneDocuments { get; set; } = new List<StoneDocument>();
         public StoneShape? StoneShape { get; set; }
-        public ICollection<Document> Documents { get; set; } = new List<Document>();
 
     }
 }

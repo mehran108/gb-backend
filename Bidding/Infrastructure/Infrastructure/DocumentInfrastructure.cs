@@ -31,9 +31,9 @@ namespace GoldBank.Infrastructure.Infrastructure
         
         private const string DocumentTypeIdParameterName = "PDocumentTypeId";
         private const string DocumentFileParameterName = "PDocumentFile";
-        private const string DocumentNameParameterName = "PDocumentName";
-        private const string DocumentExtensionParameterName = "PDocumentExtension";
-        private const string DocumentPathParameterName = "PDocumentPath";
+        private const string DocumentNameParameterName = "PName";
+        private const string DocumentExtensionParameterName = "PExtension";
+        private const string DocumentPathParameterName = "PUrl";
         private const string DocumentTypeParameterName = "PDocumentType";
 
         #endregion
@@ -54,7 +54,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 base.GetParameter(DocumentInfrastructure.DocumentPathParameterName, entity.Url),
                 base.GetParameter(BaseInfrastructure.CurrentUserIdParameterName,    entity.CreatedBy),
                 base.GetParameter(BaseInfrastructure.ActiveParameterName, entity.IsActive),
-                base.GetParameter(DocumentInfrastructure.DocumentTypeParameterName,entity.DocumentTypeId)
+                base.GetParameter("PCreatedBy",entity.CreatedBy)
 
             };
 

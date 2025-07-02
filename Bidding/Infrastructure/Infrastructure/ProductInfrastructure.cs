@@ -122,28 +122,32 @@ namespace GoldBank.Infrastructure.Infrastructure
                                 p_Quantity = stone.Quantity,
                                 p_StoneWeightTypeId = stone.StoneWeightTypeId,
                                 p_TotalPrice = stone.TotalPrice,
+                                p_TotalWeight = stone.TotalWeight,
                                 p_StoneShapeId = stone.StoneShapeId,
                                 p_CreatedBy = product.CreatedBy
                             },
                             transaction,
                             commandType: CommandType.StoredProcedure
                         );
-                        if(product.StoneDocuments?.Count > 0)
+                        if(product.StoneProducts?.Count > 0)
                         {
-                            foreach (var doc in product.StoneDocuments)
+                            foreach (var stoneProduct in product.StoneProducts)
                             {
-                                await connection.ExecuteAsync(
-                                    "AddStoneDocumentGb",
-                                    new
-                                    {
-                                        p_StoneId = stoneId,
-                                        p_DocumentId = doc.DocumentId,
-                                        p_CreatedBy = product.CreatedBy,
-                                        p_IsPrimary = doc.IsPrimary
-                                    },
-                                    transaction,
-                                    commandType: CommandType.StoredProcedure
-                                );
+                                foreach(var doc in stoneProduct.StoneDocuments)
+                                {
+                                    await connection.ExecuteAsync(
+                                   "AddStoneDocumentGb",
+                                   new
+                                   {
+                                       p_StoneId = stoneId,
+                                       p_DocumentId = doc.DocumentId,
+                                       p_CreatedBy = product.CreatedBy,
+                                       p_IsPrimary = doc.IsPrimary
+                                   },
+                                   transaction,
+                                   commandType: CommandType.StoredProcedure
+                                   );
+                                }
                             }
                         }
                     }
@@ -205,10 +209,143 @@ namespace GoldBank.Infrastructure.Infrastructure
             return result;
         }
 
-        public Task<bool> Update(Product entity)
+        public async Task<bool> Update(Product product)
         {
-            throw new NotImplementedException();
+            using var connection = base.GetConnection();
+            await connection.OpenAsync();
+            using var transaction = await connection.BeginTransactionAsync();
+
+            try
+            {
+                // Step 1: Update Product + Jewellery
+                var affected = await connection.ExecuteAsync(
+                    "UpdateProductWithJewelleryGb",
+                    new
+                    {
+                        ProductId = product.ProductId,
+                        JewelleryId = product.Jewellery.JewelleryId,
+                        ProductTypeId = product.ProductTypeId,
+                        SKU = product.SKU,
+                        ProductSourceId = product.ProductSourceId,
+                        VendorId = product.VendorId,
+                        CreatedBy = product.CreatedBy,
+
+                        PrimaryCategoryIds = product.Jewellery.PrimaryCategoryIds,
+                        CategoryId = product.Jewellery.CategoryId,
+                        SubCategoryId = product.Jewellery.SubCategoryId,
+                        WearingTypeIds = product.Jewellery.WearingTypeIds,
+                        CollectionIds = product.Jewellery.CollectionIds,
+                        GenderId = product.Jewellery.GenderId,
+                        OccasionIds = product.Jewellery.OccasionIds,
+                        Description = product.Jewellery.Description,
+                        MetalTypeId = product.Jewellery.MetalTypeId,
+                        MetalPurityTypeId = product.Jewellery.MetalPurityTypeId,
+                        MetalColorTypeId = product.Jewellery.MetalColorTypeId,
+                        WeightTypeId = product.Jewellery.WeightTypeId,
+                        NetWeight = product.Jewellery.NetWeight,
+                        WastageWeight = product.Jewellery.WastageWeight,
+                        WastagePct = product.Jewellery.WastagePct,
+                        TotalWeight = product.Jewellery.TotalWeight,
+                        Width = product.Jewellery.Width,
+                        Bandwidth = product.Jewellery.Bandwidth,
+                        Thickness = product.Jewellery.Thickness,
+                        Size = product.Jewellery.Size,
+                        IsEcommerce = product.Jewellery.IsEcommerce,
+                        IsEngravingAvailable = product.Jewellery.IsEngravingAvailable,
+                        IsSizeAlterationAvailable = product.Jewellery.IsSizeAlterationAvailable,
+                        LacquerPrice = product.Jewellery.LacquerPrice,
+                        MakingPrice = product.Jewellery.MakingPrice,
+                        TotalPrice = product.Jewellery.TotalPrice
+                    },
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                // Optional: Delete old ProductDocuments before re-inserting
+                await connection.ExecuteAsync(
+                    "DeleteProductDocumentsGb",
+                    new { ProductId = product.ProductId },
+                    transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                // Step 2: Insert updated ProductDocuments
+                if (product.ProductDocuments?.Count > 0)
+                {
+                    foreach (var doc in product.ProductDocuments)
+                    {
+                        await connection.ExecuteAsync(
+                            "AddProductDocumentGb",
+                            new
+                            {
+                                ProductId = product.ProductId,
+                                DocumentId = doc.DocumentId,
+                                CreatedBy = product.CreatedBy
+                            },
+                            transaction,
+                            commandType: CommandType.StoredProcedure
+                        );
+                    }
+                }
+
+                // Optional: Delete old StoneProducts + StoneDocuments
+                await connection.ExecuteAsync(
+                    "DeleteStoneProductsByProductIdGb",
+                    new { ProductId = product.ProductId },
+                    transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                // Step 3: Re-insert StoneProducts and their Documents
+                if(product.StoneProducts?.Count>0)
+                {
+                    foreach (var stone in product.StoneProducts)
+                    {
+                        int stoneId = await connection.QuerySingleAsync<int>(
+                            "AddStoneProductGb",
+                            new
+                            {
+                                ProductId = product.ProductId,
+                                StoneTypeId = stone.StoneTypeId,
+                                Quantity = stone.Quantity,
+                                StoneWeightTypeId = stone.StoneWeightTypeId,
+                                TotalPrice = stone.TotalPrice,
+                                p_TotalWeight = stone.TotalWeight,
+                                StoneShapeId = stone.StoneShapeId,
+                                CreatedBy = product.CreatedBy
+                            },
+                            transaction,
+                            commandType: CommandType.StoredProcedure
+                        );
+
+                        foreach (var doc in stone.StoneDocuments)
+                        {
+                            await connection.ExecuteAsync(
+                                "AddStoneDocumentGb",
+                                new
+                                {
+                                    StoneId = stoneId,
+                                    DocumentId = doc.DocumentId,
+                                    CreatedBy = product.CreatedBy,
+                                    IsPrimary = doc.IsPrimary
+                                },
+                                transaction,
+                                commandType: CommandType.StoredProcedure
+                            );
+                        }
+                    }
+                }
+
+                await transaction.CommitAsync();
+                return true;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
+
         public Task<AllResponse<Product>> GetAll(AllRequest<Product> entity)
         {
             throw new NotImplementedException();
