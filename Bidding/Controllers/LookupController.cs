@@ -134,5 +134,23 @@ namespace GoldBank.Controllers
             var result = await this.LookupApplication.GetAllOccasionGbAsync();
             return Ok(result);
         }
+        [HttpGet("GetAllPrimaryCategories")]
+        public async Task<ActionResult<IEnumerable<PrimaryCategory>>> GetPrimaryCategories()
+        {
+            var result = await this.LookupApplication.GetPrimaryCategories();
+            return Ok(result);
+        }
+        [HttpGet("GetAllCategories")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        {
+            var result = await this.LookupApplication.GetCategories();
+            return Ok(result);
+        }
+        [HttpGet("GetAllSubCategories")]
+        public async Task<ActionResult<IEnumerable<SubCategory>>> GetSubCategories()
+        {
+            var result = await this.LookupApplication.GetSubCategories();
+            return Ok(result);
+        }
     }
 }

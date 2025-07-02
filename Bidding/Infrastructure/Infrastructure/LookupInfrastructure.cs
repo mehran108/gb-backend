@@ -7,6 +7,7 @@ using GoldBank.Infrastructure.Extension;
 using Amazon.Runtime.Documents;
 using GoldBank.Models.Product;
 using Collection = GoldBank.Models.Product.Collection;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GoldBank.Infrastructure.Infrastructure
 {
@@ -366,6 +367,64 @@ namespace GoldBank.Infrastructure.Infrastructure
                         list.Add(new GenderType
                         {
                             GenderTypeId = dataReader.GetIntegerValue("GenderTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+        public async Task<IEnumerable<PrimaryCategory>> GetPrimaryCategories()
+        {
+            var list = new List<PrimaryCategory>();
+            using (var dataReader = await ExecuteReader(null, "GetAllPrimaryCategoryGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new PrimaryCategory
+                        {
+                            PrimarycategoryId = dataReader.GetIntegerValue("PrimarycategoryId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+        public async Task<IEnumerable<Category>> GetCategories()
+        {
+            var list = new List<Category>();
+            using (var dataReader = await ExecuteReader(null, "GetAllCategoryGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new Category
+                        {
+                            CategoryId = dataReader.GetIntegerValue("CategoryId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+        public async Task<IEnumerable<SubCategory>> GetSubCategories()
+        {
+            var list = new List<SubCategory>();
+            using (var dataReader = await ExecuteReader(null, "GetAllSubCategoryGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new SubCategory
+                        {
+                            SubCategoryId = dataReader.GetIntegerValue("SubCategoryId"),
+                            CategoryId = dataReader.GetIntegerValue("CategoryId"),
                             Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
                         });
                     }

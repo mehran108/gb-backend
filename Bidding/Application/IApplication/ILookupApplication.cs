@@ -1,6 +1,7 @@
 ﻿using Amazon.Runtime.Documents;
 using GoldBank.Models;
 using GoldBank.Models.Product;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GoldBank.Application.IApplication
 {
@@ -21,5 +22,8 @@ namespace GoldBank.Application.IApplication
         Task<IEnumerable<WearingType>> GetAllWearingTypeGbAsync();
         Task<IEnumerable<Collection>> GetAllCollectionGbAsync();
         Task<IEnumerable<Occasion>> GetAllOccasionGbAsync();
+        Task<IEnumerable<PrimaryCategory>> GetPrimaryCategories();
+        Task<IEnumerable<Category>> GetCategories();
+        Task<IEnumerable<SubCategory>> GetSubCategories();
     }
 }

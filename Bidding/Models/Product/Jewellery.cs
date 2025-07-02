@@ -4,8 +4,8 @@
     {
         public int JewelleryId { get; set; }
         public string? PrimaryCategoryIds { get; set; }
-        public int? CategoryIds { get; set; }
-        public int? SubCategoryIds { get; set; }
+        public int? CategoryId { get; set; }
+        public int? SubCategoryId { get; set; }
         public string? WearingTypeIds { get; set; }
         public string? CollectionName { get; set; }
         public int? GenderId { get; set; }

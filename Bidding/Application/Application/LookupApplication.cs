@@ -3,6 +3,7 @@ using GoldBank.Application.IApplication;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using GoldBank.Models.Product;
+using Microsoft.AspNetCore.Mvc;
 using static Amazon.S3.Util.S3EventNotification;
 
 namespace GoldBank.Application.Application
@@ -79,7 +80,18 @@ namespace GoldBank.Application.Application
         {
             return await this.LookupInfrastructure.GetAllOccasionGbAsync();
         }
-       
+        public async Task<IEnumerable<PrimaryCategory>> GetPrimaryCategories()
+        {
+            return await this.LookupInfrastructure.GetPrimaryCategories();
+        }
+        public async Task<IEnumerable<Category>> GetCategories()
+        {
+            return await this.LookupInfrastructure.GetCategories();
+        }
+        public async Task<IEnumerable<SubCategory>> GetSubCategories()
+        {
+            return await this.LookupInfrastructure.GetSubCategories();
+        }
 
         public Task<bool> Activate(LookupValue entity)
         {
