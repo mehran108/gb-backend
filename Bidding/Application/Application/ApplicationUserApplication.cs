@@ -44,5 +44,9 @@ namespace GoldBank.Application.Application
         {
             return await ApplicationUserInfrastructure.Update(ApplicationUser);
         }
+        public Task<AllResponse<ApplicationUser>> GetAll(AllRequest<ApplicationUser> entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

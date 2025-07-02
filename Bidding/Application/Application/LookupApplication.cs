@@ -112,5 +112,9 @@ namespace GoldBank.Application.Application
         {
             throw new NotImplementedException();
         }
+        public Task<AllResponse<LookupValue>> GetAll(AllRequest<LookupValue> entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace GoldBank.Application.IApplication
+﻿using GoldBank.Models;
+
+namespace GoldBank.Application.IApplication
 {
     public interface IBaseApplication<T>
     {
@@ -38,6 +40,8 @@
         /// <param name="entity"></param>
         /// <returns></returns>
         Task<bool> Update(T entity);
+
+        Task<AllResponse<T>> GetAll(AllRequest<T> entity);
         #endregion
     }
 

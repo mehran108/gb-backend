@@ -61,6 +61,10 @@ namespace GoldBank.Application.Application
         {
             return await DocumentInfrastructure.Update(entity);
         }
+        public Task<AllResponse<Document>> GetAll(AllRequest<Document> entity)
+        {
+            throw new NotImplementedException();
+        }
         public async Task<int> UploadImage(Document Document)
         {
             try

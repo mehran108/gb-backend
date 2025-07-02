@@ -43,6 +43,9 @@ namespace GoldBank.Application.Application
         {
             return await DocumentApplication.UploadImage(Document);            
         }
-
+        public Task<AllResponse<Product>> GetAll(AllRequest<Product> entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

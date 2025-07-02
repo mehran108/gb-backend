@@ -111,5 +111,9 @@ namespace GoldBank.Infrastructure.Infrastructure
         {
             throw new NotImplementedException();
         }
+        public Task<AllResponse<Document>> GetAll(AllRequest<Document> entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

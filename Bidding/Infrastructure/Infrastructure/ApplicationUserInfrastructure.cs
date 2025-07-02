@@ -177,6 +177,9 @@ namespace GoldBank.Infrastructure.Infrastructure
             var returnValue = await base.ExecuteNonQuery(parameters, ApplicationUserInfrastructure.ActivateStoredProcedureName, CommandType.StoredProcedure);
             return returnValue > 0;
         }
-
+        public Task<AllResponse<ApplicationUser>> GetAll(AllRequest<ApplicationUser> entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

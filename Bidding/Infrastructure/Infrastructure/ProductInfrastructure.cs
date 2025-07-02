@@ -1,10 +1,11 @@
-﻿using GoldBank.Infrastructure.Extension;
+﻿using Dapper;
+using GoldBank.Infrastructure.Extension;
 using GoldBank.Infrastructure.IInfrastructure;
+using GoldBank.Models;
 using GoldBank.Models.Product;
 using MySql.Data.MySqlClient;
 using System.Data;
 using System.Data.Common;
-using Dapper;
 
 namespace GoldBank.Infrastructure.Infrastructure
 {
@@ -16,11 +17,6 @@ namespace GoldBank.Infrastructure.Infrastructure
         }
         #region Constants
         private const string ProductIdParameterName = "@PProductId";
-        private const string VendorIdParameterName = "@PVendorId";
-        private const string ProductTypeIdParameterName = "@PProductTypeId";
-        private const string ProductSourceIdParameterName = "@PProductSourceId";
-        private const string ImageURLParameterName = "@PImageURL";
-        private const string SKUParameterName = "@PSKU";
 
         public const string ProductIdColumnName = "ProductId";
         public const string ProductTypeIdColumnName = "ProductTypeId";
@@ -28,66 +24,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         public const string ProductSourceIdColumnName = "@PProductSource";
         public const string VendorIdColumnName = "@PVendorId";
 
-        private const string JewelleryIdParameterName = "@PJewelleryId";
-        private const string PrimaryCategoryIdsParameterName = "@PPrimaryCategoryIds";
-        private const string CategoryIdsParameterName = "@PCategoryIds";
-        private const string SubCategoryIdsParameterName = "@PSubCategoryIds";
-        private const string WearingTypeIdsParameterName = "@PWearingTypeIds";
-        private const string CollectionNameParameterName = "@PCollectionName";
-        private const string GenderIdParameterName = "@PGenderId";
-        private const string OccasionParameterName = "@POccasion";
-        private const string DescriptionParameterName = "@PDescription";
-        private const string MetalTypeIdParameterName = "@PMetalTypeId";
-        private const string MetalPurityTypeIdParameterName = "@PMetalPurityTypeId";
-        private const string MetalColorTypeIdParameterName = "@PMetalColorTypeId";
-        private const string WeightTypeIdParameterName = "@PWeightTypeId";
-        private const string NetWeightParameterName = "@PNetWeight";
-        private const string WastageWeightParameterName = "@PWastageWeight";
-        private const string WastagePctParameterName = "@PWastagePct";
-        private const string TotalWeightParameterName = "@PTotalWeight";
-        private const string WidthParameterName = "@PWidth";
-        private const string BandwidthParameterName = "@PBandwidth";
-        private const string ThicknessParameterName = "@PThickness";
-        private const string SizeParameterName = "@PSize";
-        private const string IsEcommerceParameterName = "@PIsEcommerce";
-        private const string IsEngravingAvailableParameterName = "@PIsEngravingAvailable";
-        private const string IsSizeAlterationAvailableParameterName = "@PIsSizeAlterationAvailable";
-        private const string LacquerPriceParameterName = "@PLacquerPrice";
-        private const string MakingPriceParameterName = "@PMakingPrice";
-        private const string TotalPriceParameterName = "@PTotalPrice";
 
-
-        public const string JewelleryIdColumnName = "JewelleryId";
-        public const string PrimaryCategoryIdsColumnName = "PrimaryCategoryIds";
-        public const string CategoryIdsColumnName = "CategoryIds";
-        public const string SubCategoryIdsColumnName = "SubCategoryIds";
-        public const string WearingTypeIdsColumnName = "WearingTypeIds";
-        public const string CollectionNameColumnName = "CollectionName";
-        public const string GenderIdColumnName = "GenderId";
-        public const string OccasionColumnName = "Occasion";
-        public const string DescriptionColumnName = "Description";
-        public const string MetalTypeIdColumnName = "MetalTypeId";
-        public const string MetalPurityTypeIdColumnName = "MetalPurityTypeId";
-        public const string MetalColorTypeIdColumnName = "MetalColorTypeId";
-        public const string WeightTypeIdColumnName = "WeightTypeId";
-        public const string NetWeightColumnName = "NetWeight";
-        public const string WastageWeightColumnName = "WastageWeight";
-        public const string WastagePctColumnName = "WastagePct";
-        public const string TotalWeightColumnName = "TotalWeight";
-        public const string WidthColumnName = "Width";
-        public const string BandwidthColumnName = "Bandwidth";
-        public const string ThicknessColumnName = "Thickness";
-        public const string SizeColumnName = "Size";
-        public const string IsEcommerceColumnName = "IsEcommerce";
-        public const string IsEngravingAvailableColumnName = "IsEngravingAvailable";
-        public const string IsSizeAlterationAvailableColumnName = "IsSizeAlterationAvailable";
-        public const string LacquerPriceColumnName = "LacquerPrice";
-        public const string MakingPriceColumnName = "MakingPrice";
-        public const string TotalPriceColumnName = "TotalPrice";
-
-        private const string AddProductProcedureName = "AddProduct";
-        private const string GetProductByIdProcedureName = "GetProductById";
-        private const string GetProductListProcedureName = "GetProductList";
         #endregion
 
         public Task<bool> Activate(Product entity)
@@ -233,7 +170,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 base.GetParameter(ProductInfrastructure.ProductIdParameterName, entity.ProductId)
             };
             var res = new Product();
-            using (var dataReader = await base.ExecuteReader(parameters, ProductInfrastructure.GetProductByIdProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await base.ExecuteReader(parameters, "GetProductById", CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
@@ -253,7 +190,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 base.GetParameter(ProductInfrastructure.ProductIdParameterName, entity.ProductId)
             };
             var result = new List<Product>();
-            using (var dataReader = await base.ExecuteReader(parameters, ProductInfrastructure.GetProductListProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await base.ExecuteReader(parameters, "ProductGetList", CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
@@ -269,6 +206,10 @@ namespace GoldBank.Infrastructure.Infrastructure
         }
 
         public Task<bool> Update(Product entity)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<AllResponse<Product>> GetAll(AllRequest<Product> entity)
         {
             throw new NotImplementedException();
         }

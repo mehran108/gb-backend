@@ -1,4 +1,6 @@
-﻿namespace GoldBank.Infrastructure.IInfrastructure
+﻿using GoldBank.Models;
+
+namespace GoldBank.Infrastructure.IInfrastructure
 {
     public interface IBaseInfrastructure<T>
     {
@@ -37,6 +39,8 @@
         /// <param name="entity"></param>
         /// <returns></returns>
         Task<List<T>> GetList(T entity);
+
+        Task<AllResponse<T>> GetAll(AllRequest<T> entity);
         #endregion
     }
 }
