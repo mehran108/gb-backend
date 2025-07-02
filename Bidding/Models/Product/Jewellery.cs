@@ -4,12 +4,18 @@
     {
         public int JewelleryId { get; set; }
         public string? PrimaryCategoryIds { get; set; }
+        public ICollection<PrimaryCategory> PrimaryCategoryList { get; set; } = new List<PrimaryCategory>();
         public int? CategoryId { get; set; }
+        public Category? Category { get; set; }
         public int? SubCategoryId { get; set; }
+        public SubCategory? SubCategory { get; set; }
         public string? WearingTypeIds { get; set; }
-        public string? CollectionName { get; set; }
+        public ICollection<WearingType> WearingTypeList { get; set; } = new List<WearingType>();
+        public string? CollectionIds { get; set; }
+        public ICollection<Collection> CollectionList { get; set; } = new List<Collection>();
         public int? GenderId { get; set; }
-        public string? Occasion { get; set; }
+        public string? OccasionIds { get; set; }
+        public ICollection<Occasion> OccasionList { get; set; } = new List<Occasion>();
         public string? Description { get; set; }
         public int? MetalTypeId { get; set; }
         public int? MetalPurityTypeId { get; set; }
