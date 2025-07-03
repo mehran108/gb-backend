@@ -4,5 +4,6 @@ namespace GoldBank.Infrastructure.IInfrastructure
 {
     public interface IProductInfrastructure : IBaseInfrastructure<Product>
     {
+        Task<bool> BulkImport(ProductBulkImport productBulkImport);
     }
 }

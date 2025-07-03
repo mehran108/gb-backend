@@ -350,5 +350,9 @@ namespace GoldBank.Infrastructure.Infrastructure
         {
             throw new NotImplementedException();
         }
+        public Task<bool> BulkImport(ProductBulkImport productBulkImport)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

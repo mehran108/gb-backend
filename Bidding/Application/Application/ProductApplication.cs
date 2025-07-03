@@ -47,5 +47,9 @@ namespace GoldBank.Application.Application
         {
             throw new NotImplementedException();
         }
+        public async Task<bool> BulkImport(string fileContent, ProductBulkImport productBulkImport)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
