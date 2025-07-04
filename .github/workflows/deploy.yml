@@ -33,6 +33,26 @@ jobs:
     - name: Publish Application
       run: dotnet publish --configuration ${{ env.CONFIGURATION }} --output ${{ env.PUBLISH_DIR }} --no-build
 
+    - name: Stop IIS
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.RDP_HOST }}
+        username: ${{ secrets.RDP_USERNAME }}
+        password: ${{ secrets.RDP_PASSWORD }}
+        port: 22
+        script: |
+          iisreset /stop
+
+    - name: Clean Remote Directory
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.RDP_HOST }}
+        username: ${{ secrets.RDP_USERNAME }}
+        password: ${{ secrets.RDP_PASSWORD }}
+        port: 22
+        script: |
+          powershell -Command "Remove-Item -Path '${{ secrets.REMOTE_APP_PATH }}\*' -Recurse -Force -ErrorAction SilentlyContinue"
+
     - name: Upload to RDP Server via SCP
       uses: appleboy/scp-action@v0.1.4
       with:
@@ -44,7 +64,7 @@ jobs:
         target: "${{ secrets.REMOTE_APP_PATH }}"
         strip_components: 1
 
-    - name: Restart IIS on Remote Server
+    - name: Start IIS
       uses: appleboy/ssh-action@v1.0.0
       with:
         host: ${{ secrets.RDP_HOST }}
@@ -52,5 +72,4 @@ jobs:
         password: ${{ secrets.RDP_PASSWORD }}
         port: 22
         script: |
-          echo "Restarting IIS..."
-          iisreset
+          iisreset /start
