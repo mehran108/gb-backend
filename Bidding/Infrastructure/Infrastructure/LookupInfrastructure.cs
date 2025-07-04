@@ -405,7 +405,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         list.Add(new Category
                         {
                             CategoryId = dataReader.GetIntegerValue("CategoryId"),
-                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                            ImageUrl = dataReader.GetStringValue("Url")
                         });
                     }
                 }
