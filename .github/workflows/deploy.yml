@@ -1,0 +1,56 @@
+name: Build & Deploy .NET 8 App via SSH
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      CONFIGURATION: Release
+      DOTNET_VERSION: '8.0.x'
+      PUBLISH_DIR: './publish'
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore Dependencies
+      run: dotnet restore
+
+    - name: Build Application
+      run: dotnet build --configuration ${{ env.CONFIGURATION }} --no-restore
+
+    - name: Publish Application
+      run: dotnet publish --configuration ${{ env.CONFIGURATION }} --output ${{ env.PUBLISH_DIR }} --no-build
+
+    - name: Upload to RDP Server via SCP
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.RDP_HOST }}
+        username: ${{ secrets.RDP_USERNAME }}
+        password: ${{ secrets.RDP_PASSWORD }}
+        port: 22
+        source: "${{ env.PUBLISH_DIR }}/*"
+        target: "${{ secrets.REMOTE_APP_PATH }}"
+        strip_components: 1
+
+    - name: Restart IIS on Remote Server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.RDP_HOST }}
+        username: ${{ secrets.RDP_USERNAME }}
+        password: ${{ secrets.RDP_PASSWORD }}
+        port: 22
+        script: |
+          echo "Restarting IIS..."
+          iisreset
