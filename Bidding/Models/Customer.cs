@@ -3,7 +3,8 @@
 
     public class Customer : BaseDomain
     {
-        public int ReferenceCustomerId { get; set; }
+        public int CustomerId { get; set; }
+        public int? ReferenceCustomerId { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Email { get; set; }
@@ -15,7 +16,7 @@
         public string? Title { get; set; }
         public DateTime? BirthAnniversary { get; set; }
         public DateTime? WeddingAnniversary { get; set; }
-        public bool? IsNewSubscribe { get; set; }
+        public bool? IsNewsSubscribe { get; set; }
         public string? PasswordHash { get; set; }
     }
 

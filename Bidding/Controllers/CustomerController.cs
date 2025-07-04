@@ -34,9 +34,9 @@ namespace GoldBank.Controllers
 
 
         [HttpGet("GetById")]
-        public async Task<Customer> Get([FromQuery] int referenceCustomerId,  string? email = "")
+        public async Task<Customer> Get([FromQuery] int customerId,  string? email = "")
         {
-            Customer Customer = new Customer { ReferenceCustomerId = referenceCustomerId, Email = email };
+            Customer Customer = new Customer { CustomerId = customerId, Email = email };
             return await this.customerApplication.Get(Customer);
         }
 

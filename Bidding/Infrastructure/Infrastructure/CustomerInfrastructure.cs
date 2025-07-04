@@ -14,6 +14,7 @@ namespace GoldBank.Infrastructure.Infrastructure
        
        
         private const string ReferenceCustomerIdParameterName = "@PReferenceCustomerId";
+        private const string CustomerIdParameterName = "@PCustomerId";
         private const string EmailParameterName = "@PEmail";
         private const string FirstNameParameterName = "@PFirstName";
         private const string LastNameParameterName = "@PLastName";
@@ -31,15 +32,16 @@ namespace GoldBank.Infrastructure.Infrastructure
         private const string TitleParameterName = "@PTitle";
         private const string BirthAnniversaryParameterName = "@PBirthAnniversary";
         private const string WeddingAnniversaryParameterName = "@PWeddingAnniversary";
-        private const string IsNewSubscribeParameterName = "@PIsNewSubscribe";
+        private const string IsNewsSubscribeParameterName = "@PIsNewSubscribe";
 
 
         public async Task<int> Add(Customer Customer)
         {
-            var CustomerIdParameter = base.GetParameterOut(CustomerInfrastructure.ReferenceCustomerIdParameterName, SqlDbType.Int, Customer.ReferenceCustomerId);
+            var CustomerIdParameter = base.GetParameterOut(CustomerInfrastructure.CustomerIdParameterName, SqlDbType.Int, Customer.CustomerId);
             var parameters = new List<DbParameter>
                 {
-                      CustomerIdParameter,
+                     CustomerIdParameter,
+                     base.GetParameter(CustomerInfrastructure.ReferenceCustomerIdParameterName,Customer.ReferenceCustomerId),
                      base.GetParameter(CustomerInfrastructure.EmailParameterName,Customer.Email),
                      base.GetParameter(CustomerInfrastructure.FirstNameParameterName,Customer.FirstName),
                      base.GetParameter(CustomerInfrastructure.LastNameParameterName,Customer.LastName),
@@ -52,12 +54,12 @@ namespace GoldBank.Infrastructure.Infrastructure
                      base.GetParameter(CustomerInfrastructure.TitleParameterName,Customer.Title),
                      base.GetParameter(CustomerInfrastructure.BirthAnniversaryParameterName,Customer.BirthAnniversary),
                      base.GetParameter(CustomerInfrastructure.WeddingAnniversaryParameterName,Customer.WeddingAnniversary),
-                     base.GetParameter(CustomerInfrastructure.IsNewSubscribeParameterName,Customer.IsNewSubscribe),
+                     base.GetParameter(CustomerInfrastructure.IsNewsSubscribeParameterName,Customer.IsNewsSubscribe),
 
             };
             await base.ExecuteNonQuery(parameters, "AddCustomer_gb", CommandType.StoredProcedure);
-            Customer.ReferenceCustomerId = Convert.ToInt32(CustomerIdParameter.Value);
-            return Customer.ReferenceCustomerId;
+            Customer.CustomerId = Convert.ToInt32(CustomerIdParameter.Value);
+            return Customer.CustomerId;
         }
 
         public async Task<bool> Update(Customer Customer)
@@ -65,6 +67,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             var parameters = new List<DbParameter>
             {
                 base.GetParameter(CustomerInfrastructure.ReferenceCustomerIdParameterName,Customer.ReferenceCustomerId),
+                base.GetParameter(CustomerInfrastructure.CustomerIdParameterName,Customer.CustomerId),
                 base.GetParameter(CustomerInfrastructure.FirstNameParameterName,Customer.FirstName),
                 base.GetParameter(CustomerInfrastructure.LastNameParameterName,Customer.LastName),
                 base.GetParameter(CustomerInfrastructure.MobileParameterName,Customer.Mobile),
@@ -76,7 +79,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 base.GetParameter(CustomerInfrastructure.TitleParameterName,Customer.Title),
                 base.GetParameter(CustomerInfrastructure.BirthAnniversaryParameterName,Customer.BirthAnniversary),
                 base.GetParameter(CustomerInfrastructure.WeddingAnniversaryParameterName,Customer.WeddingAnniversary),
-                base.GetParameter(CustomerInfrastructure.IsNewSubscribeParameterName,Customer.IsNewSubscribe),
+                base.GetParameter(CustomerInfrastructure.IsNewsSubscribeParameterName,Customer.IsNewsSubscribe),
                 base.GetParameter(CustomerInfrastructure.ActiveParameterName,Customer.IsActive)
 
             };
@@ -89,7 +92,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             Customer customerItem = new Customer();
             var parameters = new List<DbParameter>
             {
-            base.GetParameter(CustomerInfrastructure.ReferenceCustomerIdParameterName,Customer.ReferenceCustomerId),
+            base.GetParameter(CustomerInfrastructure.CustomerIdParameterName,Customer.CustomerId),
             base.GetParameter(CustomerInfrastructure.EmailParameterName,Customer.Email),
             };
             using (var dataReader = await base.ExecuteReader(parameters, "GetCustomerById_gb", CommandType.StoredProcedure))
@@ -98,6 +101,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 {
                     while (dataReader.Read())
                     {
+                        customerItem.CustomerId = dataReader.GetIntegerValue("CustomerId");
                         customerItem.ReferenceCustomerId = dataReader.GetIntegerValue("ReferenceCustomerId");
                         customerItem.FirstName = dataReader.GetStringValue("FirstName");
                         customerItem.LastName = dataReader.GetStringValue("LastName");
@@ -141,6 +145,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         while (dataReader.Read())
                         {
                             var customerItem = new Customer();
+                            customerItem.CustomerId = dataReader.GetIntegerValue("CustomerId");
                             customerItem.ReferenceCustomerId = dataReader.GetIntegerValue("ReferenceCustomerId");
                             customerItem.FirstName = dataReader.GetStringValue("FirstName");
                             customerItem.LastName = dataReader.GetStringValue("LastName");
@@ -178,7 +183,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         {
             var parameters = new List<DbParameter>
             {
-            base.GetParameter(CustomerInfrastructure.ReferenceCustomerIdParameterName,customer.ReferenceCustomerId),
+            base.GetParameter(CustomerInfrastructure.CustomerIdParameterName,customer.CustomerId),
             base.GetParameter(CustomerInfrastructure.EmailParameterName,customer.Email),
             };
             await base.ExecuteNonQuery(parameters, "DeleteCustomer_gb", CommandType.StoredProcedure);
@@ -219,6 +224,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         while (dataReader.Read())
                         {
                             var customerItem = new Customer();
+                            customerItem.CustomerId = dataReader.GetIntegerValue("CustomerId");
                             customerItem.ReferenceCustomerId = dataReader.GetIntegerValue("ReferenceCustomerId");
                             customerItem.FirstName = dataReader.GetStringValue("FirstName");
                             customerItem.LastName = dataReader.GetStringValue("LastName");
