@@ -47,8 +47,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         p_SKU = product.SKU,
                         p_ProductSourceId = product.ProductSourceId,
                         p_VendorId = product.VendorId,
+                        p_StoreId = product.StoreId,
                         p_CreatedBy = product.CreatedBy,
-
                         p_PrimaryCategoryIds = product.Jewellery.PrimaryCategoryIds,
                         p_CategoryId = product.Jewellery.CategoryId,
                         p_SubCategoryId = product.Jewellery.SubCategoryId,

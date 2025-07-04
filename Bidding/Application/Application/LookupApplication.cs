@@ -93,6 +93,11 @@ namespace GoldBank.Application.Application
             return await this.LookupInfrastructure.GetSubCategories();
         }
 
+        public async Task<IEnumerable<Store>> GetAllStores()
+        {
+            return await this.LookupInfrastructure.GetAllStores();
+        }
+
         public Task<bool> Activate(LookupValue entity)
         {
             throw new NotImplementedException();

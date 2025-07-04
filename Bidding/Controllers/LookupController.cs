@@ -152,5 +152,11 @@ namespace GoldBank.Controllers
             var result = await this.LookupApplication.GetSubCategories();
             return Ok(result);
         }
+        [HttpGet("GetAllStores")]
+        public async Task<ActionResult<IEnumerable<SubCategory>>> GetAllStores()
+        {
+            var result = await this.LookupApplication.GetAllStores();
+            return Ok(result);
+        }
     }
 }

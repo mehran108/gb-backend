@@ -26,5 +26,6 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<IEnumerable<PrimaryCategory>> GetPrimaryCategories();
         Task<IEnumerable<Category>> GetCategories();
         Task<IEnumerable<SubCategory>> GetSubCategories();
+        Task<IEnumerable<Store>> GetAllStores();
     }
 }
