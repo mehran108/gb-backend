@@ -1,0 +1,64 @@
+name: Build & Deploy .NET 8 App to RDP Server
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    env:
+      CONFIGURATION: Release
+      DOTNET_VERSION: '8.0.x'
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore Dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration ${{ env.CONFIGURATION }} --no-restore
+
+    - name: Publish
+      run: dotnet publish --configuration ${{ env.CONFIGURATION }} --output ./publish --no-build
+
+    - name: Install PSRemoting (winrm)
+      shell: pwsh
+      run: |
+        Install-Module -Name PSWSMan -Force -Scope CurrentUser
+        Install-Module -Name Posh-SSH -Force -Scope CurrentUser
+        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
+
+    - name: Deploy via WinRM
+      shell: pwsh
+      run: |
+        $username = "${{ secrets.RDP_USERNAME }}"
+        $password = ConvertTo-SecureString "${{ secrets.RDP_PASSWORD }}" -AsPlainText -Force
+        $cred = New-Object System.Management.Automation.PSCredential ($username, $password)
+
+        $session = New-PSSession -ComputerName ${{ secrets.RDP_HOST }} -Credential $cred -Authentication basic
+
+        Write-Host "Cleaning existing app folder..."
+        Invoke-Command -Session $session -ScriptBlock {
+          Remove-Item -Path "${{ secrets.REMOTE_APP_PATH }}\*" -Recurse -Force -ErrorAction SilentlyContinue
+        }
+
+        Write-Host "Copying new build..."
+        Copy-Item -Path "./publish/*" -Destination "${{ secrets.REMOTE_APP_PATH }}" -ToSession $session -Recurse -Force
+
+        Write-Host "Restarting IIS (optional)"
+        Invoke-Command -Session $session -ScriptBlock {
+          iisreset
+        }
+
+        Remove-PSSession $session
