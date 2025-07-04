@@ -27,13 +27,13 @@ jobs:
     - name: Restore Dependencies
       run: dotnet restore
 
-    - name: Build
+    - name: Build Application
       run: dotnet build --configuration ${{ env.CONFIGURATION }} --no-restore
 
-    - name: Publish
+    - name: Publish Application
       run: dotnet publish --configuration ${{ env.CONFIGURATION }} --output ${{ env.PUBLISH_DIR }} --no-build
 
-    - name: Upload via SCP
+    - name: Upload to RDP Server via SCP
       uses: appleboy/scp-action@v0.1.4
       with:
         host: ${{ secrets.RDP_HOST }}
@@ -44,7 +44,7 @@ jobs:
         target: "${{ secrets.REMOTE_APP_PATH }}"
         strip_components: 1
 
-    - name: Restart IIS on Remote Server (optional)
+    - name: Restart IIS on Remote Server
       uses: appleboy/ssh-action@v1.0.0
       with:
         host: ${{ secrets.RDP_HOST }}
@@ -52,5 +52,5 @@ jobs:
         password: ${{ secrets.RDP_PASSWORD }}
         port: 22
         script: |
-          Write-Host "Restarting IIS..."
+          echo "Restarting IIS..."
           iisreset
