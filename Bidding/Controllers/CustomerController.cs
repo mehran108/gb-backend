@@ -1,14 +1,7 @@
 using GoldBank.Application.IApplication;
 using GoldBank.Extensions;
 using GoldBank.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace GoldBank.Controllers
 {
@@ -28,10 +21,7 @@ namespace GoldBank.Controllers
 
         [HttpPost("Add")]
         public async Task<int> Add([FromBody]Customer Customer)
-        {
-            string pwd = "GoldBank@1234";
-           
-            Customer.PasswordHash = BCrypt.Net.BCrypt.HashPassword(pwd);
+        {           
             return await this.customerApplication.Add(Customer);
         }
 
@@ -43,60 +33,58 @@ namespace GoldBank.Controllers
         }
 
 
-        [HttpGet("Get")]
-        public async Task<Customer> GetById([FromQuery] int? CustomerId,  string? Email = "")
+        [HttpGet("GetById")]
+        public async Task<Customer> Get([FromQuery] int referenceCustomerId,  string? email = "")
         {
-            Customer Customer = new Customer();
-            Customer.CustomerId = CustomerId ?? 0;
-            Customer.Email = Email;
-            return await this.customerApplication.GetById(Customer);
+            Customer Customer = new Customer { ReferenceCustomerId = referenceCustomerId, Email = email };
+            return await this.customerApplication.Get(Customer);
         }
 
 
-        [HttpGet("GetAll")]
-        public async Task<List<Customer>> GetAll()
+        [HttpPost("GetAll")]
+        public async Task<AllResponse<Customer>> GetAll(AllRequest<Customer> entity)
         {
             Customer Customer = new Customer();
 
-            return await this.customerApplication.GetAll(Customer);
+            return await this.customerApplication.GetAll(entity);
         }
 
-        [HttpPut("Activate")]
+        [HttpPut("Delete")]
         public async Task<bool> Activate([FromBody]Customer Customer)
         {
-            return await this.customerApplication.Activate(Customer);
+            return await this.customerApplication.Delete(Customer);
         }
 
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login(Login user)
-        {
-            Customer customer = new Customer();
+        //[HttpPost("Login")]
+        //public async Task<IActionResult> Login(Login user)
+        //{
+        //    Customer customer = new Customer();
 
-            customer.Email = user.Email;
-            var resultUser = await this.customerApplication.GetById(customer);
+        //    customer.Email = user.Email;
+        //    var resultUser = await this.customerApplication.Get(customer);
 
-            if (resultUser.Email != null && resultUser.Active != false)
+        //    if (resultUser.Email != null && resultUser.IsActive != false)
 
-            {
-                bool verified = BCrypt.Net.BCrypt.Verify(user.Password, resultUser.PasswordHash);
-                if (verified)
-                {
-                    var Token = new UserTokens();
-                    Token = JwtHelpers.GenTokenkey(new UserTokens()
-                    {
-                        Email = user.Email,
-                        UserId = resultUser.CustomerId,
-                    }, jwtSettings);
-                    return Ok(Token);
-                }
-                else
-                {
-                    return BadRequest("Invalid Username or Password");
-                }
-            }
+        //    {
+        //        bool verified = BCrypt.Net.BCrypt.Verify(user.Password, resultUser.PasswordHash);
+        //        if (verified)
+        //        {
+        //            var Token = new UserTokens();
+        //            Token = JwtHelpers.GenTokenkey(new UserTokens()
+        //            {
+        //                Email = user.Email,
+        //                UserId = resultUser.ReferenceCustomerId,
+        //            }, jwtSettings);
+        //            return Ok(Token);
+        //        }
+        //        else
+        //        {
+        //            return BadRequest("Invalid Username or Password");
+        //        }
+        //    }
 
-            return BadRequest("Username does not exists or is Inactive.");
-        }
+        //    return BadRequest("Username does not exists or is Inactive.");
+        //}
 
 
     }

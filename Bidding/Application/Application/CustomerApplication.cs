@@ -4,45 +4,55 @@ using GoldBank.Infrastructure;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Infrastructure.Infrastructure;
 using GoldBank.Models;
+using GoldBank.Models.Product;
 
 namespace GoldBank.Application.Application
 {
-    public class CustomerApplication : ICustomerApplication
+    public class CustomerApplication : IBaseApplication<Customer>, ICustomerApplication
     {
-        public CustomerApplication(IConfiguration Configuration, ICustomerInfrastructure CustomerInfrastructure) 
+        public CustomerApplication(IConfiguration Configuration, ICustomerInfrastructure CustomerInfrastructure)
         {
             this.Configuration = Configuration;
             this.CustomerInfrastructure = CustomerInfrastructure;
-               
+
         }
 
         public IConfiguration Configuration { get; }
         public ICustomerInfrastructure CustomerInfrastructure { get; set; }
-        public IServiceConnector ServiceConnector { get; set; }
 
-        public async Task<bool> Activate(Customer Customer)
+        public async Task<bool> Activate(Customer customer)
         {
-            return await CustomerInfrastructure.Activate(Customer);
+            return await CustomerInfrastructure.Activate(customer);
         }
 
-        public async Task<int> Add(Customer Customer)
+        public async Task<int> Add(Customer customer)
         {
-            return await CustomerInfrastructure.Add(Customer);
+            return await CustomerInfrastructure.Add(customer);
         }
 
-        public async Task<Customer> GetById(Customer Customer)
+        public async Task<Customer> Get(Customer customer)
         {
-            return await CustomerInfrastructure.GetById(Customer);
+            return await CustomerInfrastructure.Get(customer);
         }
 
-        public async Task<List<Customer>> GetAll(Customer Customer)
+        public async Task<AllResponse<Customer>> GetAll(AllRequest<Customer> customer)
         {
-            return await CustomerInfrastructure.GetAll(Customer);
+            return await CustomerInfrastructure.GetAll(customer);
         }
 
-        public async Task<bool> Update(Customer Customer)
+        public async Task<bool> Update(Customer customer)
         {
-            return await CustomerInfrastructure.Update(Customer);
+            return await CustomerInfrastructure.Update(customer);
+        }
+
+
+        public Task<List<Customer>> GetList(Customer entity)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<bool> Delete(Customer customer)
+        {
+            return await CustomerInfrastructure.Delete(customer);
         }
     }
 }

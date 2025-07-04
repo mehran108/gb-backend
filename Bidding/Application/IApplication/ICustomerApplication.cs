@@ -1,13 +1,10 @@
 ﻿using GoldBank.Models;
+using GoldBank.Models.Product;
 
 namespace GoldBank.Application.IApplication
 {
-    public interface ICustomerApplication
+    public interface ICustomerApplication : IBaseApplication<Customer>
     {
-        public Task<int> Add(Customer Customer);
-        public Task<bool> Update(Customer Customer);
-        public Task<Customer> GetById(Customer Customer);
-        public Task<List<Customer>> GetAll(Customer Customer);
-        public Task<bool> Activate(Customer Customer);
+        Task<bool> Delete(Customer customer);
     }
 }
