@@ -158,7 +158,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 }
 
                 await transaction.CommitAsync();
-                return 1;
+                return productId;
             }
             catch(Exception ex)
             {
