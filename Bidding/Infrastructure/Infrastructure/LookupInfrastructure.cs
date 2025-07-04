@@ -432,6 +432,25 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return list;
         }
+        public async Task<IEnumerable<Store>> GetAllStores()
+        {
+            var list = new List<Store>();
+            using (var dataReader = await ExecuteReader(null, "GetAllStoresGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new Store
+                        {
+                            StoreId = dataReader.GetIntegerValue("StoreId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
 
 
 
