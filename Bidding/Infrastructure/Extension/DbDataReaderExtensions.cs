@@ -297,7 +297,7 @@ namespace GoldBank.Infrastructure.Extension
         /// <param name="dataReader"></param>
         /// <param name="columnName"></param>
         /// <returns></returns>
-        public static DateTime? GetDateTimeValueNullable(this DbDataReader dataReader, string columnName)
+        public static DateTime? GetBooleanValueNullableGetDateTimeValueNullable(this DbDataReader dataReader, string columnName)
         {
             var objVal = dataReader.GetValue(columnName);
 
