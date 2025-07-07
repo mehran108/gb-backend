@@ -42,9 +42,9 @@ namespace GoldBank.Controllers
             return await ProductApplication.Get(product);
         }
         [HttpPost("GetAll")]
-        public async Task<AllResponse<Product>> GetList([FromBody] AllRequest<Product> product)
+        public async Task<AllResponse<Product>> GetList([FromBody] AllRequest<ProductRequestVm> product)
         {
-            return await ProductApplication.GetAll(product);
+            return await ProductApplication.GetAllProducts(product);
         }
         [HttpPost("UploadImage")]
         public async Task<int> UploadImage(Document Document)

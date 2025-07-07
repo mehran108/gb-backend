@@ -4,6 +4,7 @@ using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using GoldBank.Models.Product;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Common;
 using System.Data;
 using System.Data.Common;
 
@@ -353,6 +354,62 @@ namespace GoldBank.Infrastructure.Infrastructure
         public Task<bool> BulkImport(ProductBulkImport productBulkImport)
         {
             throw new NotImplementedException();
+        }
+        public async Task<AllResponse<Product>> GetAllProducts(AllRequest<ProductRequestVm> product)
+        {
+            var result = new AllResponse<Product>();
+            var parameters = new List<DbParameter>
+            {
+            base.GetParameter("@p_PageNumber", product.Offset),
+            base.GetParameter("@p_PageSize", product.PageSize),
+            base.GetParameter("@p_ProductTypeId", product.Data.ProductTypeId),
+            base.GetParameter("@p_SKU", product.Data.SKU),
+            base.GetParameter("@p_ProductSourceId", product.Data.ProductSourceId),
+            base.GetParameter("@p_VendorId", product.Data.VendorId),
+            base.GetParameter("@p_PrimaryCategoryIds", product.Data.PrimaryCategoryIds),
+            base.GetParameter("@p_CategoryIds", product.Data.CategoryIds),
+            base.GetParameter("@p_SubCategoryIds", product.Data.SubCategoryIds),
+            base.GetParameter("@p_WearingTypeIds", product.Data.WearingTypeIds),
+            base.GetParameter("@p_CollectionIds", product.Data.CollectionIds),
+            base.GetParameter("@p_GenderId", product.Data.GenderId),
+            base.GetParameter("@p_OccasionIds", product.Data.OccasionIds),
+            base.GetParameter("@p_Description", product.Data.Description),
+            base.GetParameter("@p_MetalTypeId", product.Data.MetalTypeId),
+            base.GetParameter("@p_MetalPurityTypeId", product.Data.MetalPurityTypeId),
+            base.GetParameter("@p_MetalColorTypeId", product.Data.MetalColorTypeId),
+            base.GetParameter("@p_WeightTypeId", product.Data.WeightTypeId),
+            base.GetParameter("@p_NetWeight", product.Data.NetWeight),
+            base.GetParameter("@p_WastageWeight", product.Data.WastageWeight),
+            base.GetParameter("@p_WastagePct", product.Data.WastagePct),
+            base.GetParameter("@p_TotalWeight", product.Data.TotalWeight),
+            base.GetParameter("@p_Width", product.Data.Width),
+            base.GetParameter("@p_Bandwidth", product.Data.Bandwidth),
+            base.GetParameter("@p_Thickness", product.Data.Thickness),
+            base.GetParameter("@p_Size", product.Data.Size),
+            base.GetParameter("@p_IsEcommerce", product.Data.IsEcommerce),
+            base.GetParameter("@p_IsEngravingAvailable", product.Data.IsEngravingAvailable),
+            base.GetParameter("@p_IsSizeAlterationAvailable", product.Data.IsSizeAlterationAvailable),
+            base.GetParameter("@p_LacquerPrice", product.Data.LacquerPrice),
+            base.GetParameter("@p_MakingPrice", product.Data.MakingPrice),
+            base.GetParameter("@p_TotalPrice", product.Data.TotalPrice),
+            base.GetParameter("@p_StoneTypeId", product.Data.StoneTypeId),
+            base.GetParameter("@p_StoneShapeId", product.Data.StoneShapeId),
+            base.GetParameter("@p_StoneWeightTypeId", product.Data.StoneWeightTypeId),
+                };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAllProductsGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    if (dataReader.Read())
+                    {
+                        var res = new Product();
+                        res.ProductTypeId = dataReader.GetIntegerValue(ProductInfrastructure.ProductIdColumnName);
+                        result.Data.Add(res);
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

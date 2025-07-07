@@ -51,5 +51,9 @@ namespace GoldBank.Application.Application
         {
             throw new NotImplementedException();
         }
+        public async Task<AllResponse<Product>> GetAllProducts(AllRequest<ProductRequestVm> product)
+        {
+            return await ProductInfrastructure.GetAllProducts(product);
+        }
     }
 }
