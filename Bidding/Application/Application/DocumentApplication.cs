@@ -159,7 +159,7 @@ namespace GoldBank.Application.Application
 
                     // Optionally save document metadata in your infrastructure
                     document.Url = url;
-                    var fPath = @"C:\GbProducts\file.csv";
+                    var fPath = @"/var/lib/mysql-files/file.csv";
                     await DownloadFileAsync(url, fPath);
                     return await DocumentInfrastructure.Add(document);
                 }
