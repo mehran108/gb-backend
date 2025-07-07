@@ -4,7 +4,9 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using GoldBank.Application.IApplication;
 using GoldBank.Infrastructure.IInfrastructure;
+using GoldBank.Infrastructure.Infrastructure;
 using GoldBank.Models;
+using MySqlX.XDevAPI;
 using System.Text.RegularExpressions;
 
 namespace GoldBank.Application.Application
@@ -17,6 +19,9 @@ namespace GoldBank.Application.Application
         private readonly string _accessKey;
         private readonly string _secretKey;
         private readonly string _publicKey;
+        private static readonly HttpClient client = new HttpClient();
+        public IDocumentInfrastructure DocumentInfrastructure { get; }
+
         public DocumentApplication(IDocumentInfrastructure DocumentInfrastructure, IConfiguration configuration, ILogger<Document> logger)
         {
             this.DocumentInfrastructure = DocumentInfrastructure;
@@ -35,8 +40,7 @@ namespace GoldBank.Application.Application
             _s3Client = new AmazonS3Client(_accessKey, _secretKey, config);
 
         }
-
-        public IDocumentInfrastructure DocumentInfrastructure { get; }
+        
         public async Task<bool> Activate(Document entity)
         {
             return await DocumentInfrastructure.Activate(entity);
@@ -122,6 +126,80 @@ namespace GoldBank.Application.Application
                 throw; 
             }
         }
+        public async Task<int> UploadFile(Document document)
+        {
+            try
+            {
+                string fileName = Path.GetFileNameWithoutExtension(document.File.FileName);
 
+                if (document.File == null || string.IsNullOrWhiteSpace(fileName))
+                {
+                    throw new ArgumentException("File and document name must be provided.");
+                }
+
+                var memoryStream = new MemoryStream();
+                await document.File.CopyToAsync(memoryStream);
+                memoryStream.Position = 0;
+
+                var contentType = "text/csv";
+
+                var putRequest = new PutObjectRequest
+                {
+                    BucketName = _bucketName,
+                    Key = fileName,
+                    InputStream = memoryStream,
+                    ContentType = contentType,
+                    AutoCloseStream = true
+                };
+
+                try
+                {
+                    var response = await _s3Client.PutObjectAsync(putRequest);
+                    var url = $"{_publicKey}/{_bucketName}/{fileName}";
+
+                    // Optionally save document metadata in your infrastructure
+                    document.Url = url;
+                    var fPath = @"C:\GbProducts\file.csv";
+                    await DownloadFileAsync(url, fPath);
+                    return await DocumentInfrastructure.Add(document);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException($"S3 upload failed: {ex.Message}", ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error uploading Document.Image: {ex.Message}");
+                throw;
+            }
+        }
+        public static async Task DownloadFileAsync(string url, string destinationPath)
+        {
+            try
+            {
+                string directoryPath = Path.GetDirectoryName(destinationPath);
+                
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                    Console.WriteLine($"Directory created: {directoryPath}");
+                }
+                
+                var response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                using (var fileStream = new FileStream(destinationPath, FileMode.Create))
+                {
+                    await response.Content.CopyToAsync(fileStream);
+                }
+
+                Console.WriteLine($"File downloaded successfully to {destinationPath}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error downloading file: {ex.Message}");
+            }
+        }
     }
 }

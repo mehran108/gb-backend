@@ -39,5 +39,10 @@ namespace GoldBank.Controllers
         {
             return await DocumentApplication.UploadImage(Document);
         }
+        [HttpPost("UploadFile")]
+        public async Task<int> UploadFile(Document document)
+        {
+            return await DocumentApplication.UploadFile(document);
+        }
     }
 }
