@@ -384,7 +384,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             var StoneProductList = new List<StoneProduct>();
             var parameters = new List<DbParameter>
             {
-            base.GetParameter("@p_PageNumber", ToDbValue(product.Offset)),
+            base.GetParameter("@p_PageNumber", product.Offset),
             base.GetParameter("@p_PageSize", ToDbValue(product.PageSize)),
             base.GetParameter("@p_ProductTypeId", ToDbValue(product.Data.ProductTypeId)),
             base.GetParameter("@p_SKU", ToDbValue(product.Data.SKU)),
@@ -424,7 +424,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
-                    if (dataReader.Read())
+                    while (dataReader.Read())
                     {
                         var item = new Product();
                         item.ProductTypeId = dataReader.GetIntegerValue(ProductInfrastructure.ProductIdColumnName);
