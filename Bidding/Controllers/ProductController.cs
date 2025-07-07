@@ -3,6 +3,7 @@ using GoldBank.Application.Application;
 using GoldBank.Application.IApplication;
 using GoldBank.Models;
 using GoldBank.Models.Product;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Text;
@@ -11,6 +12,7 @@ namespace GoldBank.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class ProductController : ControllerBase
     {
         public IProductApplication ProductApplication { get; }
