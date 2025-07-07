@@ -160,8 +160,10 @@ namespace GoldBank.Application.Application
                     // Optionally save document metadata in your infrastructure
                     document.Url = url;
                     var fPath = @"/var/lib/mysql-files/file.csv";
-                    await DownloadFileAsync(url, fPath);
-                    return await DocumentInfrastructure.Add(document);
+                    var res = await DownloadFileAsync(url, fPath);
+                    if (res)
+                        return await DocumentInfrastructure.Add(document);
+                    else return 0;
                 }
                 catch (Exception ex)
                 {
@@ -174,7 +176,7 @@ namespace GoldBank.Application.Application
                 throw;
             }
         }
-        public static async Task DownloadFileAsync(string url, string destinationPath)
+        public static async Task<bool> DownloadFileAsync(string url, string destinationPath)
         {
             try
             {
@@ -195,10 +197,12 @@ namespace GoldBank.Application.Application
                 }
 
                 Console.WriteLine($"File downloaded successfully to {destinationPath}");
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error downloading file: {ex.Message}");
+                throw;
             }
         }
     }
