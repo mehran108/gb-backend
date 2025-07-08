@@ -48,7 +48,7 @@ namespace GoldBank.Controllers
         {
             return await ProductApplication.GetAllProducts(product);
         }
-        [HttpPost("GetById")]
+        [HttpGet("GetById")]
         public async Task<Product> GetProductById([FromQuery] int productId)
         {
             return await ProductApplication.GetProductById(productId);
