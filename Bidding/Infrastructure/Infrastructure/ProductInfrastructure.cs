@@ -521,6 +521,41 @@ namespace GoldBank.Infrastructure.Infrastructure
                             }
                         }
                     }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new StoneDocument();
+                            item.StoneDocumentId = dataReader.GetIntegerValue("stoneDocumentId");
+                            item.StoneId = dataReader.GetIntegerValue("stoneId");
+                            item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+
+                            var filteredProduct = ProductList.SelectMany(p => p.StoneProducts).FirstOrDefault(sp => sp.StoneProductId == item.StoneId);
+
+                            if (filteredProduct != null)
+                            {
+                                filteredProduct.StoneDocuments.Add(item);
+                            }
+                        }
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new ProductDocument();
+                            item.ProductDocumentId = dataReader.GetIntegerValue("productDocumentId");
+                            item.ProductId = dataReader.GetIntegerValue("productId");
+                            item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+
+                            var productItem = ProductList.FirstOrDefault(x => x.ProductId == item.ProductId);
+                            if (productItem != null)
+                            {
+                                productItem.ProductDocuments.Add(item);
+                            }
+                        }
+                    }
                 }
             }
 

@@ -6,11 +6,13 @@
         public int ProductId { get; set; }
         public int DocumentId { get; set; }
         public bool IsPrimary { get; set; }
+        public int StoneId { get; set; }
 
     }
     public class StoneDocument
     {
         public int StoneDocumentId { get; set; }
+        public int StoneId { get; set; }
         public int ProductId { get; set; }
         public int DocumentId { get; set; }
         public bool IsPrimary { get; set; }
