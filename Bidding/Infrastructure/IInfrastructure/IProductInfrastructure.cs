@@ -7,5 +7,6 @@ namespace GoldBank.Infrastructure.IInfrastructure
     {
         Task<bool> BulkImport(ProductBulkImport productBulkImport);
         Task<AllResponse<Product>> GetAllProducts(AllRequest<ProductRequestVm> product);
+        Task<Product> GetProductById(int productId);
     }
 }

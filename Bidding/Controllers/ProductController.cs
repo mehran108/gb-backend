@@ -48,6 +48,11 @@ namespace GoldBank.Controllers
         {
             return await ProductApplication.GetAllProducts(product);
         }
+        [HttpPost("GetById")]
+        public async Task<Product> GetProductById([FromQuery] int productId)
+        {
+            return await ProductApplication.GetProductById(productId);
+        }
         [HttpPost("UploadImage")]
         public async Task<int> UploadImage(Document Document)
         {
