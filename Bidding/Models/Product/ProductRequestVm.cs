@@ -2,22 +2,22 @@
 {
     public class ProductRequestVm
     {       
-        public int ProductTypeId { get; set; }
+        public int? ProductTypeId { get; set; }
         public string? SKU { get; set; }
-        public int ProductSourceId { get; set; }
-        public int VendorId { get; set; }
+        public int? ProductSourceId { get; set; }
+        public int? VendorId { get; set; }
         public string? PrimaryCategoryIds { get; set; }
-        public int CategoryId { get; set; }
-        public int SubCategoryId { get; set; }
+        public int? CategoryId { get; set; }
+        public int? SubCategoryId { get; set; }
         public string? WearingTypeIds { get; set; }
         public string? CollectionIds { get; set; }
-        public int GenderId { get; set; }
+        public int? GenderId { get; set; }
         public string? OccasionIds { get; set; }
         public string? Description { get; set; }
-        public int MetalTypeId { get; set; }
-        public int MetalPurityTypeId { get; set; }
-        public int MetalColorTypeId { get; set; }
-        public int WeightTypeId { get; set; }
+        public int? MetalTypeId { get; set; }
+        public int? MetalPurityTypeId { get; set; }
+        public int? MetalColorTypeId { get; set; }
+        public int? WeightTypeId { get; set; }
         public decimal? NetWeight { get; set; }
         public decimal? WastageWeight { get; set; }
         public decimal? WastagePct { get; set; }
@@ -26,9 +26,9 @@
         public string? Bandwidth { get; set; }
         public string? Thickness { get; set; }
         public string? Size { get; set; }
-        public bool IsEcommerce { get; set; }
-        public bool IsEngravingAvailable { get; set; }
-        public bool IsSizeAlterationAvailable { get; set; }
+        public bool? IsEcommerce { get; set; }
+        public bool? IsEngravingAvailable { get; set; }
+        public bool? IsSizeAlterationAvailable { get; set; }
         public decimal? LacquerPrice { get; set; }
         public decimal? MakingPrice { get; set; }
         public decimal? TotalPrice { get; set; }

@@ -219,7 +219,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                 //  Insert or Update Product + Jewellery
                 var result = await connection.QueryFirstAsync<(int ProductId, int JewelleryId)>(
-                    "UpdateInsertProductDocumentGb",
+                    "AddOrUpdateProductWithJewelleryGb",
                     new
                     {
                         p_ProductId = product.ProductId,
