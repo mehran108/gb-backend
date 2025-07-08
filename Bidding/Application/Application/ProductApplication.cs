@@ -60,5 +60,9 @@ namespace GoldBank.Application.Application
         {
             return await ProductInfrastructure.GetAllProducts(product);
         }
+        public async Task<Product> GetProductById(int productId)
+        {
+            return await ProductInfrastructure.GetProductById(productId);
+        }
     }
 }

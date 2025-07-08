@@ -3,6 +3,7 @@ using GoldBank.Application.Application;
 using GoldBank.Application.IApplication;
 using GoldBank.Models;
 using GoldBank.Models.Product;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Text;
@@ -11,6 +12,7 @@ namespace GoldBank.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class ProductController : ControllerBase
     {
         public IProductApplication ProductApplication { get; }
@@ -31,7 +33,7 @@ namespace GoldBank.Controllers
         }
 
         [HttpPost("Update")]
-        public async Task<bool> Update(Product product)
+        public async Task<bool> Update([FromBody] Product product)
         {
             return await ProductApplication.Update(product);
         }
@@ -45,6 +47,11 @@ namespace GoldBank.Controllers
         public async Task<AllResponse<Product>> GetList([FromBody] AllRequest<ProductRequestVm> product)
         {
             return await ProductApplication.GetAllProducts(product);
+        }
+        [HttpGet("GetById")]
+        public async Task<Product> GetProductById([FromQuery] int productId)
+        {
+            return await ProductApplication.GetProductById(productId);
         }
         [HttpPost("UploadImage")]
         public async Task<int> UploadImage(Document Document)

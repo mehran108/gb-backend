@@ -8,5 +8,6 @@ namespace GoldBank.Application.IApplication
         Task<int> UploadImage(Document Document);
         Task<bool> BulkImport(Document document);
         Task<AllResponse<Product>> GetAllProducts(AllRequest<ProductRequestVm> product);
+        Task<Product> GetProductById(int productId);
     }
 }

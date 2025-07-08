@@ -5,6 +5,7 @@ namespace GoldBank.Models.Product
     {
         public int StoneProductId { get; set; }
         public int? StoneTypeId { get; set; }
+        public int? ProductId { get; set; }
         public StoneType? StoneType { get; set; }
         public int Quantity { get; set; }
         public int? StoneWeightTypeId { get; set; }

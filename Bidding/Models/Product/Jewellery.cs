@@ -41,5 +41,6 @@
         public decimal LacquerPrice { get; set; }
         public decimal MakingPrice { get; set; }
         public decimal TotalPrice { get; set; }
+        public int ProductId { get; set; }
     }
 }
