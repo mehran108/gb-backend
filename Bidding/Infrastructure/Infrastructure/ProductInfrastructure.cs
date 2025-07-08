@@ -665,6 +665,40 @@ namespace GoldBank.Infrastructure.Infrastructure
                             }
                         }
                     }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new StoneDocument();
+                            item.StoneDocumentId = dataReader.GetIntegerValue("stoneDocumentId");
+                            item.StoneId = dataReader.GetIntegerValue("stoneId");
+                            item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+
+                            var filteredProduct = Product.StoneProducts.FirstOrDefault(sp => sp.StoneProductId == item.StoneId);
+
+                            if (filteredProduct != null)
+                            {
+                                filteredProduct.StoneDocuments.Add(item);
+                            }
+                        }
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new ProductDocument();
+                            item.ProductDocumentId = dataReader.GetIntegerValue("productDocumentId");
+                            item.ProductId = dataReader.GetIntegerValue("productId");
+                            item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+
+                            if (Product.ProductId == item.ProductId)
+                            {
+                                Product.ProductDocuments.Add(item);
+                            }
+                        }
+                    }
                 }
             }
             return Product;
