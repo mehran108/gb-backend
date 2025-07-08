@@ -33,7 +33,7 @@ namespace GoldBank.Controllers
         }
 
         [HttpPost("Update")]
-        public async Task<bool> Update(Product product)
+        public async Task<bool> Update([FromBody] Product product)
         {
             return await ProductApplication.Update(product);
         }
