@@ -5,8 +5,10 @@ using GoldBank.Models;
 using GoldBank.Models.Product;
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI.Common;
+using Org.BouncyCastle.Utilities.Collections;
 using System.Data;
 using System.Data.Common;
+using System.Transactions;
 
 namespace GoldBank.Infrastructure.Infrastructure
 {
@@ -32,6 +34,47 @@ namespace GoldBank.Infrastructure.Infrastructure
         {
             throw new NotImplementedException();
         }
+
+        public async Task<bool> BulkImport(Document document)
+        {
+            using var connection = base.GetConnection();
+            await connection.OpenAsync();
+
+            using var transaction = await connection.BeginTransactionAsync();
+
+            try
+            {
+    //            // Step 1: Load CSV into temp table
+    //            var loadCsvCommand = @"
+    //    LOAD DATA INFILE '/var/lib/mysql-files/file.csv'
+    //    INTO TABLE producttemp_gb
+    //    FIELDS TERMINATED BY ','
+    //    ENCLOSED BY '\"'
+    //                LINES TERMINATED BY '\n'
+    //                IGNORE 1 ROWS;
+    //            ";
+            
+    //await connection.ExecuteAsync(loadCsvCommand, transaction: transaction);
+
+                // Step 2: Call stored procedure to insert products
+                await connection.ExecuteAsync(
+                    "BulkInsertProducts_Gb",
+                    param: null,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+            return true;
+        }
+
         public async Task<int> Add(Product product)
         {
             using var connection = base.GetConnection();

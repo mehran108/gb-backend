@@ -52,26 +52,9 @@ namespace GoldBank.Controllers
             return await ProductApplication.UploadImage(Document);
         }
         [HttpPost("BulkImport")]
-        public async Task<bool> BulkImport(ProductBulkImport productBulkImport)
+        public async Task<bool> BulkImport(Document document)
         {
-            using (var streamReader = new StreamReader(productBulkImport.File.OpenReadStream()))
-            {
-                var fileContent = "";
-
-                if (productBulkImport.File.FileName.EndsWith(".csv"))
-                {
-                    fileContent = await streamReader.ReadToEndAsync();
-                }
-                if (productBulkImport.File.FileName.EndsWith(".xlsx") || productBulkImport.File.FileName.EndsWith(".xls"))
-                {
-                    var reader = ExcelReaderFactory.CreateReader(productBulkImport.File.OpenReadStream());
-                    var spreadsheet = reader.AsDataSet();
-                    var table = spreadsheet.Tables[0];
-                    fileContent = await this.ToCSV(table);
-                    //var bytes = Encoding.UTF8.GetBytes(csv);
-                }
-                return await ProductApplication.BulkImport(fileContent, productBulkImport);
-            }
+            return await ProductApplication.BulkImport(document);
         }
         private async Task<string> ToCSV(DataTable dtDataTable)
         {

@@ -6,7 +6,9 @@ using GoldBank.Application.IApplication;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Infrastructure.Infrastructure;
 using GoldBank.Models;
+using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
+using Renci.SshNet;
 using System.Text.RegularExpressions;
 
 namespace GoldBank.Application.Application
@@ -18,8 +20,10 @@ namespace GoldBank.Application.Application
         private readonly string _bucketUrl;
         private readonly string _accessKey;
         private readonly string _secretKey;
+        private readonly string _sshUser;
+        private readonly string _sshpassword;
+        private readonly string _server;
         private readonly string _publicKey;
-        private static readonly HttpClient client = new HttpClient();
         public IDocumentInfrastructure DocumentInfrastructure { get; }
 
         public DocumentApplication(IDocumentInfrastructure DocumentInfrastructure, IConfiguration configuration, ILogger<Document> logger)
@@ -30,17 +34,24 @@ namespace GoldBank.Application.Application
             _accessKey = configuration["AWS:AccessKey"];
             _secretKey = configuration["AWS:SecretKey"];
             _publicKey = configuration["AWS:BucketPublicURL"];
+            var dbConnectionString = configuration["General:DefaultConnection"];  // This is the full connection string
+
+            // You can now parse this connection string (or manually split it if needed):
+            var builder = new MySqlConnectionStringBuilder(dbConnectionString);
+            _sshUser = configuration["SSH:User"];  
+            _sshpassword = configuration["SSH:Password"];  
+            _server = builder.Server;  
 
             var config = new AmazonS3Config
             {
                 ServiceURL = _bucketUrl,
-                ForcePathStyle = true 
+                ForcePathStyle = true
             };
 
             _s3Client = new AmazonS3Client(_accessKey, _secretKey, config);
 
         }
-        
+
         public async Task<bool> Activate(Document entity)
         {
             return await DocumentInfrastructure.Activate(entity);
@@ -110,7 +121,7 @@ namespace GoldBank.Application.Application
                 try
                 {
                     var response = await _s3Client.PutObjectAsync(putRequest);
-                    Document.Url =  $"{_publicKey}/{_bucketName}/{Document.Name}";
+                    Document.Url = $"{_publicKey}/{_bucketName}/{Document.Name}";
                     return await DocumentInfrastructure.Add(Document);
                 }
                 catch (Exception ex)
@@ -123,7 +134,7 @@ namespace GoldBank.Application.Application
             catch (Exception ex)
             {
                 Console.WriteLine($"Error uploading Document.Image: {ex.Message}");
-                throw; 
+                throw;
             }
         }
         public async Task<int> UploadFile(Document document)
@@ -160,7 +171,7 @@ namespace GoldBank.Application.Application
                     // Optionally save document metadata in your infrastructure
                     document.Url = url;
                     var fPath = @"/var/lib/mysql-files/file.csv";
-                    var res = await DownloadFileAsync(url, fPath);
+                    var res = await DownloadFileAsync(url);
                     if (res)
                         return await DocumentInfrastructure.Add(document);
                     else return 0;
@@ -176,34 +187,57 @@ namespace GoldBank.Application.Application
                 throw;
             }
         }
-        public static async Task<bool> DownloadFileAsync(string url, string destinationPath)
+        
+        public async Task<bool> DownloadFileAsync(string remoteFileUrl)
         {
+            string tmpFilePath = Path.GetTempFileName(); // temp file on app server
+
             try
             {
-                string directoryPath = Path.GetDirectoryName(destinationPath);
-                
-                if (!Directory.Exists(directoryPath))
+                // Step 1: Download to temporary location on app server
+                using (HttpClient client = new HttpClient())
+                using (var response = await client.GetAsync(remoteFileUrl))
                 {
-                    Directory.CreateDirectory(directoryPath);
-                    Console.WriteLine($"Directory created: {directoryPath}");
-                }
-                
-                var response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode();
+                    if (!response.IsSuccessStatusCode)
+                        return false;
 
-                using (var fileStream = new FileStream(destinationPath, FileMode.Create))
-                {
-                    await response.Content.CopyToAsync(fileStream);
+                    await using var fs = new FileStream(tmpFilePath, FileMode.Create);
+                    await response.Content.CopyToAsync(fs);
                 }
 
-                Console.WriteLine($"File downloaded successfully to {destinationPath}");
+                // Step 2: Upload to DB server via SFTP
+                using var sftp = new SftpClient(_server, 22, _sshUser, _sshpassword);
+                sftp.Connect();
+
+                using (var fileStream = new FileStream(tmpFilePath, FileMode.Open))
+                {
+                    sftp.UploadFile(fileStream, "/tmp/file.csv");
+                }
+
+                sftp.Disconnect();
+
+                // Step 3: Move to MySQL-readable folder via SSH
+                using var ssh = new SshClient(_server, 22, _sshUser, _sshpassword);
+                ssh.Connect();
+
+                var mvCommand = ssh.CreateCommand("sudo mv -f /tmp/file.csv /var/lib/mysql-files/file.csv");
+                mvCommand.Execute();
+                ssh.Disconnect();
+
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error downloading file: {ex.Message}");
-                throw;
+                Console.Error.WriteLine($"File move to DB server failed: {ex.Message}");
+                return false;
+            }
+            finally
+            {
+                // Cleanup temp file
+                if (File.Exists(tmpFilePath))
+                    File.Delete(tmpFilePath);
             }
         }
     }
+        
 }

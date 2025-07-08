@@ -47,9 +47,14 @@ namespace GoldBank.Application.Application
         {
             throw new NotImplementedException();
         }
-        public async Task<bool> BulkImport(string fileContent, ProductBulkImport productBulkImport)
+        public async Task<bool> BulkImport(Document document)
         {
-            throw new NotImplementedException();
+            var dId = await DocumentApplication.UploadFile(document);
+            if (dId > 0)
+            {
+                return await ProductInfrastructure.BulkImport(document);
+            }
+            return false;
         }
         public async Task<AllResponse<Product>> GetAllProducts(AllRequest<ProductRequestVm> product)
         {
