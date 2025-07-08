@@ -529,6 +529,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.StoneDocumentId = dataReader.GetIntegerValue("stoneDocumentId");
                             item.StoneId = dataReader.GetIntegerValue("stoneId");
                             item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.Url = dataReader.GetStringValue("url");
                             item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
 
                             var filteredProduct = ProductList.SelectMany(p => p.StoneProducts).FirstOrDefault(sp => sp.StoneProductId == item.StoneId);
@@ -548,6 +549,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.ProductId = dataReader.GetIntegerValue("productId");
                             item.DocumentId = dataReader.GetIntegerValue("documentId");
                             item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+                            item.Url = dataReader.GetStringValue("url");
 
                             var productItem = ProductList.FirstOrDefault(x => x.ProductId == item.ProductId);
                             if (productItem != null)
@@ -673,6 +675,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.StoneDocumentId = dataReader.GetIntegerValue("stoneDocumentId");
                             item.StoneId = dataReader.GetIntegerValue("stoneId");
                             item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.Url = dataReader.GetStringValue("url");
                             item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
 
                             var filteredProduct = Product.StoneProducts.FirstOrDefault(sp => sp.StoneProductId == item.StoneId);
@@ -691,6 +694,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.ProductDocumentId = dataReader.GetIntegerValue("productDocumentId");
                             item.ProductId = dataReader.GetIntegerValue("productId");
                             item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.Url = dataReader.GetStringValue("url");
                             item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
 
                             if (Product.ProductId == item.ProductId)
