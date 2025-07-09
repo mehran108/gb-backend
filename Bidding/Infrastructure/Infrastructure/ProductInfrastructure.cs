@@ -261,53 +261,66 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             try
             {
-                //  Insert or Update Product + Jewellery
-                var result = await connection.QueryFirstAsync<(int ProductId, int JewelleryId)>(
+                var parameters = new DynamicParameters();
+
+                // Input parameters for product and jewellery
+                parameters.Add("p_ProductId", product.ProductId);
+                parameters.Add("p_ProductTypeId", product.ProductTypeId);
+                parameters.Add("p_SKU", product.SKU);
+                parameters.Add("p_ProductSourceId", product.ProductSourceId);
+                parameters.Add("p_VendorId", product.VendorId);
+                parameters.Add("p_StoreId", product.StoreId);
+                parameters.Add("p_CreatedBy", product.CreatedBy);
+
+                parameters.Add("p_PrimaryCategoryIds", product.Jewellery.PrimaryCategoryIds);
+                parameters.Add("p_CategoryId", product.Jewellery.CategoryId);
+                parameters.Add("p_SubCategoryId", product.Jewellery.SubCategoryId);
+                parameters.Add("p_WearingTypeIds", product.Jewellery.WearingTypeIds);
+                parameters.Add("p_CollectionIds", product.Jewellery.CollectionIds);
+                parameters.Add("p_GenderId", product.Jewellery.GenderId);
+                parameters.Add("p_OccasionIds", product.Jewellery.OccasionIds);
+                parameters.Add("p_Description", product.Jewellery.Description);
+                parameters.Add("p_MetalTypeId", product.Jewellery.MetalTypeId);
+                parameters.Add("p_MetalPurityTypeId", product.Jewellery.MetalPurityTypeId);
+                parameters.Add("p_MetalColorTypeId", product.Jewellery.MetalColorTypeId);
+                parameters.Add("p_WeightTypeId", product.Jewellery.WeightTypeId);
+                parameters.Add("p_NetWeight", product.Jewellery.NetWeight);
+                parameters.Add("p_WastageWeight", product.Jewellery.WastageWeight);
+                parameters.Add("p_WastagePct", product.Jewellery.WastagePct);
+                parameters.Add("p_TotalWeight", product.Jewellery.TotalWeight);
+                parameters.Add("p_Width", product.Jewellery.Width);
+                parameters.Add("p_Bandwidth", product.Jewellery.Bandwidth);
+                parameters.Add("p_Thickness", product.Jewellery.Thickness);
+                parameters.Add("p_Size", product.Jewellery.Size);
+                parameters.Add("p_IsEcommerce", product.Jewellery.IsEcommerce);
+                parameters.Add("p_IsEngravingAvailable", product.Jewellery.IsEngravingAvailable);
+                parameters.Add("p_IsSizeAlterationAvailable", product.Jewellery.IsSizeAlterationAvailable);
+                parameters.Add("p_LacquerPrice", product.Jewellery.LacquerPrice);
+                parameters.Add("p_MakingPrice", product.Jewellery.MakingPrice);
+                parameters.Add("p_TotalPrice", product.Jewellery.TotalPrice);
+
+                // OUT parameters
+                parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                parameters.Add("o_JewelleryId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                // Execute SP for Product & Jewellery
+                await connection.ExecuteAsync(
                     "AddOrUpdateProductWithJewelleryGb",
-                    new
-                    {
-                        p_ProductId = product.ProductId,
-                        p_ProductTypeId = product.ProductTypeId,
-                        p_SKU = product.SKU,
-                        p_ProductSourceId = product.ProductSourceId,
-                        p_VendorId = product.VendorId,
-                        p_StoreId = product.StoreId,
-                        p_CreatedBy = product.CreatedBy,
-                        p_PrimaryCategoryIds = product.Jewellery.PrimaryCategoryIds,
-                        p_CategoryId = product.Jewellery.CategoryId,
-                        p_SubCategoryId = product.Jewellery.SubCategoryId,
-                        p_WearingTypeIds = product.Jewellery.WearingTypeIds,
-                        p_CollectionIds = product.Jewellery.CollectionIds,
-                        p_GenderId = product.Jewellery.GenderId,
-                        p_OccasionIds = product.Jewellery.OccasionIds,
-                        p_Description = product.Jewellery.Description,
-                        p_MetalTypeId = product.Jewellery.MetalTypeId,
-                        p_MetalPurityTypeId = product.Jewellery.MetalPurityTypeId,
-                        p_MetalColorTypeId = product.Jewellery.MetalColorTypeId,
-                        p_WeightTypeId = product.Jewellery.WeightTypeId,
-                        p_NetWeight = product.Jewellery.NetWeight,
-                        p_WastageWeight = product.Jewellery.WastageWeight,
-                        p_WastagePct = product.Jewellery.WastagePct,
-                        p_TotalWeight = product.Jewellery.TotalWeight,
-                        p_Width = product.Jewellery.Width,
-                        p_Bandwidth = product.Jewellery.Bandwidth,
-                        p_Thickness = product.Jewellery.Thickness,
-                        p_Size = product.Jewellery.Size,
-                        p_IsEcommerce = product.Jewellery.IsEcommerce,
-                        p_IsEngravingAvailable = product.Jewellery.IsEngravingAvailable,
-                        p_IsSizeAlterationAvailable = product.Jewellery.IsSizeAlterationAvailable,
-                        p_LacquerPrice = product.Jewellery.LacquerPrice,
-                        p_MakingPrice = product.Jewellery.MakingPrice,
-                        p_TotalPrice = product.Jewellery.TotalPrice
-                    },
-                    transaction: transaction,
-                    commandType: CommandType.StoredProcedure
-                );
+                    parameters,
+                    transaction,
+                    commandType: CommandType.StoredProcedure);
 
-                int productId = result.ProductId;
+                int productId = parameters.Get<int>("o_ProductId");
+                int jewelleryId = parameters.Get<int>("o_JewelleryId");
 
-                // Upsert Product Documents
-                if (product.ProductDocuments?.Count > 0 && productId>0)
+                if (productId <= 0 || jewelleryId <= 0)
+                {
+                    await transaction.RollbackAsync();
+                    return false;
+                }
+
+                // Product Documents
+                if (product.ProductDocuments?.Count > 0)
                 {
                     foreach (var doc in product.ProductDocuments)
                     {
@@ -321,13 +334,12 @@ namespace GoldBank.Infrastructure.Infrastructure
                                 p_CreatedBy = product.CreatedBy
                             },
                             transaction,
-                            commandType: CommandType.StoredProcedure
-                        );
+                            commandType: CommandType.StoredProcedure);
                     }
                 }
 
-                // Upsert StoneProducts + Documents
-                if (product.StoneProducts?.Count > 0 && productId > 0)
+                // Stone Products + Stone Documents
+                if (product.StoneProducts?.Count > 0)
                 {
                     foreach (var stone in product.StoneProducts)
                     {
@@ -345,10 +357,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                                 p_CreatedBy = product.CreatedBy
                             },
                             transaction,
-                            commandType: CommandType.StoredProcedure
-                        );
+                            commandType: CommandType.StoredProcedure);
 
-                        // Get stoneId (newly inserted)
                         int stoneId = await connection.QueryFirstOrDefaultAsync<int>(
                             "SELECT stoneProductId FROM stoneProduct_gb WHERE productId = @productId AND stoneTypeId = @stoneTypeId AND stoneShapeId = @stoneShapeId",
                             new
@@ -357,8 +367,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                                 stoneTypeId = stone.StoneTypeId,
                                 stoneShapeId = stone.StoneShapeId
                             },
-                            transaction
-                        );
+                            transaction);
 
                         if (stone.StoneDocuments?.Count > 0)
                         {
@@ -374,30 +383,22 @@ namespace GoldBank.Infrastructure.Infrastructure
                                         p_CreatedBy = product.CreatedBy
                                     },
                                     transaction,
-                                    commandType: CommandType.StoredProcedure
-                                );
+                                    commandType: CommandType.StoredProcedure);
                             }
                         }
                     }
                 }
 
                 await transaction.CommitAsync();
-
-                if (productId > 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return true;
             }
-            catch
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                throw;
+                throw; // Optionally log ex
             }
         }
+
 
 
         public Task<AllResponse<Product>> GetAll(AllRequest<Product> entity)
@@ -480,6 +481,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                     while (dataReader.Read())
                     {
                         var item = new Product();
+                        item.ProductSource = new ProductSource();
+                        item.Vendor = new Vendor();
+
+
                         item.ProductTypeId = dataReader.GetIntegerValue(ProductInfrastructure.ProductIdColumnName);
                         item.ProductId = dataReader.GetIntegerValue("productId");
                         item.SKU = dataReader.GetStringValue("sKU");
@@ -490,6 +495,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.StoreId = dataReader.GetIntegerValue("storeId");
                         item.CreatedAt = dataReader.GetDateTime("createdAt");
                         item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        item.ProductSource.ProductSourceId = dataReader.GetIntegerValue("productSourceId");
+                        item.ProductSource.Description = dataReader.GetStringValue("ProductSourceDescription");
+                        item.Vendor.VendorId = dataReader.GetIntegerValue("vendorId");
+                        item.Vendor.Description = dataReader.GetStringValue("VendorDescription");
 
                         ProductList.Add(item);
                     }
