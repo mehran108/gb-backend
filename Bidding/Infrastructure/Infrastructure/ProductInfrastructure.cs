@@ -501,6 +501,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.ProductSource.Description = dataReader.GetStringValue("ProductSourceDescription");
                         item.Vendor.VendorId = dataReader.GetIntegerValue("vendorId");
                         item.Vendor.Description = dataReader.GetStringValue("VendorDescription");
+                        item.Title = dataReader.GetStringValue("title");
 
                         ProductList.Add(item);
                     }
@@ -649,6 +650,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.StoreId = dataReader.GetIntegerValue("storeId");
                         item.CreatedAt = dataReader.GetDateTime("createdAt");
                         item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        item.Title = dataReader.GetStringValue("title");
 
                         Product = item;
                     }
