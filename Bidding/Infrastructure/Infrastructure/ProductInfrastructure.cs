@@ -119,7 +119,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         p_IsSizeAlterationAvailable = product.Jewellery.IsSizeAlterationAvailable,
                         p_LacquerPrice = product.Jewellery.LacquerPrice,
                         p_MakingPrice = product.Jewellery.MakingPrice,
-                        p_TotalPrice = product.Jewellery.TotalPrice
+                        p_TotalPrice = product.Jewellery.TotalPrice,
+                        p_Title = product.Title
                     },
                     transaction: transaction,
                     commandType: CommandType.StoredProcedure
@@ -298,6 +299,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_LacquerPrice", product.Jewellery.LacquerPrice);
                 parameters.Add("p_MakingPrice", product.Jewellery.MakingPrice);
                 parameters.Add("p_TotalPrice", product.Jewellery.TotalPrice);
+                parameters.Add("p_Title", product.Title);
 
                 // OUT parameters
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);

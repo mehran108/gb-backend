@@ -6,6 +6,7 @@ namespace GoldBank.Models.Product
         public int ProductId { get; set; }
         public int? ProductTypeId { get; set; }
         public string SKU { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
         public int? ProductSourceId { get; set; }
         public ProductSource? ProductSource { get; set; }
         public int? VendorId { get; set; }
