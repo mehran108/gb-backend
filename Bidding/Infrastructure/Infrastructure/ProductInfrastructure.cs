@@ -4,10 +4,14 @@ using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using GoldBank.Models.Product;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI;
 using MySqlX.XDevAPI.Common;
 using Org.BouncyCastle.Utilities.Collections;
+using Renci.SshNet.Compression;
 using System.Data;
 using System.Data.Common;
+using System.IO;
+using System.Text;
 using System.Transactions;
 
 namespace GoldBank.Infrastructure.Infrastructure
@@ -38,23 +42,20 @@ namespace GoldBank.Infrastructure.Infrastructure
         public async Task<bool> BulkImport(Document document)
         {
             using var connection = base.GetConnection();
-            await connection.OpenAsync();
+            //await connection.OpenAsync();
 
             using var transaction = await connection.BeginTransactionAsync();
 
             try
             {
-    //            // Step 1: Load CSV into temp table
-    //            var loadCsvCommand = @"
-    //    LOAD DATA INFILE '/var/lib/mysql-files/file.csv'
-    //    INTO TABLE producttemp_gb
-    //    FIELDS TERMINATED BY ','
-    //    ENCLOSED BY '\"'
-    //                LINES TERMINATED BY '\n'
-    //                IGNORE 1 ROWS;
-    //            ";
-            
-    //await connection.ExecuteAsync(loadCsvCommand, transaction: transaction);
+                var command = @"truncate table producttemp_gb";
+                await connection.ExecuteAsync(command, transaction: transaction);
+                command = "LOAD DATA INFILE '/var/lib/mysql-files/file.csv' INTO TABLE producttemp_gb FIELDS TERMINATED BY ',' LINES TERMINATED BY '\\n' IGNORE 1 ROWS;";
+
+                await connection.ExecuteAsync(command, transaction: transaction);
+
+
+
 
                 // Step 2: Call stored procedure to insert products
                 await connection.ExecuteAsync(

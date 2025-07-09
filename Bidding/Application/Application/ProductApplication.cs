@@ -10,7 +10,7 @@ namespace GoldBank.Application.Application
         public ProductApplication(IProductInfrastructure ProductInfrastructure, IConfiguration configuration, ILogger<Product> logger, IDocumentApplication DocumentApplication)
         {
             this.ProductInfrastructure = ProductInfrastructure;
-            DocumentApplication = DocumentApplication;
+            this.DocumentApplication = DocumentApplication;
         }
 
         public IProductInfrastructure ProductInfrastructure { get;}
