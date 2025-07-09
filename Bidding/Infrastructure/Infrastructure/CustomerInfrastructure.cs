@@ -20,6 +20,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         private const string LastNameParameterName = "@PLastName";
         private const string MobileParameterName = "@PMobile";
         private const string PostalAddressParameterName = "@PPostalAddress";
+        private const string PasswordHashParameterName = "@PPasswordHash";
 
 
         private const string CreatedByIdParameterName = "@PCreatedBy";
@@ -55,6 +56,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                      base.GetParameter(CustomerInfrastructure.BirthAnniversaryParameterName,Customer.BirthAnniversary),
                      base.GetParameter(CustomerInfrastructure.WeddingAnniversaryParameterName,Customer.WeddingAnniversary),
                      base.GetParameter(CustomerInfrastructure.IsNewsSubscribeParameterName,Customer.IsNewsSubscribe),
+                     base.GetParameter(CustomerInfrastructure.PasswordHashParameterName,Customer.PasswordHash),
 
             };
             await base.ExecuteNonQuery(parameters, "AddCustomer_gb", CommandType.StoredProcedure);
@@ -118,6 +120,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         customerItem.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
                         customerItem.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
                         customerItem.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
+                        customerItem.PasswordHash = dataReader.GetStringValue("PasswordHash");
                         
                     }
                     if (!dataReader.IsClosed)

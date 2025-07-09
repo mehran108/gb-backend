@@ -1,6 +1,7 @@
 using GoldBank.Application.IApplication;
 using GoldBank.Extensions;
 using GoldBank.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GoldBank.Controllers
@@ -21,7 +22,9 @@ namespace GoldBank.Controllers
 
         [HttpPost("Add")]
         public async Task<int> Add([FromBody]Customer Customer)
-        {           
+        {
+            // to do : update hardcoded password to newpwd field
+            Customer.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Qwerty123@");
             return await this.customerApplication.Add(Customer);
         }
 
@@ -37,7 +40,9 @@ namespace GoldBank.Controllers
         public async Task<Customer> Get([FromQuery] int customerId,  string? email = "")
         {
             Customer Customer = new Customer { CustomerId = customerId, Email = email };
-            return await this.customerApplication.Get(Customer);
+            var res = await this.customerApplication.Get(Customer);
+            res.PasswordHash = "";
+            return res;
         }
 
 

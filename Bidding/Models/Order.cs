@@ -20,6 +20,6 @@
         public int OrderStatusId { get; set; }
         public OrderStatus? OrderStatus { get; set; }
         public List<CustomCharge> CustomCharge { get; set; }
-        public OrderDelievery OrderDelievery { get; set; }
+        public OrderDelievery? OrderDelievery { get; set; }
     }
 }

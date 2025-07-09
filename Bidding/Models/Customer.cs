@@ -18,6 +18,8 @@
         public DateTime? WeddingAnniversary { get; set; }
         public bool? IsNewsSubscribe { get; set; }
         public string? PasswordHash { get; set; }
+        public string? OldPwd {  get; set; }
+        public string? NewPwd { get; set; }
     }
 
 }
