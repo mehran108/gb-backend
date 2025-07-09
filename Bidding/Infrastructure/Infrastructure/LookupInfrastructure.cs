@@ -188,7 +188,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         {
                             MetalPurityId = dataReader.GetIntegerValue("MetalPurityId"),
                             Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
-                            UnitPrice = dataReader.GetDecimalValue("unitPrice")
+                            UnitPrice = dataReader.GetDecimalValue("unitPrice"),
+                            MetalTypeId = dataReader.GetIntegerValue("metalTypeId")
                         });
                     }
                 }
