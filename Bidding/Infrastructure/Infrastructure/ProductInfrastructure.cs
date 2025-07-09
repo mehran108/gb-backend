@@ -175,26 +175,21 @@ namespace GoldBank.Infrastructure.Infrastructure
                             transaction,
                             commandType: CommandType.StoredProcedure
                         );
-                        if(product.StoneProducts?.Count > 0)
+
+                        foreach(var doc in stone.StoneDocuments)
                         {
-                            foreach (var stoneProduct in product.StoneProducts)
-                            {
-                                foreach(var doc in stoneProduct.StoneDocuments)
-                                {
-                                    await connection.ExecuteAsync(
-                                   "AddStoneDocumentGb",
-                                   new
-                                   {
-                                       p_StoneId = stoneId,
-                                       p_DocumentId = doc.DocumentId,
-                                       p_CreatedBy = product.CreatedBy,
-                                       p_IsPrimary = doc.IsPrimary
-                                   },
-                                   transaction,
-                                   commandType: CommandType.StoredProcedure
-                                   );
-                                }
-                            }
+                            await connection.ExecuteAsync(
+                           "AddStoneDocumentGb",
+                           new
+                           {
+                               p_StoneId = stoneId,
+                               p_DocumentId = doc.DocumentId,
+                               p_CreatedBy = product.CreatedBy,
+                               p_IsPrimary = doc.IsPrimary
+                           },
+                           transaction,
+                           commandType: CommandType.StoredProcedure
+                           );
                         }
                     }
                 }
