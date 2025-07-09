@@ -32,6 +32,8 @@ builder.Services.AddTransient<IServiceConnector, ServiceConnector>();
 builder.Services.AddTransient<ILookupInfrastructure, LookupInfrastructure>();
 builder.Services.AddTransient<ILookupApplication, LookupApplication>();
 
+builder.Services.AddTransient<IOrderApplication, OrderApplication>();
+builder.Services.AddTransient<IOrderInfrastructure, OrderInfrastructure>();
 
 builder.Services.AddCors(options =>
 {

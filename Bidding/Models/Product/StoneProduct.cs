@@ -15,6 +15,10 @@ namespace GoldBank.Models.Product
         public int? StoneShapeId { get; set; }
         public ICollection<StoneDocument> StoneDocuments { get; set; } = new List<StoneDocument>();
         public StoneShape? StoneShape { get; set; }
+        public decimal MinStoneWeight {get; set; }
+        public decimal MaxStoneWeight {get; set; }
+        public decimal MinStonePrice  {get; set; }
+        public decimal MaxStonePrice { get; set; }
 
     }
 }

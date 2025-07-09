@@ -8,6 +8,7 @@
         public string Url { get; set; }
         public bool IsPrimary { get; set; }
         public int StoneId { get; set; }
+        public bool IsPostManufactured { get; set; }
 
     }
     public class StoneDocument

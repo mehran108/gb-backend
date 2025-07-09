@@ -1,0 +1,24 @@
+﻿namespace GoldBank.Models
+{
+    public class Order : BaseDomain
+    {
+        public int OrderId { get; set; }
+        public int CustomerId { get; set; }
+        public Customer Customer { get; set; }
+        public int ProductId { get; set; }
+        public Product.Product? Product { get; set; }
+        public int StoreId { get; set; }
+        public int OrderTypeId { get; set; }
+        public OrderType? OrderType { get; set; }
+        public decimal EstStartingPrice { get; set; } = 0;
+        public decimal EstMaxPrice { get; set; } = 0;
+        public decimal Rate { get; set; } = 0;
+        public bool IsRateLocked { get; set; } = false;
+        public decimal AdvancePayment { get; set; } = 0;
+        public decimal PendingPayment { get; set; } = 0;
+        public decimal PaymentReceived { get; set; } = 0;
+        public int OrderStatusId { get; set; }
+        public OrderStatus? OrderStatus { get; set; }
+        public List<CustomCharge> CustomCharge { get; set; }
+    }
+}

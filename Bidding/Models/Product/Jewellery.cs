@@ -42,5 +42,7 @@
         public decimal MakingPrice { get; set; }
         public decimal TotalPrice { get; set; }
         public int ProductId { get; set; }
+        public decimal MinWeight { get; set; } = 0;
+        public decimal MaxWeight { get; set; } = 0;
     }
 }
