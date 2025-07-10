@@ -68,5 +68,9 @@ namespace GoldBank.Application.Application
         {
             return await ProductInfrastructure.AddOrder(order);
         }
+        public async Task<AllResponse<OrderRequestVm>> GetAllOrders(AllRequest<OrderRequestVm> order)
+        {
+            return await ProductInfrastructure.GetAllOrders(order);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using Amazon.Runtime.Internal;
+using Dapper;
 using GoldBank.Infrastructure.Extension;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
@@ -6,6 +7,7 @@ using GoldBank.Models.Product;
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
 using MySqlX.XDevAPI.Common;
+using Org.BouncyCastle.Asn1.Ocsp;
 using Org.BouncyCastle.Utilities.Collections;
 using Renci.SshNet.Compression;
 using System.Data;
@@ -19,9 +21,9 @@ namespace GoldBank.Infrastructure.Infrastructure
 {
     public class ProductInfrastructure : BaseInfrastructure, IProductInfrastructure
     {
-        public ProductInfrastructure(IConfiguration configuration) : base(configuration)
+        public ProductInfrastructure(IConfiguration configuration,ICustomerInfrastructure customerInfrastructure) : base(configuration)
         {
-
+            this.CustomerInfrastructure = customerInfrastructure;
         }
         #region Constants
         private const string ProductIdParameterName = "@PProductId";
@@ -32,6 +34,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         public const string ProductSourceIdColumnName = "@PProductSource";
         public const string VendorIdColumnName = "@PVendorId";
 
+        public ICustomerInfrastructure CustomerInfrastructure { get; set; }
 
         #endregion
 
@@ -975,6 +978,63 @@ namespace GoldBank.Infrastructure.Infrastructure
                 return 0;
             }
         }
+        public async Task<AllResponse<OrderRequestVm>> GetAllOrders(AllRequest<OrderRequestVm> product)
+        {
+            var Response = new AllResponse<OrderRequestVm>();
+            var OrderList = new List<Order>();
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("@p_PageNumber", product.Offset),
+                base.GetParameter("@p_PageSize", ToDbValue(product.PageSize)),
+                base.GetParameter("@p_OrderId", ToDbValue(product.Data.OrderId)),
+                base.GetParameter("@p_CustomerId", ToDbValue(product.Data.CustomerId)),
+                base.GetParameter("@p_ProductId", ToDbValue(product.Data.ProductId)),
+                base.GetParameter("@p_StoreId", ToDbValue(product.Data.StoreId)),
+                base.GetParameter("@p_OrderTypeId", ToDbValue(product.Data.OrderTypeId)),
+                base.GetParameter("@p_EstStartingPrice", ToDbValue(product.Data.EstStartingPrice)),
+                base.GetParameter("@p_EstMaxPrice", ToDbValue(product.Data.EstMaxPrice)),
+                base.GetParameter("@p_Rate", ToDbValue(product.Data.Rate)),
+                base.GetParameter("@p_IsRateLocked", ToDbValue(product.Data.IsRateLocked)),
+                base.GetParameter("@p_AdvancePayment", ToDbValue(product.Data.AdvancePayment)),
+                base.GetParameter("@p_PendingPayment", ToDbValue(product.Data.PendingPayment)),
+                base.GetParameter("@p_PaymentReceived", ToDbValue(product.Data.PaymentReceived)),
+                base.GetParameter("@p_OrderStatusId", ToDbValue(product.Data.OrderStatusId))
+            };
 
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAllOrdersGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new Order();
+                        item.OrderType = new OrderType();
+                        item.Customer = new Customer();
+                        var Customer = new Customer();
+
+                        item.ProductId = dataReader.GetIntegerValue("productId");
+                        item.OrderId = dataReader.GetIntegerValue("orderId");
+                        item.CustomerId = dataReader.GetIntegerValue("customerId");
+                        item.StoreId = dataReader.GetIntegerValue("storeId");
+                        item.OrderTypeId = dataReader.GetIntegerValue("orderTypeId");
+                        item.EstMaxPrice = dataReader.GetDecimalValue("estMaxPrice");
+                        item.EstStartingPrice = dataReader.GetDecimalValue("estStartingPrice");
+                        item.Rate = dataReader.GetDecimalValue("rate");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        item.IsRateLocked = dataReader.GetBooleanValue("IsRateLocked");
+                        item.PaymentReceived = dataReader.GetDecimalValue("paymentReceived");
+                        item.AdvancePayment = dataReader.GetDecimalValue("advancePayment");
+                        item.PendingPayment = dataReader.GetDecimalValue("pendingPayment");
+                        item.OrderStatusId = dataReader.GetIntegerValue("OrderStatusId");
+
+                        Customer.CustomerId = item.CustomerId;
+                        item.Customer = await this.CustomerInfrastructure.Get(Customer);
+                        item.Product = await this.GetProductById(item.ProductId);
+                        OrderList.Add(item);
+                    }
+                }
+            }
+            return Response;
+        }
     }
 }

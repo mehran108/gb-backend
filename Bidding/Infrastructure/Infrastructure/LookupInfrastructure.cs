@@ -473,6 +473,25 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return list;
         }
+        public async Task<ActionResult<IEnumerable<DelieveryMethod>>> GetAllDeliveryMethods()
+        {
+            var list = new List<DelieveryMethod>();
+            using (var dataReader = await ExecuteReader(null, "GetAllDelieveryMethodGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new DelieveryMethod
+                        {
+                            DelieveryMethodId = dataReader.GetIntegerValue("deliveryMethodId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }        
 
 
 

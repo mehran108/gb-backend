@@ -65,6 +65,11 @@ namespace GoldBank.Controllers
         {
             return await ProductApplication.AddOrder(order);
         }
+        [HttpPost("GetAllOrders")]
+        public async Task<AllResponse<OrderRequestVm>> GetAllOrders([FromBody] AllRequest<OrderRequestVm> order)
+        {
+            return await ProductApplication.GetAllOrders(order);
+        }
 
         [HttpPost("BulkImport")]
         public async Task<bool> BulkImport(Document document)
