@@ -978,15 +978,14 @@ namespace GoldBank.Infrastructure.Infrastructure
                 return 0;
             }
         }
-        public async Task<AllResponse<OrderRequestVm>> GetAllOrders(AllRequest<OrderRequestVm> product)
+        public async Task<AllResponse<Order>> GetAllOrders(AllRequest<OrderRequestVm> product)
         {
-            var Response = new AllResponse<OrderRequestVm>();
+            var Response = new AllResponse<Order>();
             var OrderList = new List<Order>();
             var parameters = new List<DbParameter>
             {
                 base.GetParameter("@p_PageNumber", product.Offset),
                 base.GetParameter("@p_PageSize", ToDbValue(product.PageSize)),
-                base.GetParameter("@p_OrderId", ToDbValue(product.Data.OrderId)),
                 base.GetParameter("@p_CustomerId", ToDbValue(product.Data.CustomerId)),
                 base.GetParameter("@p_ProductId", ToDbValue(product.Data.ProductId)),
                 base.GetParameter("@p_StoreId", ToDbValue(product.Data.StoreId)),
@@ -1034,6 +1033,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                     }
                 }
             }
+            Response.Data = OrderList;
+            Response.TotalRecord = OrderList.Count();
             return Response;
         }
     }
