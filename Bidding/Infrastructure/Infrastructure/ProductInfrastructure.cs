@@ -255,6 +255,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_MakingPrice", product.Jewellery.MakingPrice);
                 parameters.Add("p_TotalPrice", product.Jewellery.TotalPrice);
                 parameters.Add("p_Title", product.Title);
+                parameters.Add("p_ReferenceSKU", product.ReferenceSKU);
 
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
                 parameters.Add("o_JewelleryId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -429,6 +430,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_MakingPrice", product.Jewellery.MakingPrice);
                 parameters.Add("p_TotalPrice", product.Jewellery.TotalPrice);
                 parameters.Add("p_Title", product.Title);
+                parameters.Add("p_ReferenceSKU", product.ReferenceSKU);
 
                 // OUT parameters
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -603,7 +605,8 @@ namespace GoldBank.Infrastructure.Infrastructure
             base.GetParameter("@p_TotalPrice", ToDbValue(product.Data.TotalPrice)),
             base.GetParameter("@p_StoneTypeId", ToDbValue(product.Data.StoneTypeId)),
             base.GetParameter("@p_StoneShapeId", ToDbValue(product.Data.StoneShapeId)),
-            base.GetParameter("@p_StoneWeightTypeId", ToDbValue(product.Data.StoneWeightTypeId))
+            base.GetParameter("@p_StoneWeightTypeId", ToDbValue(product.Data.StoneWeightTypeId)),
+            base.GetParameter("@p_ReferenceSKU", ToDbValue(product.Data.ReferenceSKU))
                 };
             using (var dataReader = await base.ExecuteReader(parameters, "GetAllProductsGb", CommandType.StoredProcedure))
             {
@@ -631,6 +634,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.Vendor.VendorId = dataReader.GetIntegerValue("vendorId");
                         item.Vendor.Description = dataReader.GetStringValue("VendorDescription");
                         item.Title = dataReader.GetStringValue("title");
+                        item.ReferenceSKU = dataReader.GetStringValue("referenceSKU");
 
                         ProductList.Add(item);
                     }
@@ -780,6 +784,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.CreatedAt = dataReader.GetDateTime("createdAt");
                         item.CreatedBy = dataReader.GetIntegerValue("createdBy");
                         item.Title = dataReader.GetStringValue("title");
+                        item.ReferenceSKU = dataReader.GetStringValue("referenceSKU");
 
                         Product = item;
                     }
