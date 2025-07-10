@@ -8,7 +8,7 @@ namespace GoldBank.Models
         public int OrderId {get; set; }
         public int DelieveryMethodId {get; set; }
         public DelieveryMethod? DelieveryMethod {get; set; }
-        public int EstDelieveryDate {get; set; }
+        public DateTime? EstDelieveryDate {get; set; }
         public decimal? ShippingCost {get; set; }
         public string? DelieveryAddress { get; set; }
     }
