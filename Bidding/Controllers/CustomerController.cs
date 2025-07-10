@@ -60,36 +60,36 @@ namespace GoldBank.Controllers
             return await this.customerApplication.Delete(Customer);
         }
 
-        //[HttpPost("Login")]
-        //public async Task<IActionResult> Login(Login user)
-        //{
-        //    Customer customer = new Customer();
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(Login user)
+        {
+            Customer customer = new Customer();
 
-        //    customer.Email = user.Email;
-        //    var resultUser = await this.customerApplication.Get(customer);
+            customer.Email = user.Email;
+            var resultUser = await this.customerApplication.Get(customer);
 
-        //    if (resultUser.Email != null && resultUser.IsActive != false)
+            if (resultUser.Email != null && resultUser.IsActive != false)
 
-        //    {
-        //        bool verified = BCrypt.Net.BCrypt.Verify(user.Password, resultUser.PasswordHash);
-        //        if (verified)
-        //        {
-        //            var Token = new UserTokens();
-        //            Token = JwtHelpers.GenTokenkey(new UserTokens()
-        //            {
-        //                Email = user.Email,
-        //                UserId = resultUser.ReferenceCustomerId,
-        //            }, jwtSettings);
-        //            return Ok(Token);
-        //        }
-        //        else
-        //        {
-        //            return BadRequest("Invalid Username or Password");
-        //        }
-        //    }
+            {
+                bool verified = BCrypt.Net.BCrypt.Verify(user.Password, resultUser.PasswordHash);
+                if (verified)
+                {
+                    var Token = new UserTokens();
+                    Token = JwtHelpers.GenTokenkey(new UserTokens()
+                    {
+                        Email = user.Email,
+                        UserId = resultUser.CustomerId,
+                    }, jwtSettings);
+                    return Ok(Token);
+                }
+                else
+                {
+                    return BadRequest("Invalid Username or Password");
+                }
+            }
 
-        //    return BadRequest("Username does not exists or is Inactive.");
-        //}
+            return BadRequest("Username does not exists or is Inactive.");
+        }
 
 
     }
