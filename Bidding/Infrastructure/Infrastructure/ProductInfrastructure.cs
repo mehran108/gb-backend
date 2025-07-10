@@ -11,6 +11,7 @@ using Renci.SshNet.Compression;
 using System.Data;
 using System.Data.Common;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Transactions;
 
@@ -76,7 +77,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             return true;
         }
 
-        public async Task<int> Add(Product product)
+        private async Task<int> AddOld(Product product)
         {
             using var connection = base.GetConnection();
             using var transaction = await connection.BeginTransactionAsync();
@@ -207,6 +208,139 @@ namespace GoldBank.Infrastructure.Infrastructure
                 throw;
             }
         }
+        public async Task<int> Add(Product product)
+        {
+            //return await this.AddOld(product); //old method
+            return await this.AddProduct(product,null,null);
+        }
+        private async Task<int> AddProduct(Product product, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_ProductTypeId", product.ProductTypeId);
+                parameters.Add("p_SKU", product.SKU);
+                parameters.Add("p_ProductSourceId", product.ProductSourceId);
+                parameters.Add("p_VendorId", product.VendorId);
+                parameters.Add("p_StoreId", product.StoreId);
+                parameters.Add("p_CreatedBy", product.CreatedBy);
+                parameters.Add("p_PrimaryCategoryIds", product.Jewellery.PrimaryCategoryIds);
+                parameters.Add("p_CategoryId", product.Jewellery.CategoryId);
+                parameters.Add("p_SubCategoryId", product.Jewellery.SubCategoryId);
+                parameters.Add("p_WearingTypeIds", product.Jewellery.WearingTypeIds);
+                parameters.Add("p_CollectionIds", product.Jewellery.CollectionIds);
+                parameters.Add("p_GenderId", product.Jewellery.GenderId);
+                parameters.Add("p_OccasionIds", product.Jewellery.OccasionIds);
+                parameters.Add("p_Description", product.Jewellery.Description);
+                parameters.Add("p_MetalTypeId", product.Jewellery.MetalTypeId);
+                parameters.Add("p_MetalPurityTypeId", product.Jewellery.MetalPurityTypeId);
+                parameters.Add("p_MetalColorTypeId", product.Jewellery.MetalColorTypeId);
+                parameters.Add("p_WeightTypeId", product.Jewellery.WeightTypeId);
+                parameters.Add("p_NetWeight", product.Jewellery.NetWeight);
+                parameters.Add("p_WastageWeight", product.Jewellery.WastageWeight);
+                parameters.Add("p_WastagePct", product.Jewellery.WastagePct);
+                parameters.Add("p_TotalWeight", product.Jewellery.TotalWeight);
+                parameters.Add("p_Width", product.Jewellery.Width);
+                parameters.Add("p_Bandwidth", product.Jewellery.Bandwidth);
+                parameters.Add("p_Thickness", product.Jewellery.Thickness);
+                parameters.Add("p_Size", product.Jewellery.Size);
+                parameters.Add("p_IsEcommerce", product.Jewellery.IsEcommerce);
+                parameters.Add("p_IsEngravingAvailable", product.Jewellery.IsEngravingAvailable);
+                parameters.Add("p_IsSizeAlterationAvailable", product.Jewellery.IsSizeAlterationAvailable);
+                parameters.Add("p_LacquerPrice", product.Jewellery.LacquerPrice);
+                parameters.Add("p_MakingPrice", product.Jewellery.MakingPrice);
+                parameters.Add("p_TotalPrice", product.Jewellery.TotalPrice);
+                parameters.Add("p_Title", product.Title);
+
+                parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                parameters.Add("o_JewelleryId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "AddProductWithJewelleryGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int productId = parameters.Get<int>("o_ProductId");
+                int jewelleryId = parameters.Get<int>("o_JewelleryId");
+
+                if (productId <= 0 || jewelleryId <= 0)
+                    throw new Exception("Product or Jewellery insert failed.");
+
+                // Product Documents
+                foreach (var doc in product.ProductDocuments ?? Enumerable.Empty<ProductDocument>())
+                {
+                    await connection.ExecuteAsync("InsertUpdateProductDocumentGb", new
+                    {
+                        p_ProductId = productId,
+                        p_DocumentId = doc.DocumentId,
+                        p_IsPrimary = doc.IsPrimary,
+                        p_CreatedBy = product.CreatedBy
+                    }, 
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure);
+                }
+
+                // Stone Products and Documents
+                foreach (var stone in product.StoneProducts ?? Enumerable.Empty<StoneProduct>())
+                {
+                    await connection.ExecuteAsync("InsertUpdateStoneProductGb", new
+                    {
+                        p_ProductId = productId,
+                        p_StoneTypeId = stone.StoneTypeId,
+                        p_StoneShapeId = stone.StoneShapeId,
+                        p_StoneWeightTypeId = stone.StoneWeightTypeId,
+                        p_Quantity = stone.Quantity,
+                        p_TotalWeight = stone.TotalWeight,
+                        p_TotalPrice = stone.TotalPrice,
+                        p_CreatedBy = product.CreatedBy
+                    },
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure);
+
+                    int stoneId = await connection.QueryFirstOrDefaultAsync<int>(
+                        "SELECT stoneProductId FROM stoneProduct_gb WHERE productId = @productId AND stoneTypeId = @stoneTypeId AND stoneShapeId = @stoneShapeId",
+                        new { productId, stone.StoneTypeId, stone.StoneShapeId },
+                        transaction
+                    );
+
+                    foreach (var doc in stone.StoneDocuments ?? Enumerable.Empty<StoneDocument>())
+                    {
+                        await connection.ExecuteAsync("InsertUpdateStoneDocumentGb", new
+                        {
+                            p_StoneId = stoneId,
+                            p_DocumentId = doc.DocumentId,
+                            p_IsPrimary = doc.IsPrimary,
+                            p_CreatedBy = product.CreatedBy
+                        }, transaction: transaction,
+                    commandType: CommandType.StoredProcedure);
+                    }
+                }
+
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+
+                return productId;
+            }
+            catch(Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
+
+
 
         public async Task<Product> Get(Product entity)
         {
@@ -759,5 +893,83 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return Product;
         }
+        public async Task<int> AddOrder(Order order)
+        {
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+
+            try
+            {
+                if (order.Product != null)
+                {
+                    // Pass connection and transaction to reuse Add logic
+                    order.ProductId = await this.AddProduct(order.Product, connection, transaction);
+
+                    if (order.ProductId <= 0)
+                        throw new Exception("Failed to insert Product inside AddOrder.");
+                }
+
+                // Prepare parameters
+                var parameters = new DynamicParameters();
+                parameters.Add("p_CustomerId", order.CustomerId);
+                parameters.Add("p_ProductId", order.ProductId);
+                parameters.Add("p_StoreId", order.StoreId);
+                parameters.Add("p_OrderTypeId", order.OrderTypeId);
+                parameters.Add("p_EstStartingPrice", order.EstStartingPrice);
+                parameters.Add("p_EstMaxPrice", order.EstMaxPrice);
+                parameters.Add("p_Rate", order.Rate);
+                parameters.Add("p_IsRateLocked", order.IsRateLocked);
+                parameters.Add("p_AdvancePayment", order.AdvancePayment);
+                parameters.Add("p_PendingPayment", order.PendingPayment);
+                parameters.Add("p_PaymentReceived", order.PaymentReceived);
+                parameters.Add("p_OrderStatusId", order.OrderStatusId);
+                parameters.Add("p_CreatedBy", order.CreatedBy);
+                parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                // Insert Order
+                await connection.ExecuteAsync(
+                    "InsertOrderGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                order.OrderId = parameters.Get<int>("o_OrderId");
+
+                if (order.OrderId <= 0)
+                    throw new Exception("Failed to insert Order.");
+
+                // Insert Custom Charges
+                if (order.CustomCharge?.Count > 0)
+                {
+                    foreach (var customCharge in order.CustomCharge)
+                    {
+                        await connection.ExecuteAsync(
+                            "InsertCustomChargeGb",
+                            new
+                            {
+                                p_OrderId = order.OrderId,
+                                p_Label = customCharge.Label,
+                                p_Value = customCharge.Value,
+                                p_CreatedBy = customCharge.CreatedBy
+                            },
+                            transaction: transaction,
+                            commandType: CommandType.StoredProcedure
+                        );
+                    }
+                }
+
+                // Commit transaction only if everything succeeded
+                await transaction.CommitAsync();
+                return order.OrderId;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                Console.WriteLine("Error in AddOrder(): " + ex.Message);
+                return 0;
+            }
+        }
+
     }
 }

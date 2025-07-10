@@ -6,7 +6,7 @@
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }
         public int ProductId { get; set; }
-        public Product.Product? Product { get; set; }
+        public Product.Product Product { get; set; } = new Product.Product();
         public int StoreId { get; set; }
         public int OrderTypeId { get; set; }
         public OrderType? OrderType { get; set; }

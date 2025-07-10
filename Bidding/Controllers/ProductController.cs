@@ -58,6 +58,14 @@ namespace GoldBank.Controllers
         {
             return await ProductApplication.UploadImage(Document);
         }
+
+
+        [HttpPost("AddOrder")]
+        public async Task<int> AddOrder(Order order)
+        {
+            return await ProductApplication.AddOrder(order);
+        }
+
         [HttpPost("BulkImport")]
         public async Task<bool> BulkImport(Document document)
         {

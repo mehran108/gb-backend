@@ -97,6 +97,10 @@ namespace GoldBank.Application.Application
         {
             return await this.LookupInfrastructure.GetAllStores();
         }
+        public async Task<ActionResult<IEnumerable<OrderType>>> GetAllOrderTypes()
+        {
+            return await this.LookupInfrastructure.GetAllOrderTypes();
+        }
 
         public Task<bool> Activate(LookupValue entity)
         {

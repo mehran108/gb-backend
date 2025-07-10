@@ -454,6 +454,25 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return list;
         }
+        public async Task<ActionResult<IEnumerable<OrderType>>> GetAllOrderTypes()
+        {
+            var list = new List<OrderType>();
+            using (var dataReader = await ExecuteReader(null, "GetAllOrderTypesGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new OrderType
+                        {
+                            OrderTypeId = dataReader.GetIntegerValue("orderTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
 
 
 

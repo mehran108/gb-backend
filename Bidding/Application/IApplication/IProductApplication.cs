@@ -9,5 +9,6 @@ namespace GoldBank.Application.IApplication
         Task<bool> BulkImport(Document document);
         Task<AllResponse<Product>> GetAllProducts(AllRequest<ProductRequestVm> product);
         Task<Product> GetProductById(int productId);
+        Task<int> AddOrder(Order order);
     }
 }
