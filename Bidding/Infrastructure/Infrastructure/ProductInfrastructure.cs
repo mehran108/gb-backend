@@ -1037,5 +1037,48 @@ namespace GoldBank.Infrastructure.Infrastructure
             Response.TotalRecord = OrderList.Count();
             return Response;
         }
+
+        public async Task<Order> GetOrderById(int orderId)
+        {
+            var item = new Order();
+
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("@p_OrderId", orderId)
+            };
+
+            using (var dataReader = await base.ExecuteReader(parameters, "GetOrderByIdGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        item.OrderType = new OrderType();
+                        item.Customer = new Customer();
+                        var Customer = new Customer();
+
+                        item.ProductId = dataReader.GetIntegerValue("productId");
+                        item.OrderId = dataReader.GetIntegerValue("orderId");
+                        item.CustomerId = dataReader.GetIntegerValue("customerId");
+                        item.StoreId = dataReader.GetIntegerValue("storeId");
+                        item.OrderTypeId = dataReader.GetIntegerValue("orderTypeId");
+                        item.EstMaxPrice = dataReader.GetDecimalValue("estMaxPrice");
+                        item.EstStartingPrice = dataReader.GetDecimalValue("estStartingPrice");
+                        item.Rate = dataReader.GetDecimalValue("rate");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        item.IsRateLocked = dataReader.GetBooleanValue("IsRateLocked");
+                        item.PaymentReceived = dataReader.GetDecimalValue("paymentReceived");
+                        item.AdvancePayment = dataReader.GetDecimalValue("advancePayment");
+                        item.PendingPayment = dataReader.GetDecimalValue("pendingPayment");
+                        item.OrderStatusId = dataReader.GetIntegerValue("OrderStatusId");
+
+                        Customer.CustomerId = item.CustomerId;
+                        item.Customer = await this.CustomerInfrastructure.Get(Customer);
+                        item.Product = await this.GetProductById(item.ProductId);
+                    }
+                }
+            }
+            return item;
+        }
     }
 }

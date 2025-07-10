@@ -70,6 +70,11 @@ namespace GoldBank.Controllers
         {
             return await ProductApplication.GetAllOrders(order);
         }
+        [HttpGet("GetOrderById")]
+        public async Task<Order> GetOrderById([FromQuery]int orderId)
+        {
+            return await ProductApplication.GetOrderById(orderId);
+        }
 
         [HttpPost("BulkImport")]
         public async Task<bool> BulkImport(Document document)
