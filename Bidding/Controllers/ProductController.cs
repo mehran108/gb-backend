@@ -66,14 +66,14 @@ namespace GoldBank.Controllers
             return await ProductApplication.AddOrder(order);
         }
         [HttpPost("GetAllOrders")]
-        public async Task<AllResponse<Order>> GetAllOrders([FromBody] AllRequest<OrderRequestVm> order)
+        public async Task<AllResponse<OrderRequestVm>> GetAllOrders([FromBody] AllRequest<OrderRequestVm> order)
         {
             return await ProductApplication.GetAllOrders(order);
         }
-        [HttpGet("GetOrderById")]
-        public async Task<Order> GetOrderById([FromQuery]int orderId)
+        [HttpPost("UpdateOrder")]
+        public async Task<bool> UpdateOrder([FromBody] Order order)
         {
-            return await ProductApplication.GetOrderById(orderId);
+            return await ProductApplication.UpdateOrder(order);
         }
 
         [HttpPost("BulkImport")]

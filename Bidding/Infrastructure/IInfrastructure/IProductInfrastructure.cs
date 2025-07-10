@@ -9,7 +9,7 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<AllResponse<Product>> GetAllProducts(AllRequest<ProductRequestVm> product);
         Task<Product> GetProductById(int productId);
         Task<int> AddOrder(Order order);
-        Task<AllResponse<Order>> GetAllOrders(AllRequest<OrderRequestVm> order);
-        Task<Order> GetOrderById(int orderId);
+        Task<AllResponse<OrderRequestVm>> GetAllOrders(AllRequest<OrderRequestVm> order);
+        Task<bool> UpdateOrder(Order order);
     }
 }
