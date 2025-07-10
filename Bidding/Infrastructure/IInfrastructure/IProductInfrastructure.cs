@@ -11,5 +11,6 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<int> AddOrder(Order order);
         Task<AllResponse<OrderRequestVm>> GetAllOrders(AllRequest<OrderRequestVm> order);
         Task<bool> UpdateOrder(Order order);
+        Task<Order> GetOrderById(int orderId);
     }
 }

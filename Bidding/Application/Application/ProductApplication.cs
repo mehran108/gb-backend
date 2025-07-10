@@ -2,6 +2,7 @@
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using GoldBank.Models.Product;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GoldBank.Application.Application
 {
@@ -75,6 +76,10 @@ namespace GoldBank.Application.Application
         public async Task<bool> UpdateOrder(Order order)
         {
             return await ProductInfrastructure.UpdateOrder(order);
+        }
+        public async Task<Order> GetOrderById([FromQuery] int orderId)
+        {
+            return await ProductInfrastructure.GetOrderById(orderId);
         }
     }
 }

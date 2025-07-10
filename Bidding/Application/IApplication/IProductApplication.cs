@@ -1,5 +1,6 @@
 ﻿using GoldBank.Models;
 using GoldBank.Models.Product;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GoldBank.Application.IApplication
 {
@@ -12,5 +13,6 @@ namespace GoldBank.Application.IApplication
         Task<int> AddOrder(Order order);
         Task<AllResponse<OrderRequestVm>> GetAllOrders(AllRequest<OrderRequestVm> order);
         Task<bool> UpdateOrder(Order order);
+        Task<Order> GetOrderById([FromQuery] int orderId);
     }
 }
