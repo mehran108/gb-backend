@@ -1211,10 +1211,6 @@ namespace GoldBank.Infrastructure.Infrastructure
 
                 // Prepare parameters
                 var parameters = new DynamicParameters();
-                parameters.Add("p_CustomerId", order.CustomerId);
-                parameters.Add("p_ProductId", order.ProductId);
-                parameters.Add("p_StoreId", order.StoreId);
-                parameters.Add("p_OrderTypeId", order.OrderTypeId);
                 parameters.Add("p_EstStartingPrice", order.EstStartingPrice);
                 parameters.Add("p_EstMaxPrice", order.EstMaxPrice);
                 parameters.Add("p_Rate", order.Rate);
@@ -1224,11 +1220,12 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_PaymentReceived", order.PaymentReceived);
                 parameters.Add("p_OrderStatusId", order.OrderStatusId);
                 parameters.Add("p_CreatedBy", order.CreatedBy);
+                parameters.Add("p_OrderId", order.OrderId);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
                 await connection.ExecuteAsync(
-                    "InsertOrderGb",
+                    "UpdateOrderGb",
                     parameters,
                     transaction: transaction,
                     commandType: CommandType.StoredProcedure
@@ -1273,6 +1270,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         public async Task<Order> GetOrderById(int orderId)
         {
             var item = new Order();
+            item.CustomCharge = new List<CustomCharge>();
 
             var parameters = new List<DbParameter>
             {
@@ -1287,6 +1285,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                     {
                         item.OrderType = new OrderType();
                         item.Customer = new Customer();
+                        item.OrderDelievery = new OrderDelievery();
                         var Customer = new Customer();
 
                         item.ProductId = dataReader.GetIntegerValue("productId");
@@ -1307,6 +1306,24 @@ namespace GoldBank.Infrastructure.Infrastructure
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = await this.CustomerInfrastructure.Get(Customer);
                         item.Product = await this.GetProductById(item.ProductId);
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var res = new CustomCharge();
+                            res.OrderId = dataReader.GetIntegerValue("orderId");
+                            res.CustomChargesId = dataReader.GetIntegerValue("customChargesId");
+                            res.Label = dataReader.GetStringValue("label");
+                            res.Value = dataReader.GetDecimalValue("Value");
+                            res.IsActive = dataReader.GetBooleanValue("isActive");
+                            res.IsDeleted = dataReader.GetBooleanValue("IsDeleted");
+                            res.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                            res.UpdatedBy = dataReader.GetIntegerValue("updatedBy");
+                            res.UpdatedAt = dataReader.GetDateTimeValue("updatedAt");
+                            res.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                            item.CustomCharge.Add(res);
+                        }
                     }
                 }
             }
