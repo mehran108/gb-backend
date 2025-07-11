@@ -1093,6 +1093,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_PaymentReceived", order.PaymentReceived);
                 parameters.Add("p_OrderStatusId", order.OrderStatusId);
                 parameters.Add("p_CreatedBy", order.CreatedBy);
+                parameters.Add("p_delieveryMethodId", order.OrderDelievery?.DelieveryMethodId);
+                parameters.Add("p_estDelieveryDate", order.OrderDelievery?.EstDelieveryDate);
+                parameters.Add("p_shippingCost", order.OrderDelievery?.ShippingCost);
+                parameters.Add("p_delieveryAddress", order.OrderDelievery?.DelieveryAddress);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
@@ -1227,6 +1231,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_OrderStatusId", order.OrderStatusId);
                 parameters.Add("p_CreatedBy", order.CreatedBy);
                 parameters.Add("p_OrderId", order.OrderId);
+                parameters.Add("p_delieveryMethodId", order.OrderDelievery?.DelieveryMethodId);
+                parameters.Add("p_estDelieveryDate", order.OrderDelievery?.EstDelieveryDate);
+                parameters.Add("p_shippingCost", order.OrderDelievery?.ShippingCost);
+                parameters.Add("p_delieveryAddress", order.OrderDelievery?.DelieveryAddress);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
