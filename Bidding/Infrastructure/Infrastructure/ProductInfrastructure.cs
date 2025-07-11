@@ -1135,9 +1135,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                 return 0;
             }
         }
-        public async Task<AllResponse<OrderRequestVm>> GetAllOrders(AllRequest<OrderRequestVm> product)
+        public async Task<AllResponse<Order>> GetAllOrders(AllRequest<OrderRequestVm> product)
         {
-            var Response = new AllResponse<OrderRequestVm>();
+            var Response = new AllResponse<Order>();
             var OrderList = new List<Order>();
             var parameters = new List<DbParameter>
             {
@@ -1191,6 +1191,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                     }
                 }
             }
+            Response.Data = OrderList;
+            Response.TotalRecord = OrderList.Count;
             return Response;
         }
         public async Task<bool> UpdateOrder(Order order)
@@ -1242,9 +1244,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                     foreach (var customCharge in order.CustomCharge)
                     {
                         await connection.ExecuteAsync(
-                            "InsertCustomChargeGb",
+                            "InsertUpdateCustomChargeGb",
                             new
                             {
+
                                 p_OrderId = order.OrderId,
                                 p_Label = customCharge.Label,
                                 p_Value = customCharge.Value,
