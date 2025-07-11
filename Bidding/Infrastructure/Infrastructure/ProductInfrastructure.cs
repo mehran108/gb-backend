@@ -1070,6 +1070,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                 if (order.Product != null)
                 {
+                    order.Product.IsSold = true;
                     // Pass connection and transaction to reuse Add logic
                     order.ProductId = await this.AddProduct(order.Product, connection, transaction);
 
