@@ -766,7 +766,8 @@ namespace GoldBank.Infrastructure.Infrastructure
             base.GetParameter("@p_StoneTypeId", ToDbValue(product.Data.StoneTypeId)),
             base.GetParameter("@p_StoneShapeId", ToDbValue(product.Data.StoneShapeId)),
             base.GetParameter("@p_StoneWeightTypeId", ToDbValue(product.Data.StoneWeightTypeId)),
-            base.GetParameter("@p_ReferenceSKU", ToDbValue(product.Data.ReferenceSKU))
+            base.GetParameter("@p_ReferenceSKU", ToDbValue(product.Data.ReferenceSKU)),
+            base.GetParameter("@p_IsSold", ToDbValue(product.Data.IsSold))
                 };
             using (var dataReader = await base.ExecuteReader(parameters, "GetAllProductsGb", CommandType.StoredProcedure))
             {
@@ -795,6 +796,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.Vendor.Description = dataReader.GetStringValue("VendorDescription");
                         item.Title = dataReader.GetStringValue("title");
                         item.ReferenceSKU = dataReader.GetStringValue("referenceSKU");
+                        item.IsSold = dataReader.GetBooleanValue("isSold");
 
                         ProductList.Add(item);
                     }

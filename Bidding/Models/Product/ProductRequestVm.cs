@@ -36,5 +36,6 @@
         public int? StoneShapeId { get; set; }
         public int? StoneWeightTypeId { get; set; }
         public string? ReferenceSKU { get; set; }
+        public bool? IsSold { get; set; }
     }
 }

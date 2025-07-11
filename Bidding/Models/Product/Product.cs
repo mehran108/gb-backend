@@ -16,5 +16,6 @@ namespace GoldBank.Models.Product
         public ICollection<StoneProduct> StoneProducts { get; set; } = new List<StoneProduct>();
         public ICollection<ProductDocument> ProductDocuments { get; set; } = new List<ProductDocument>();
         public string? ReferenceSKU { get; set; }
+        public bool IsSold { get; set; }
     }
 }
