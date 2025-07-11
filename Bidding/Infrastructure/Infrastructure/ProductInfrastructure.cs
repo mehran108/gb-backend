@@ -1247,7 +1247,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             "InsertUpdateCustomChargeGb",
                             new
                             {
-
+                                p_customChargesId = customCharge.CustomChargesId,
                                 p_OrderId = order.OrderId,
                                 p_Label = customCharge.Label,
                                 p_Value = customCharge.Value,
