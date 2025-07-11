@@ -454,7 +454,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return list;
         }
-        public async Task<ActionResult<IEnumerable<OrderType>>> GetAllOrderTypes()
+        public async Task<IEnumerable<OrderType>> GetAllOrderTypes()
         {
             var list = new List<OrderType>();
             using (var dataReader = await ExecuteReader(null, "GetAllOrderTypesGb", CommandType.StoredProcedure))
@@ -473,7 +473,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return list;
         }
-        public async Task<ActionResult<IEnumerable<DelieveryMethod>>> GetAllDeliveryMethods()
+        public async Task<IEnumerable<DelieveryMethod>> GetAllDeliveryMethods()
         {
             var list = new List<DelieveryMethod>();
             using (var dataReader = await ExecuteReader(null, "GetAllDelieveryMethodGb", CommandType.StoredProcedure))

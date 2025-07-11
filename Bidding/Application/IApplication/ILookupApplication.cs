@@ -26,7 +26,7 @@ namespace GoldBank.Application.IApplication
         Task<IEnumerable<Category>> GetCategories();
         Task<IEnumerable<SubCategory>> GetSubCategories();
         Task<IEnumerable<Store>> GetAllStores();
-        Task<ActionResult<IEnumerable<OrderType>>> GetAllOrderTypes();
-        Task<ActionResult<IEnumerable<DelieveryMethod>>> GetAllDeliveryMethods();
+        Task<IEnumerable<OrderType>> GetAllOrderTypes();
+        Task<IEnumerable<DelieveryMethod>> GetAllDeliveryMethods();
     }
 }

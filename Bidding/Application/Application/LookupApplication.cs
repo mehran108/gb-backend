@@ -97,11 +97,11 @@ namespace GoldBank.Application.Application
         {
             return await this.LookupInfrastructure.GetAllStores();
         }
-        public async Task<ActionResult<IEnumerable<OrderType>>> GetAllOrderTypes()
+        public async Task<IEnumerable<OrderType>> GetAllOrderTypes()
         {
             return await this.LookupInfrastructure.GetAllOrderTypes();
         }
-        public async Task<ActionResult<IEnumerable<DelieveryMethod>>> GetAllDeliveryMethods()
+        public async Task<IEnumerable<DelieveryMethod>> GetAllDeliveryMethods()
         {
             return await this.LookupInfrastructure.GetAllDeliveryMethods();
         }
