@@ -1191,6 +1191,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.AdvancePayment = dataReader.GetDecimalValue("advancePayment");
                         item.PendingPayment = dataReader.GetDecimalValue("pendingPayment");
                         item.OrderStatusId = dataReader.GetIntegerValue("OrderStatusId");
+                        item.OrderDelievery.DelieveryMethodId = dataReader.GetIntegerValue("delieveryMethodId");
+                        item.OrderDelievery.EstDelieveryDate = dataReader.GetDateTimeValue("estDelieveryDate");
+                        item.OrderDelievery.ShippingCost = dataReader.GetIntegerValue("shippingCost");
+                        item.OrderDelievery.DelieveryAddress = dataReader.GetStringValue("delieveryAddress");
 
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = await this.CustomerInfrastructure.Get(Customer);
@@ -1318,6 +1322,12 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.AdvancePayment = dataReader.GetDecimalValue("advancePayment");
                         item.PendingPayment = dataReader.GetDecimalValue("pendingPayment");
                         item.OrderStatusId = dataReader.GetIntegerValue("OrderStatusId");
+
+                        item.OrderDelievery.DelieveryMethodId = dataReader.GetIntegerValue("delieveryMethodId") ;
+                        item.OrderDelievery.EstDelieveryDate = dataReader.GetDateTimeValue("estDelieveryDate");
+                        item.OrderDelievery.ShippingCost = dataReader.GetIntegerValue("shippingCost");
+                        item.OrderDelievery.DelieveryAddress = dataReader.GetStringValue("delieveryAddress");
+
 
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = await this.CustomerInfrastructure.Get(Customer);
