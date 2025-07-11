@@ -909,11 +909,17 @@ namespace GoldBank.Infrastructure.Infrastructure
                             }
                         }
                     }
+                    if (dataReader.NextResult())
+                    {
+                        if (dataReader.Read())
+                        {
+                            Response.TotalRecord = dataReader.GetIntegerValue("TotalRecords");
+                        }
+                    }
                 }
             }
 
             Response.Data = ProductList;
-            Response.TotalRecord = ProductList.Count;
 
             return Response;
         }
@@ -1056,7 +1062,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                                 Product.ProductDocuments.Add(item);
                             }
                         }
-                    }
+                    }                   
                 }
             }
             return Product;
@@ -1187,6 +1193,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.EstStartingPrice = dataReader.GetDecimalValue("estStartingPrice");
                         item.Rate = dataReader.GetDecimalValue("rate");
                         item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        item.UpdatedBy = dataReader.GetIntegerValue("updatedBy");
+                        item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        item.UpdatedAt = dataReader.GetDateTimeValue("updatedAt");
                         item.IsRateLocked = dataReader.GetBooleanValue("IsRateLocked");
                         item.PaymentReceived = dataReader.GetDecimalValue("paymentReceived");
                         item.AdvancePayment = dataReader.GetDecimalValue("advancePayment");
@@ -1318,6 +1327,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.EstStartingPrice = dataReader.GetDecimalValue("estStartingPrice");
                         item.Rate = dataReader.GetDecimalValue("rate");
                         item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        item.UpdatedBy = dataReader.GetIntegerValue("updatedBy");
+                        item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        item.UpdatedAt = dataReader.GetDateTimeValue("updatedAt");
                         item.IsRateLocked = dataReader.GetBooleanValue("IsRateLocked");
                         item.PaymentReceived = dataReader.GetDecimalValue("paymentReceived");
                         item.AdvancePayment = dataReader.GetDecimalValue("advancePayment");
