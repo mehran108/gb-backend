@@ -1291,6 +1291,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                     while (dataReader.Read())
                     {
                         item.OrderType = new OrderType();
+                        item.OrderStatus = new OrderStatus();
                         item.Customer = new Customer();
                         item.OrderDelievery = new OrderDelievery();
                         var Customer = new Customer();
