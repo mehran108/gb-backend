@@ -947,6 +947,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.CreatedBy = dataReader.GetIntegerValue("createdBy");
                         item.Title = dataReader.GetStringValue("title");
                         item.ReferenceSKU = dataReader.GetStringValue("referenceSKU");
+                        item.IsSold = dataReader.GetBooleanValue("isSold");
 
                         Product = item;
                     }
