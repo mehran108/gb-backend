@@ -1176,6 +1176,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.OrderType = new OrderType();
                         item.Customer = new Customer();
                         var Customer = new Customer();
+                        item.OrderDelievery = new OrderDelievery();
 
                         item.ProductId = dataReader.GetIntegerValue("productId");
                         item.OrderId = dataReader.GetIntegerValue("orderId");

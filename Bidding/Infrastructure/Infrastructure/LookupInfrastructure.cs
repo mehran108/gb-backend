@@ -492,25 +492,26 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return list;
         }
-        //public async Task<ActionResult<IEnumerable<DelieveryMethod>>> GetAllOrderStatus()
-        //{
-        //    var list = new List<DelieveryMethod>();
-        //    using (var dataReader = await ExecuteReader(null, "GetAllDelieveryMethodGb", CommandType.StoredProcedure))
-        //    {
-        //        if (dataReader != null && dataReader.HasRows)
-        //        {
-        //            while (dataReader.Read())
-        //            {
-        //                list.Add(new DelieveryMethod
-        //                {
-        //                    DelieveryMethodId = dataReader.GetIntegerValue("deliveryMethodId"),
-        //                    Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
-        //                });
-        //            }
-        //        }
-        //    }
-        //    return list;
-        //}
+        public async Task<IEnumerable<OrderStatus>> GetAllOrderStatus()
+        {
+            var list = new List<OrderStatus>();
+            using (var dataReader = await ExecuteReader(null, "GetAllOrderStatus", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new OrderStatus
+                        {
+                            OrderStatusId = dataReader.GetIntegerValue("orderStatusId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                            PublicDescription = dataReader.GetStringValue("publicDescription")
+                        });
+                    }
+                }
+            }
+            return list;
+        }
 
 
 

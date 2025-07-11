@@ -170,5 +170,11 @@ namespace GoldBank.Controllers
             var result = await this.LookupApplication.GetAllDeliveryMethods();
             return Ok(result);
         }
+        [HttpGet("GetAllOrderStatus")]
+        public async Task<ActionResult<IEnumerable<OrderStatus>>> GetAllOrderStatus()
+        {
+            var result = await this.LookupApplication.GetAllOrderStatus();
+            return Ok(result);
+        }
     }
 }

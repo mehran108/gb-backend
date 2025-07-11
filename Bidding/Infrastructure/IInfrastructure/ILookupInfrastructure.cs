@@ -29,5 +29,6 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<IEnumerable<Store>> GetAllStores();
         Task<IEnumerable<OrderType>> GetAllOrderTypes();
         Task<IEnumerable<DelieveryMethod>> GetAllDeliveryMethods();
+        Task<IEnumerable<OrderStatus>> GetAllOrderStatus();
     }
 }
