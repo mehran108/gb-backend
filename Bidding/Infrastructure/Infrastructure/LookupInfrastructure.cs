@@ -505,7 +505,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         {
                             OrderStatusId = dataReader.GetIntegerValue("orderStatusId"),
                             Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
-                            PublicDescription = dataReader.GetStringValue("publicDescription")
+                            PublicDescription = dataReader.GetStringValue("publicDescription"),
+                            StatusClass = dataReader.GetStringValue("statusClass")
                         });
                     }
                 }
