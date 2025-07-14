@@ -17,7 +17,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         private const string AddStoredProcedureName = "ApplicationUserAdd";
         private const string UpdateStoredProcedureName = "ApplicationUserUpdate";
         private const string ActivateStoredProcedureName = "ApplicationUserActivate";
-        private const string GetStoredProcedureName = "ApplicationUserGetById";
+        private const string GetStoredProcedureName = "ApplicationUserGetById_gb";
         private const string GetAllStoredProcedureName = "ApplicationUserGetAll";
         private const string ApplicationUserIdColumnName = "ApplicationUserId";
         private const string UsernameColumnName = "Username";
@@ -56,7 +56,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         ,base.GetParameter(ApplicationUserInfrastructure.PasswordHashParameterName,ApplicationUser.PasswordHash)
                         ,base.GetParameter(ApplicationUserInfrastructure.CreatedDateParameterName,ApplicationUser.CreatedDate)
                         ,base.GetParameter(ApplicationUserInfrastructure.CreatedByIdParameterName,ApplicationUser.CurrentUserId)
-                        ,base.GetParameter(ApplicationUserInfrastructure.ActiveParameterName,ApplicationUser.Active)
+                        ,base.GetParameter(ApplicationUserInfrastructure.ActiveParameterName,ApplicationUser.IsActive)
 
                 };
             await base.ExecuteNonQuery(parameters, ApplicationUserInfrastructure.AddStoredProcedureName, CommandType.StoredProcedure);
@@ -76,7 +76,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 ,base.GetParameter(ApplicationUserInfrastructure.ModifiedDateParameterName,ApplicationUser.ModifiedDate)
                 ,base.GetParameter(ApplicationUserInfrastructure.CurrentUserIdParameterName,ApplicationUser.CurrentUserId)
                 ,base.GetParameter(ApplicationUserInfrastructure.ModifiedByIdParameterName,ApplicationUser.ModifiedById)
-                ,base.GetParameter(ApplicationUserInfrastructure.ActiveParameterName,ApplicationUser.Active)
+                ,base.GetParameter(ApplicationUserInfrastructure.ActiveParameterName,ApplicationUser.IsActive)
 
             };
             var ReturnValue = await base.ExecuteNonQuery(parameters, ApplicationUserInfrastructure.UpdateStoredProcedureName, CommandType.StoredProcedure);
@@ -88,7 +88,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             ApplicationUser ApplicationUserItem = new ApplicationUser();
             var parameters = new List<DbParameter>
             {
-            base.GetParameter(ApplicationUserInfrastructure.ApplicationUserIdParameterName,ApplicationUser.ApplicationUserId),
+            base.GetParameter("PUserId",ApplicationUser.ApplicationUserId),
             base.GetParameter(ApplicationUserInfrastructure.EmailParameterName,ApplicationUser.Email),
             };
             using (var dataReader = await base.ExecuteReader(parameters, ApplicationUserInfrastructure.GetStoredProcedureName, CommandType.StoredProcedure))
@@ -100,16 +100,14 @@ namespace GoldBank.Infrastructure.Infrastructure
 
                         ApplicationUserItem = new ApplicationUser
                         {
-                            ApplicationUserId = dataReader.GetIntegerValue(ApplicationUserInfrastructure.ApplicationUserIdColumnName),
-                            UserName = dataReader.GetStringValue(ApplicationUserInfrastructure.UsernameColumnName),
-                            Email = dataReader.GetStringValue(ApplicationUserInfrastructure.EmailColumnName),
-                            FirstName = dataReader.GetStringValue(ApplicationUserInfrastructure.FirstnameColumnName),
-                            LastName = dataReader.GetStringValue(ApplicationUserInfrastructure.LastnameColumnName),
-                            CreatedDate = dataReader.GetDateTimeValue(ApplicationUserInfrastructure.CreatedDateColumnName),
-                            ModifiedDate = dataReader.GetDateTimeValue(ApplicationUserInfrastructure.ModifiedDateColumnName),
-                            CreatedById = dataReader.GetIntegerValue(ApplicationUserInfrastructure.CreatedByIdColumnName),
-                            ModifiedById = dataReader.GetIntegerValue(ApplicationUserInfrastructure.ModifiedByIdColumnName),
-                            Active = dataReader.GetBooleanValue(ApplicationUserInfrastructure.ActiveColumnName)
+                            ApplicationUserId = dataReader.GetIntegerValue("Id"),
+                            Email = dataReader.GetStringValue("email"),
+                            FirstName = dataReader.GetStringValue("name"),
+                            Phone = dataReader.GetStringValue("phone"),
+                            CreatedAt = dataReader.GetDateTimeValue("createdAt"),
+                            UpdatedAt = dataReader.GetDateTimeValue("updatedAt"),
+                            IsActive = dataReader.GetBooleanValue("isActive"),
+                            PasswordHash = dataReader.GetStringValue("password"),
 
                         };
                        
@@ -132,7 +130,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
             };
 
-            using (var dataReader = await base.ExecuteReader(parameters, ApplicationUserInfrastructure.GetAllStoredProcedureName, CommandType.StoredProcedure))
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAllApplicationUsersGb", CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
@@ -141,16 +139,14 @@ namespace GoldBank.Infrastructure.Infrastructure
                         {
                             ApplicationUserItem = new ApplicationUser
                             {
-                                ApplicationUserId = dataReader.GetIntegerValue(ApplicationUserInfrastructure.ApplicationUserIdColumnName),
-                                UserName = dataReader.GetStringValue(ApplicationUserInfrastructure.UsernameColumnName) ,
-                                Email = dataReader.GetStringValue(ApplicationUserInfrastructure.EmailColumnName),
-                                FirstName = dataReader.GetStringValue(ApplicationUserInfrastructure.FirstnameColumnName),
-                                LastName = dataReader.GetStringValue(ApplicationUserInfrastructure.LastnameColumnName),
-                                CreatedDate = dataReader.GetDateTimeValue(ApplicationUserInfrastructure.CreatedDateColumnName),
-                                ModifiedDate = dataReader.GetDateTimeValue(ApplicationUserInfrastructure.ModifiedDateColumnName),
-                                CreatedById = dataReader.GetIntegerValue(ApplicationUserInfrastructure.CreatedByIdColumnName),
-                                ModifiedById = dataReader.GetIntegerValue(ApplicationUserInfrastructure.ModifiedByIdColumnName),
-                                Active = dataReader.GetBooleanValue(ApplicationUserInfrastructure.ActiveColumnName)
+                                ApplicationUserId = dataReader.GetIntegerValue("Id"),
+                                Email = dataReader.GetStringValue("email"),
+                                FirstName  = dataReader.GetStringValue("name"),
+                                Phone = dataReader.GetStringValue("phone"),
+                                CreatedAt = dataReader.GetDateTimeValue("createdAt"),
+                                UpdatedAt = dataReader.GetDateTimeValue("updatedAt"),
+                                IsActive = dataReader.GetBooleanValue("isActive")
+
                             };
                             ApplicationUserList.Add(ApplicationUserItem);
                         }
@@ -171,7 +167,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 
                  base.GetParameter(ApplicationUserInfrastructure.ApplicationUserIdParameterName,ApplicationUser.ApplicationUserId)
                  ,base.GetParameter(ApplicationUserInfrastructure.CurrentUserIdParameterName,ApplicationUser.CurrentUserId),
-                 base.GetParameter(ApplicationUserInfrastructure.ActiveParameterName,ApplicationUser.Active)
+                 base.GetParameter(ApplicationUserInfrastructure.ActiveParameterName,ApplicationUser.IsActive)
 
                 };
             var returnValue = await base.ExecuteNonQuery(parameters, ApplicationUserInfrastructure.ActivateStoredProcedureName, CommandType.StoredProcedure);

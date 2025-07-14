@@ -12,7 +12,7 @@
         public DateTime ModifiedDate { get; set; }
         public int CreatedById { get; set; }
         public int ModifiedById { get; set; }
-        public bool Active { get; set; }
+        public string Phone {  get; set; }
 
     }
 

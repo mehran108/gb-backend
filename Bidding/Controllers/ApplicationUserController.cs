@@ -42,7 +42,9 @@ namespace GoldBank.Controllers
             ApplicationUser applicationUser = new ApplicationUser();
             applicationUser.ApplicationUserId = ApplicationUserId ?? 0;
             applicationUser.Email = Email;
-            return await applicationUserApplication.Get(applicationUser);
+            var res = await applicationUserApplication.Get(applicationUser);
+            res.PasswordHash = "";
+            return res;
         }
 
 
@@ -69,7 +71,7 @@ namespace GoldBank.Controllers
             applicationUser.Email = user.Email;
             var resultUser = await this.applicationUserApplication.Get(applicationUser);
 
-            if (resultUser.Email != null && resultUser.Active != false)
+            if (resultUser.Email != null && resultUser.IsActive != false)
 
             {
                     bool verified = BCrypt.Net.BCrypt.Verify(user.Password, resultUser.PasswordHash);
