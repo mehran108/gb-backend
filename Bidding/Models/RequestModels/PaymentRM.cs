@@ -1,9 +1,9 @@
 ﻿namespace GoldBank.Models.RequestModels
 {
-    public  class PaymentRM
+    public class PaymentRM
     {
         public AddPaymentRequest PaymentModel { get; set; }
-        public OnlinePaymentRM OnlinePayment { get; set; }
+        public AddOnlinePaymentRequest OnlinePayment { get; set; }
     }
     public class AddPaymentRequest
     {
@@ -22,7 +22,7 @@
         public int OrderId { get; set; }
         public decimal TotalAmount { get; set; }
     }
-    public class OnlinePaymentRM
+    public class AddOnlinePaymentRequest
     {
         public int OnlinePaymentId { get; set; }
         public int PaymentId { get; set; }
@@ -31,9 +31,6 @@
         public int CustomerAccountId { get; set; }
         public int CompanyAccountId { get; set; }
         public string CustomerAccountNumber { get; set; }
-        public bool IsVerificationRequested { get; set; }
-        public bool IsVerificationPassed { get; set; }
-        public bool IsVerificationFailed { get; set; }
         public int CreatedBy { get; set; }
         public List<OnlinePaymentDocumentRM> OnlinePaymentDocumentRM { get; set; }
     }
@@ -42,17 +39,27 @@
         public int OnlinePaymentId { get; set; }
         public int DocumentId { get; set; }
         public bool IsPrimary { get; set; }
-        public int OnlinePaymentDocumentId { get; set; }
+        public int? OnlinePaymentDocumentId { get; set; }
     }
-    public class CardPaymentRM
+    public class VerifyOnlinePaymentRequest
     {
-        public int CardPaymentId { get; set; }
+        public int OnlinePaymentId { get; set; }
+        public bool IsApproved { get; set; }
+        public string Notes { get; set; }
+    }
+    public class ConfirmPaymentRequest
+    {
         public int PaymentId { get; set; }
-        public decimal Amount { get; set; }
+        public decimal CashAmount { get; set; }
+        public List<CardPayment> CardPayment { get; set; }
+        public int CreatedBy { get; set; }
+    }
+    public class CardPayment
+    {
+        public string TransactionId { get; set; }
         public DateTime TransactionDate { get; set; }
         public string ReceiptNo { get; set; }
-        public string TransactionId { get; set; }
-        public int LastFourDigits { get; set; }
-        public int CreatedBy { get; set; }
+        public decimal Amount { get; set; }
+        public int LastFourDigit { get; set; }
     }
 }

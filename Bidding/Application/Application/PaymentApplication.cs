@@ -47,13 +47,17 @@ namespace GoldBank.Application.Application
         {
             return await this.PaymentInfrastructure.AddPayment(paymentRM);
         }
-        public async Task<int> AddOnlinePayment(OnlinePaymentRM paymentRM)
+        public async Task<int> AddOnlinePayment(AddOnlinePaymentRequest paymentRM)
         {
             return await this.PaymentInfrastructure.AddOnlinePayment(paymentRM);
         }
-        public async Task<int> AddCardPayment(CardPaymentRM paymentRM)
+        public async Task<bool> VerifyOnlinePayment(VerifyOnlinePaymentRequest verifyOnlinePaymentRequest)
         {
-            return await this.PaymentInfrastructure.AddCardPayment(paymentRM);
+            return await this.PaymentInfrastructure.VerifyOnlinePayment(verifyOnlinePaymentRequest);
+        }
+        public async Task<bool> ConfirmPayment(ConfirmPaymentRequest confirmPaymentRequest)
+        {
+            return await this.PaymentInfrastructure.ConfirmPayment(confirmPaymentRequest);
         }
     }
 }
