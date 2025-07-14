@@ -654,6 +654,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                                 p_Quantity = stone.Quantity,
                                 p_TotalWeight = stone.TotalWeight,
                                 p_TotalPrice = stone.TotalPrice,
+                                p_MinStoneWeight = stone.MinStoneWeight,
+                                p_MaxStoneWeight = stone.MaxStoneWeight,
+                                p_MinStonePrice = stone.MinStonePrice,
+                                p_MaxStonePrice = stone.MaxStonePrice,
                                 p_CreatedBy = product.CreatedBy
                             },
                             transaction,
@@ -1006,6 +1010,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
                             item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
                             item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                            item.MinWeight = dataReader.GetDecimalValue("minWeight");
+                            item.MaxWeight = dataReader.GetDecimalValue("maxWeight");
 
                             if(Product.ProductId == item.ProductId)
                             {
@@ -1030,6 +1036,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.StoneWeightTypeId = dataReader.GetIntegerValue("stoneWeightTypeId");
                             item.TotalWeight = dataReader.GetDecimalValue("totalWeight");
                             item.TotalPrice = dataReader.GetDecimalValue("totalPrice");
+                            item.MinStoneWeight = dataReader.GetDecimalValue("minStoneWeight");
+                            item.MaxStoneWeight = dataReader.GetDecimalValue("maxStoneWeight");
+                            item.MinStonePrice = dataReader.GetDecimalValue("minStonePrice");
+                            item.MaxStonePrice = dataReader.GetDecimalValue("maxStonePrice");
                             item.IsActive = dataReader.GetBooleanValue("isActive");
                             item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
 
