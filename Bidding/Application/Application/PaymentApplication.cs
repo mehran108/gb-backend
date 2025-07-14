@@ -1,6 +1,7 @@
 ﻿using GoldBank.Application.IApplication;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
+using GoldBank.Models.RequestModels;
 
 namespace GoldBank.Application.Application
 {
@@ -41,6 +42,10 @@ namespace GoldBank.Application.Application
         public Task<bool> Update(Payment entity)
         {
             throw new NotImplementedException();
+        }
+        public async Task<int> AddPayment(PaymentRM paymentRM)
+        {
+            return await this.PaymentInfrastructure.AddPayment(paymentRM);
         }
     }
 }

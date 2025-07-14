@@ -1,5 +1,6 @@
 ﻿using GoldBank.Application.IApplication;
 using GoldBank.Models;
+using GoldBank.Models.RequestModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,6 +41,11 @@ namespace GoldBank.Controllers
         public async Task<AllResponse<Payment>> GetAll(AllRequest<Payment> Payment)
         {
             return await this.PaymentApplication.GetAll(Payment);
+        }
+        [HttpPost("AddPayment")]
+        public async Task<int> AddPayment([FromBody]PaymentRM paymentRM)
+        {
+            return await this.PaymentApplication.AddPayment(paymentRM);
         }
     }
 }
