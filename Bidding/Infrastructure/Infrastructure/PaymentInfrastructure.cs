@@ -172,10 +172,10 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             var parameters = new DynamicParameters();
             parameters.Add("p_onlinePaymentId", onlinePaymentId);
-            parameters.Add("o_Success", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+            parameters.Add("o_PaymentStatus", dbType: DbType.Boolean, direction: ParameterDirection.Output);
 
             await connection.ExecuteAsync("CheckOnlinePaymentStatusGb", parameters, transaction, commandType: CommandType.StoredProcedure);
-            var isSucceed = parameters.Get<bool?>("o_Success");
+            var isSucceed = parameters.Get<bool?>("o_PaymentStatus");
             await transaction.CommitAsync();
 
             return isSucceed;
