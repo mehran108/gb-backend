@@ -162,7 +162,34 @@ namespace GoldBank.Infrastructure.Infrastructure
                     await connection.ExecuteAsync("AddCardPaymentGb", parameters, transaction, commandType: CommandType.StoredProcedure);
                 }
             }
+            await transaction.CommitAsync();
             return isSucceed;
+        }
+        public async Task<bool?> CheckOnlinePaymentStatus(int onlinePaymentId)
+        {
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("p_onlinePaymentId", onlinePaymentId);
+            parameters.Add("p_paymentStatus", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+            await connection.ExecuteAsync("CheckOnlinePaymentStatusGb", parameters, transaction, commandType: CommandType.StoredProcedure);
+            var isSucceed = parameters.Get<bool?>("o_Success");
+            await transaction.CommitAsync();
+
+            return isSucceed;
+
+        }
+        public async void CancelPayment(int paymentId)
+        {
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("p_oPaymentId", paymentId);
+            await connection.ExecuteAsync("CancelPaymentPaymentStatusGb", parameters, transaction, commandType: CommandType.StoredProcedure);
+            await transaction.CommitAsync();
+
         }
     }
 }
