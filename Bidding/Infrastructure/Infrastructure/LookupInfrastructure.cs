@@ -492,6 +492,25 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return list;
         }
+        public async Task<IEnumerable<PaymentType>> GetAllPaymentType()
+        {
+            var list = new List<PaymentType>();
+            using (var dataReader = await ExecuteReader(null, "GetAllPaymentTypeGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new PaymentType
+                        {
+                            PaymentTypeId = dataReader.GetIntegerValue("paymentTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                        });
+                    }
+                }
+            }
+            return list;
+        }
         public async Task<IEnumerable<OrderStatus>> GetAllOrderStatus()
         {
             var list = new List<OrderStatus>();

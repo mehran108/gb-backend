@@ -109,6 +109,10 @@ namespace GoldBank.Application.Application
         {
             return await this.LookupInfrastructure.GetAllOrderStatus();
         }
+        public async Task<IEnumerable<PaymentType>> GetAllPaymentType()
+        {
+            return await this.LookupInfrastructure.GetAllPaymentType();
+        }
 
         public Task<bool> Activate(LookupValue entity)
         {
