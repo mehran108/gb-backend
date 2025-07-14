@@ -5,6 +5,8 @@ namespace GoldBank.Infrastructure.IInfrastructure
 {
     public interface IPaymentInfrastructure : IBaseInfrastructure<Payment>
     {
-        Task<int> AddPayment(PaymentRM paymentRM);
+        Task<int> AddPayment(AddPaymentRequest paymentRM);
+        Task<int> AddOnlinePayment(OnlinePaymentRM paymentRM);
+        Task<int> AddCardPayment(CardPaymentRM paymentRM);
     }
 }

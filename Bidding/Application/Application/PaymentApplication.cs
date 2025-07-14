@@ -43,9 +43,17 @@ namespace GoldBank.Application.Application
         {
             throw new NotImplementedException();
         }
-        public async Task<int> AddPayment(PaymentRM paymentRM)
+        public async Task<int> AddPayment(AddPaymentRequest paymentRM)
         {
             return await this.PaymentInfrastructure.AddPayment(paymentRM);
+        }
+        public async Task<int> AddOnlinePayment(OnlinePaymentRM paymentRM)
+        {
+            return await this.PaymentInfrastructure.AddOnlinePayment(paymentRM);
+        }
+        public async Task<int> AddCardPayment(CardPaymentRM paymentRM)
+        {
+            return await this.PaymentInfrastructure.AddCardPayment(paymentRM);
         }
     }
 }

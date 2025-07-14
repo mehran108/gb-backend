@@ -43,9 +43,19 @@ namespace GoldBank.Controllers
             return await this.PaymentApplication.GetAll(Payment);
         }
         [HttpPost("AddPayment")]
-        public async Task<int> AddPayment([FromBody]PaymentRM paymentRM)
+        public async Task<int> AddPayment([FromBody] AddPaymentRequest paymentRM)
         {
             return await this.PaymentApplication.AddPayment(paymentRM);
+        }
+        [HttpPost("AddOnlinePayment")]
+        public async Task<int> AddOnlinePayment([FromBody]OnlinePaymentRM paymentRM)
+        {
+            return await this.PaymentApplication.AddOnlinePayment(paymentRM);
+        }
+        [HttpPost("AddCardPayment")]
+        public async Task<int> AddCardPayment([FromBody] CardPaymentRM paymentRM)
+        {
+            return await this.PaymentApplication.AddCardPayment(paymentRM);
         }
     }
 }
