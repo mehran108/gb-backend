@@ -158,6 +158,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                     parameters.Add("p_Amount", cardPay.Amount);
                     parameters.Add("p_LastFourDigit", cardPay.LastFourDigit);
                     parameters.Add("p_CreatedBy", confirmPaymentRequest.CreatedBy);
+
+                    await connection.ExecuteAsync("AddCardPaymentGb", parameters, transaction, commandType: CommandType.StoredProcedure);
                 }
             }
             return isSucceed;
