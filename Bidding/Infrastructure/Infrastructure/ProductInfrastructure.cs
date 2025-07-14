@@ -264,6 +264,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_TotalPrice", product.Jewellery.TotalPrice);
                 parameters.Add("p_Title", product.Title);
                 parameters.Add("p_ReferenceSKU", product.ReferenceSKU);
+                parameters.Add("p_MinWeight", product.Jewellery.MinWeight);
+                parameters.Add("p_MaxWeight", product.Jewellery.MaxWeight);
 
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
                 parameters.Add("o_JewelleryId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -307,9 +309,13 @@ namespace GoldBank.Infrastructure.Infrastructure
                         p_Quantity = stone.Quantity,
                         p_TotalWeight = stone.TotalWeight,
                         p_TotalPrice = stone.TotalPrice,
+                        p_MinStoneWeight = stone.MinStoneWeight,
+                        p_MaxStoneWeight = stone.MaxStoneWeight,
+                        p_MinStonePrice = stone.MinStonePrice,
+                        p_MaxStonePrice = stone.MaxStonePrice,
                         p_CreatedBy = product.CreatedBy
                     },
-                    transaction: transaction,
+        transaction: transaction,
                     commandType: CommandType.StoredProcedure);
 
                     int stoneId = await connection.QueryFirstOrDefaultAsync<int>(
@@ -495,6 +501,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                                 p_Quantity = stone.Quantity,
                                 p_TotalWeight = stone.TotalWeight,
                                 p_TotalPrice = stone.TotalPrice,
+                                p_MinStoneWeight = stone.MinStoneWeight,
+                                p_MaxStoneWeight = stone.MaxStoneWeight,
+                                p_MinStonePrice = stone.MinStonePrice,
+                                p_MaxStonePrice = stone.MaxStonePrice,
                                 p_CreatedBy = product.CreatedBy
                             },
                             transaction,
@@ -586,6 +596,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_TotalPrice", product.Jewellery.TotalPrice);
                 parameters.Add("p_Title", product.Title);
                 parameters.Add("p_ReferenceSKU", product.ReferenceSKU);
+                parameters.Add("p_MinWeight", product.Jewellery.MinWeight);
+                parameters.Add("p_MaxWeight", product.Jewellery.MaxWeight);
 
                 // OUT parameters
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
