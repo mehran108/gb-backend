@@ -12,5 +12,6 @@ namespace GoldBank.Application.IApplication
         Task<bool> ConfirmPayment(ConfirmPaymentRequest verifyOnlinePaymentRequest);
         Task<bool?> CheckOnlinePaymentStatus(int onlinePaymentId);
         void CancelPayment(int paymentId);
+        void CancelOnlinePayment(int onlinePaymentId);
     }
 }

@@ -10,7 +10,7 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<bool> VerifyOnlinePayment(VerifyOnlinePaymentRequest verifyOnlinePaymentRequest);
         Task<bool> ConfirmPayment(ConfirmPaymentRequest confirmPaymentRequest);
         Task<bool?> CheckOnlinePaymentStatus(int onlinePaymentId);
-
+        void CancelOnlinePayment(int onlinePaymentId);
         void CancelPayment(int paymentId);
     }
 }

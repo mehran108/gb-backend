@@ -110,7 +110,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                     parameters.Add("p_IsPrimary", paymentOrder.IsPrimary);
                     parameters.Add("p_CreatedBy", paymentRM.CreatedBy);
 
-                    await connection.ExecuteAsync("InsertUpdateOnlinePaymentDocumentGb", parameters, transaction, commandType: CommandType.StoredProcedure);
+                    await connection.ExecuteAsync("InsertOnlinePaymentDocumentGb", parameters, transaction, commandType: CommandType.StoredProcedure);
 
                 }
             }
@@ -172,7 +172,8 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             var parameters = new DynamicParameters();
             parameters.Add("p_onlinePaymentId", onlinePaymentId);
-            parameters.Add("p_paymentStatus", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+            parameters.Add("o_Success", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+
             await connection.ExecuteAsync("CheckOnlinePaymentStatusGb", parameters, transaction, commandType: CommandType.StoredProcedure);
             var isSucceed = parameters.Get<bool?>("o_Success");
             await transaction.CommitAsync();
@@ -186,7 +187,18 @@ namespace GoldBank.Infrastructure.Infrastructure
             using var transaction = await connection.BeginTransactionAsync();
 
             var parameters = new DynamicParameters();
-            parameters.Add("p_oPaymentId", paymentId);
+            parameters.Add("p_PaymentId", paymentId);
+            await connection.ExecuteAsync("CancelPaymentPaymentStatusGb", parameters, transaction, commandType: CommandType.StoredProcedure);
+            await transaction.CommitAsync();
+
+        }
+        public async void CancelOnlinePayment(int onlinePaymentId)
+        {
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("p_OnlinePaymentId", onlinePaymentId);
             await connection.ExecuteAsync("CancelPaymentPaymentStatusGb", parameters, transaction, commandType: CommandType.StoredProcedure);
             await transaction.CommitAsync();
 
