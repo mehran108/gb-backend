@@ -1397,5 +1397,17 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return item;
         }
+        public async Task<bool> UpdateOrderById(Order order)
+        {
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_OrderId",order.OrderId),
+                base.GetParameter("p_OrderStatusId", order.OrderStatusId),
+                base.GetParameter("p_UpdatedBy", order.UpdatedBy)
+            };
+            var ReturnValue = await base.ExecuteNonQuery(parameters, "UpdateOrderById_gb", CommandType.StoredProcedure);
+            return ReturnValue > 0;
+        }
+        
     }
 }

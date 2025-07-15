@@ -14,5 +14,6 @@ namespace GoldBank.Application.IApplication
         Task<AllResponse<Order>> GetAllOrders(AllRequest<OrderRequestVm> order);
         Task<bool> UpdateOrder(Order order);
         Task<Order> GetOrderById(int orderId);
+        Task<bool> UpdateOrderById(Order order);
     }
 }

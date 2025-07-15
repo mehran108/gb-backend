@@ -81,5 +81,9 @@ namespace GoldBank.Application.Application
         {
             return await ProductInfrastructure.GetOrderById(orderId);
         }
+        public async Task<bool> UpdateOrderById(Order order)
+        {
+            return await this.ProductInfrastructure.UpdateOrderById(order);
+        }
     }
 }
