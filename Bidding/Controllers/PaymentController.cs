@@ -67,13 +67,13 @@ namespace GoldBank.Controllers
         {
             return await this.PaymentApplication.CheckOnlinePaymentStatus(onlinePaymentId);
         }
-        [HttpGet("CancelPayment")]
-        public async void CancelPayment([FromQuery] int paymentId)
+        [HttpPost("CancelPayment")]
+        public async void CancelPayment( int paymentId)
         {
             this.PaymentApplication.CancelPayment(paymentId);
         }
-        [HttpGet("CancelOnlinePayment")]
-        public async void CancelOnlinePayment([FromQuery] int onlinePaymentId)
+        [HttpPost("CancelOnlinePayment")]
+        public async void CancelOnlinePayment( int onlinePaymentId)
         {
             this.PaymentApplication.CancelOnlinePayment(onlinePaymentId);
         }
