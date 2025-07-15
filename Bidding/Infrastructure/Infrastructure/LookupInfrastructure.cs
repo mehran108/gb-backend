@@ -532,7 +532,44 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return list;
         }
-
+        public async Task<IEnumerable<CustomerAccount>> GetAllCustomerAccounts()
+        {
+            var list = new List<CustomerAccount>();
+            using (var dataReader = await ExecuteReader(null, "GetAllCustomerAccounts_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new CustomerAccount
+                        {
+                            CustomerAccountId = dataReader.GetIntegerValue("CustomerAccountId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+        public async Task<IEnumerable<CompanyAccount>> GetAllCompanyAccounts()
+        {
+            var list = new List<CompanyAccount>();
+            using (var dataReader = await ExecuteReader(null, "GetAllCompanyAccounts_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new CompanyAccount
+                        {
+                            CompanyAccountId = dataReader.GetIntegerValue("CompanyAccountId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                        });
+                    }
+                }
+            }
+            return list;
+        }
 
 
         public Task<bool> Update(LookupValue lookupValue)

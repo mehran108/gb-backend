@@ -182,5 +182,17 @@ namespace GoldBank.Controllers
             var result = await this.LookupApplication.GetAllPaymentType();
             return Ok(result);
         }
+        [HttpGet("GetAllCustomerAccounts")]
+        public async Task<ActionResult<IEnumerable<CustomerAccount>>> GetAllCustomerAccounts()
+        {
+            var result = await this.LookupApplication.GetAllCustomerAccounts();
+            return Ok(result);
+        }
+        [HttpGet("GetAllCompanyAccounts")]
+        public async Task<ActionResult<IEnumerable<CompanyAccount>>> GetAllCompanyAccounts()
+        {
+            var result = await this.LookupApplication.GetAllCompanyAccounts();
+            return Ok(result);
+        }
     }
 }

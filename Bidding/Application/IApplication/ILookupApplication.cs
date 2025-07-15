@@ -30,5 +30,7 @@ namespace GoldBank.Application.IApplication
         Task<IEnumerable<DelieveryMethod>> GetAllDeliveryMethods();
         Task<IEnumerable<OrderStatus>> GetAllOrderStatus();
         Task<IEnumerable<PaymentType>> GetAllPaymentType();
+        Task<IEnumerable<CustomerAccount>> GetAllCustomerAccounts();
+        Task<IEnumerable<CompanyAccount>> GetAllCompanyAccounts();
     }
 }

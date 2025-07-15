@@ -113,7 +113,14 @@ namespace GoldBank.Application.Application
         {
             return await this.LookupInfrastructure.GetAllPaymentType();
         }
-
+        public async Task<IEnumerable<CustomerAccount>> GetAllCustomerAccounts()
+        {
+            return await this.LookupInfrastructure.GetAllCustomerAccounts();
+        }
+        public async Task<IEnumerable<CompanyAccount>> GetAllCompanyAccounts()
+        {
+            return await this.LookupInfrastructure.GetAllCompanyAccounts();
+        }
         public Task<bool> Activate(LookupValue entity)
         {
             throw new NotImplementedException();
