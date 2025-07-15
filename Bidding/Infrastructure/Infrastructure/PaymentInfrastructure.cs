@@ -124,13 +124,16 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             var parameters = new DynamicParameters();
             parameters.Add("p_OnlinePaymentId", verifyOnlinePaymentRequest.OnlinePaymentId);
-            parameters.Add("P_IsApproved", verifyOnlinePaymentRequest.IsApproved);
-            parameters.Add("P_Notes", verifyOnlinePaymentRequest.Notes);
-            parameters.Add("o_Success", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+            parameters.Add("p_IsApproved", verifyOnlinePaymentRequest.IsApproved == true ? 1: 0,DbType.Byte);
+            parameters.Add("p_Notes", verifyOnlinePaymentRequest.Notes);
+            parameters.Add("o_Success", dbType: DbType.Byte, direction: ParameterDirection.Output);
 
 
             await connection.ExecuteAsync("VerifyOnlinePaymentGb", parameters, transaction, commandType: CommandType.StoredProcedure);
-            var isSucceed = parameters.Get<bool>("o_Success");
+            await transaction.CommitAsync();
+
+            var tinyIntValue = parameters.Get<byte>("o_Success");
+            var isSucceed = tinyIntValue == 1;
             return isSucceed;
 
         }
