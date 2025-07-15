@@ -266,6 +266,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_ReferenceSKU", product.ReferenceSKU);
                 parameters.Add("p_MinWeight", product.Jewellery.MinWeight);
                 parameters.Add("p_MaxWeight", product.Jewellery.MaxWeight);
+                parameters.Add("p_IsSold", product.IsSold);
 
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
                 parameters.Add("o_JewelleryId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -598,6 +599,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_ReferenceSKU", product.ReferenceSKU);
                 parameters.Add("p_MinWeight", product.Jewellery.MinWeight);
                 parameters.Add("p_MaxWeight", product.Jewellery.MaxWeight);
+                parameters.Add("p_IsSold", product.IsSold);
 
                 // OUT parameters
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -1096,7 +1098,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             try
             {
-                if (order.Product != null)
+                if (order.OrderTypeId == 2)// bespoke order
                 {
                     order.Product.IsSold = true;
                     // Pass connection and transaction to reuse Add logic
@@ -1104,6 +1106,11 @@ namespace GoldBank.Infrastructure.Infrastructure
 
                     if (order.ProductId <= 0)
                         throw new Exception("Failed to insert Product inside AddOrder.");
+                }
+                else if(order.OrderTypeId == 1) // direct Sale
+                {
+                    order.Product.IsSold = true;
+                    bool isUpdated = await this.UpdateProduct(order.Product, connection, transaction);
                 }
 
                 // Prepare parameters
