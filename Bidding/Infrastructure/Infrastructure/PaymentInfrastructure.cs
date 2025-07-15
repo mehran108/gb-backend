@@ -188,7 +188,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             var parameters = new DynamicParameters();
             parameters.Add("p_PaymentId", paymentId);
-            await connection.ExecuteAsync("CancelPaymentPaymentStatusGb", parameters, transaction, commandType: CommandType.StoredProcedure);
+            await connection.ExecuteAsync("CancelPaymentGb", parameters, transaction, commandType: CommandType.StoredProcedure);
             await transaction.CommitAsync();
 
         }
@@ -199,7 +199,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             var parameters = new DynamicParameters();
             parameters.Add("p_OnlinePaymentId", onlinePaymentId);
-            await connection.ExecuteAsync("CancelPaymentPaymentStatusGb", parameters, transaction, commandType: CommandType.StoredProcedure);
+            await connection.ExecuteAsync("CancelOnlinePaymentGb", parameters, transaction, commandType: CommandType.StoredProcedure);
             await transaction.CommitAsync();
 
         }
