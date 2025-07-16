@@ -1083,6 +1083,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.DocumentId = dataReader.GetIntegerValue("documentId");
                             item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
                             item.Url = dataReader.GetStringValue("url");
+                            item.IsPostManufactured = dataReader.GetBooleanValue("isPostManufactured");
 
                             var productItem = ProductList.FirstOrDefault(x => x.ProductId == item.ProductId);
                             if (productItem != null)
@@ -1233,6 +1234,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.DocumentId = dataReader.GetIntegerValue("documentId");
                             item.Url = dataReader.GetStringValue("url");
                             item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+                            item.IsPostManufactured = dataReader.GetBooleanValue("isPostManufactured");
 
                             if (Product.ProductId == item.ProductId)
                             {
