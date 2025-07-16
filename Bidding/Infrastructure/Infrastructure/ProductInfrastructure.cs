@@ -941,7 +941,156 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             return Response;
         }
+        public async Task<List<Product>> GetAllProductList()
+        {
+            var Response = new AllResponse<Product>();
+            var ProductList = new List<Product>();
+            var JewelleryList = new List<Jewellery>();
+            var StoneProductList = new List<StoneProduct>();
+            var parameters = new List<DbParameter>
+            { };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAllProductListGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new Product();
+                        item.ProductSource = new ProductSource();
+                        item.Vendor = new Vendor();
 
+
+                        item.ProductTypeId = dataReader.GetIntegerValue(ProductInfrastructure.ProductIdColumnName);
+                        item.ProductId = dataReader.GetIntegerValue("productId");
+                        item.SKU = dataReader.GetStringValue("sKU");
+                        item.ProductSourceId = dataReader.GetIntegerValue("productSourceId");
+                        item.VendorId = dataReader.GetIntegerValue("vendorId");
+                        item.IsActive = dataReader.GetBooleanValue("isActive");
+                        item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        item.StoreId = dataReader.GetIntegerValue("storeId");
+                        item.CreatedAt = dataReader.GetDateTime("createdAt");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        item.ProductSource.ProductSourceId = dataReader.GetIntegerValue("productSourceId");
+                        item.Vendor.VendorId = dataReader.GetIntegerValue("vendorId");
+                        item.Title = dataReader.GetStringValue("title");
+                        item.ReferenceSKU = dataReader.GetStringValue("referenceSKU");
+                        item.IsSold = dataReader.GetBooleanValue("isSold");
+
+                        ProductList.Add(item);
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new Jewellery();
+                            item.JewelleryId = dataReader.GetIntegerValue("jewelleryId");
+                            item.ProductId = dataReader.GetIntegerValue("productId");
+                            item.ProductType = new ProductType();// TODO 
+                            item.PrimaryCategoryIds = dataReader.GetStringValue("primaryCategoryIds");
+                            item.CategoryId = dataReader.GetIntegerValue("categoryId");
+                            item.SubCategoryId = dataReader.GetIntegerValue("subCategoryId");
+                            item.WearingTypeIds = dataReader.GetStringValue("wearingTypeIds");
+                            item.CollectionIds = dataReader.GetStringValue("collectionIds");
+                            item.GenderId = dataReader.GetIntegerValue("genderId");
+                            item.OccasionIds = dataReader.GetStringValue("occasionIds");
+                            item.Description = dataReader.GetStringValue("description");
+                            item.MetalTypeId = dataReader.GetIntegerValue("metalTypeId");
+                            item.MetalPurityTypeId = dataReader.GetIntegerValue("metalPurityTypeId");
+                            item.MetalColorTypeId = dataReader.GetIntegerValue("metalColorTypeId");
+                            item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
+                            item.NetWeight = dataReader.GetIntegerValue("netWeight");
+                            item.WastagePct = dataReader.GetIntegerValue("wastagePct");
+                            item.WastageWeight = dataReader.GetIntegerValue("wastageWeight");
+                            item.TotalWeight = dataReader.GetIntegerValue("totalWeight");
+                            item.Width = dataReader.GetStringValue("width");
+                            item.Bandwidth = dataReader.GetStringValue("bandwidth");
+                            item.Thickness = dataReader.GetStringValue("thickness");
+                            item.Size = dataReader.GetStringValue("size");
+                            item.IsEcommerce = dataReader.GetBooleanValue("isEcommerce");
+                            item.IsEngravingAvailable = dataReader.GetBooleanValue("isEngravingAvailable");
+                            item.LacquerPrice = dataReader.GetDecimalValue("jewelleryId");
+                            item.MakingPrice = dataReader.GetDecimalValue("jewelleryId");
+                            item.TotalPrice = dataReader.GetDecimalValue("totalPrice");
+                            item.IsActive = dataReader.GetBooleanValue("isActive");
+                            item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                            item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                            item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+
+                            var productItem = ProductList.FirstOrDefault(x => x.ProductId == item.ProductId);
+                            if (productItem != null)
+                            {
+                                productItem.Jewellery = item;
+                            }
+                        }
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new StoneProduct();
+                            item.StoneProductId = dataReader.GetIntegerValue("stoneProductId");
+                            item.StoneShapeId = dataReader.GetIntegerValue("stoneShapeId");
+                            item.ProductId = dataReader.GetIntegerValue("productId");
+                            item.Quantity = dataReader.GetIntegerValue("quantity");
+                            item.StoneShape = new StoneShape();
+                            item.StoneShapeId = dataReader.GetIntegerValue("stoneShapeId");
+                            item.StoneType = new StoneType();
+                            item.StoneTypeId = dataReader.GetIntegerValue("stoneTypeId");
+                            item.StoneWeightType = new StoneWeightType();
+                            item.StoneWeightTypeId = dataReader.GetIntegerValue("stoneWeightTypeId");
+                            item.TotalWeight = dataReader.GetDecimalValue("totalWeight");
+                            item.TotalPrice = dataReader.GetDecimalValue("totalPrice");
+                            item.IsActive = dataReader.GetBooleanValue("isActive");
+                            item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+
+                            var productItem = ProductList.FirstOrDefault(x => x.ProductId == item.ProductId);
+                            if (productItem != null)
+                            {
+                                productItem.StoneProducts.Add(item);
+                            }
+                        }
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new StoneDocument();
+                            item.StoneDocumentId = dataReader.GetIntegerValue("stoneDocumentId");
+                            item.StoneId = dataReader.GetIntegerValue("stoneId");
+                            item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.Url = dataReader.GetStringValue("url");
+                            item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+
+                            var filteredProduct = ProductList.SelectMany(p => p.StoneProducts).FirstOrDefault(sp => sp.StoneProductId == item.StoneId);
+
+                            if (filteredProduct != null)
+                            {
+                                filteredProduct.StoneDocuments.Add(item);
+                            }
+                        }
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new ProductDocument();
+                            item.ProductDocumentId = dataReader.GetIntegerValue("productDocumentId");
+                            item.ProductId = dataReader.GetIntegerValue("productId");
+                            item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+                            item.Url = dataReader.GetStringValue("url");
+
+                            var productItem = ProductList.FirstOrDefault(x => x.ProductId == item.ProductId);
+                            if (productItem != null)
+                            {
+                                productItem.ProductDocuments.Add(item);
+                            }
+                        }
+                    }                  
+                }
+            }
+            return ProductList;
+        }
         public async Task<Product> GetProductById(int productId)
         {
 
@@ -1180,6 +1329,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         }
         public async Task<AllResponse<Order>> GetAllOrders(AllRequest<OrderRequestVm> product)
         {
+            var AllProducts = await this.GetAllProductList();
             var Response = new AllResponse<Order>();
             var OrderList = new List<Order>();
             var parameters = new List<DbParameter>
@@ -1237,7 +1387,12 @@ namespace GoldBank.Infrastructure.Infrastructure
 
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = await this.CustomerInfrastructure.Get(Customer);
-                        item.Product = await this.GetProductById(item.ProductId);
+                        var productItem = AllProducts.FirstOrDefault(p => p.ProductId == item.ProductId);
+                        if (productItem != null)
+                        {
+                            item.Product = productItem;
+                        }
+                        //item.Product = await this.GetProductById(item.ProductId);
                         OrderList.Add(item);
                     }
                 }
