@@ -1241,9 +1241,16 @@ namespace GoldBank.Infrastructure.Infrastructure
                         OrderList.Add(item);
                     }
                 }
+
+                if (dataReader.NextResult())
+                {
+                    if (dataReader.Read())
+                    {
+                        Response.TotalRecord = Convert.ToInt32(dataReader.GetDoubleValue("totalRecords"));
+                    }
+                }
             }
             Response.Data = OrderList;
-            Response.TotalRecord = OrderList.Count;
             return Response;
         }
         public async Task<bool> UpdateOrder(Order order)
