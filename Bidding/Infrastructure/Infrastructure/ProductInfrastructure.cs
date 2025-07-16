@@ -634,7 +634,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                                 p_ProductId = productId,
                                 p_DocumentId = doc.DocumentId,
                                 p_IsPrimary = doc.IsPrimary,
-                                p_CreatedBy = product.CreatedBy
+                                p_CreatedBy = product.CreatedBy,
+                                p_IsPostManufactured = doc.IsPostManufactured
                             },
                             transaction,
                             commandType: CommandType.StoredProcedure);
