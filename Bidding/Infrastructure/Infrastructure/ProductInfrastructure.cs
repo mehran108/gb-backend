@@ -1366,6 +1366,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         var item = new Order();
                         item.OrderType = new OrderType();
                         item.Customer = new Customer();
+                        item.CustomCharge = new List<CustomCharge>();
                         var Customer = new Customer();
                         item.OrderDelievery = new OrderDelievery();
 
@@ -1403,6 +1404,22 @@ namespace GoldBank.Infrastructure.Infrastructure
                     }
                 }
 
+                if (dataReader.NextResult())
+                {
+                    while(dataReader.Read())
+                    {
+                        var item = new CustomCharge();
+                        item.CustomChargesId = dataReader.GetIntegerValue("customChargesId");
+                        item.OrderId = dataReader.GetIntegerValue("orderId");
+                        item.Label = dataReader.GetStringValue("label");
+                        item.Value = dataReader.GetDecimalValue("value");
+                        var orderItem = OrderList.FirstOrDefault(o => o.OrderId == item.OrderId);
+                        if (orderItem != null)
+                        {
+                            orderItem?.CustomCharge?.Add(item);
+                        }
+                    }
+                }
                 if (dataReader.NextResult())
                 {
                     if (dataReader.Read())
