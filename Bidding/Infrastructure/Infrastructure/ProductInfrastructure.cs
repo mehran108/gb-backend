@@ -1329,7 +1329,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         }
         public async Task<AllResponse<Order>> GetAllOrders(AllRequest<OrderRequestVm> product)
         {
-            var AllProducts = await this.GetAllProductList();
+            //var AllProducts = await this.GetAllProductList();
             var Response = new AllResponse<Order>();
             var OrderList = new List<Order>();
             var parameters = new List<DbParameter>
@@ -1387,12 +1387,12 @@ namespace GoldBank.Infrastructure.Infrastructure
 
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = await this.CustomerInfrastructure.Get(Customer);
-                        var productItem = AllProducts.FirstOrDefault(p => p.ProductId == item.ProductId);
-                        if (productItem != null)
-                        {
-                            item.Product = productItem;
-                        }
-                        //item.Product = await this.GetProductById(item.ProductId);
+                        //var productItem = AllProducts.FirstOrDefault(p => p.ProductId == item.ProductId);
+                        //if (productItem != null)
+                        //{
+                        //    item.Product = productItem;
+                        //}
+                        item.Product = await this.GetProductById(item.ProductId);
                         OrderList.Add(item);
                     }
                 }
