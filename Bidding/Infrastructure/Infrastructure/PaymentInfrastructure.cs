@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using GoldBank.Infrastructure.Extension;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using GoldBank.Models.Product;
@@ -6,6 +7,7 @@ using GoldBank.Models.RequestModels;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System;
 using System.Data;
+using System.Data.Common;
 using System.Transactions;
 
 namespace GoldBank.Infrastructure.Infrastructure
@@ -27,9 +29,90 @@ namespace GoldBank.Infrastructure.Infrastructure
             throw new NotImplementedException();
         }
 
-        public Task<Payment> Get(Payment entity)
+        public async Task<Payment> Get(Payment entity)
         {
-            throw new NotImplementedException();
+            var res = new Payment();
+            res.OnlinePayment = new List<OnlinePayment>();
+            res.PaymentOrder = new List<PaymentOrder>();
+            var onlinePaymentDocuments = new List<OnlinePaymentDocument>();
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_PaymentId", entity.PaymentId)
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetPaymentById_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        res.PaymentId = dataReader.GetIntegerValue("paymentId");
+                        res.CustomerId = dataReader.GetIntegerValue("customerId");
+                        res.PaymentTypeId = dataReader.GetIntegerValue("paymentTypeId");
+                        res.TotalAmount = dataReader.GetDecimalValue("totalAmount");
+                        res.CashAmount = dataReader.GetDecimalValue("cashAmount");
+                        res.IsConfirmed = dataReader.GetBooleanValue("isConfirmed");
+                        res.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        res.PaymentOrder = new List<PaymentOrder>();
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new PaymentOrder();
+                            item.PaymentOrderId = dataReader.GetIntegerValue("paymentOrderId");
+                            item.PaymentId = dataReader.GetIntegerValue("paymentId");
+                            item.OrderId = dataReader.GetIntegerValue("orderId");
+                            item.TotalAmount = dataReader.GetDecimalValue("totalAmount");
+                            item.PaymentId = dataReader.GetIntegerValue("paymentId");
+                          
+                            res.PaymentOrder.Add(item);
+                        }
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var onlinepayment = new OnlinePayment();
+                            onlinepayment.OnlinePaymentId = dataReader.GetIntegerValue("onlinePaymentId");
+                            onlinepayment.PaymentId = dataReader.GetIntegerValue("paymentId");
+                            onlinepayment.Amount = dataReader.GetDecimalValue("amount");
+                            onlinepayment.TransactionId = dataReader.GetStringValue("transactionId");
+                            onlinepayment.CustomerAccountId = dataReader.GetIntegerValue("customerAccountId");
+                            onlinepayment.CompanyAccountId = dataReader.GetIntegerValue("companyAccountId");
+                            onlinepayment.CustomerAccountNumber = dataReader.GetStringValue("customerAccountNumber");
+                            onlinepayment.IsVerficationRequested = dataReader.GetBooleanValue("isVerificationRequested");
+                            onlinepayment.IsVerficationPassed = dataReader.GetBooleanValue("isVerificationPassed");
+                            onlinepayment.IsVerficationFailed = dataReader.GetBooleanValue("isVerificationFailed");
+                            onlinepayment.OnlinePaymentDocument = new List<OnlinePaymentDocument>();
+                            res.OnlinePayment.Add(onlinepayment);
+                        }
+                    }
+
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new OnlinePaymentDocument();
+                            item.OnlinePaymentDocumentId = dataReader.GetIntegerValue("onlinePaymentDocumentId");
+                            item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.OnlinePaymentId = dataReader.GetIntegerValue("OnlinePaymentId");
+                            item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+
+                            var orderItem = res.OnlinePayment?.FirstOrDefault(o => o.OnlinePaymentId == item.OnlinePaymentId);
+
+                            if (orderItem != null)
+                            {
+                                if (orderItem.OnlinePaymentDocument == null)
+                                {
+                                    orderItem.OnlinePaymentDocument = new List<OnlinePaymentDocument>();
+                                }
+                                orderItem.OnlinePaymentDocument.Add(item);
+                            }
+                        }
+                    }
+                }
+            }
+            return res;
         }
 
         public Task<AllResponse<Payment>> GetAll(AllRequest<Payment> entity)

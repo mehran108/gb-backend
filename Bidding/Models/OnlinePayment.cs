@@ -13,6 +13,7 @@ namespace GoldBank.Models
         public bool IsVerficationRequested { get; set; }
         public bool IsVerficationPassed { get; set; }
         public bool IsVerficationFailed { get; set; }
+        public List<OnlinePaymentDocument> OnlinePaymentDocument { get;set; }
 
     }
     public class OnlinePaymentDocument : BaseDomain

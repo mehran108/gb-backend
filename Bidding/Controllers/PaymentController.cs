@@ -31,9 +31,9 @@ namespace GoldBank.Controllers
         }
 
         [HttpGet("Get")]
-        public async Task<Payment> GetById([FromQuery] int PaymentId)
+        public async Task<Payment> GetById([FromQuery] int paymentId)
         {
-            var Payment = new Payment { PaymentId = PaymentId };
+            var Payment = new Payment { PaymentId = paymentId };
             return await this.PaymentApplication.Get(Payment);
         }
 

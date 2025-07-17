@@ -6,11 +6,13 @@ namespace GoldBank.Models
     {
         public int PaymentId { get; set; }
         public int CustomerId { get; set; }
+        public Customer? Customer { get; set; }
         public int PaymentTypeId { get; set; }
         public decimal? TotalAmount { get; set; }
         public decimal? CashAmount { get; set; }
         public bool IsConfirmed { get; set; }
         public List<PaymentOrder> PaymentOrder {  get; set; }
+        public List<OnlinePayment> OnlinePayment { get; set; }
     }
     public class PaymentOrder : BaseDomain
     {

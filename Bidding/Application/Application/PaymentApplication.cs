@@ -24,9 +24,9 @@ namespace GoldBank.Application.Application
             return await this.PaymentInfrastructure.Add(entity);
         }
 
-        public Task<Payment> Get(Payment entity)
+        public async Task<Payment> Get(Payment entity)
         {
-            throw new NotImplementedException();
+            return await this.PaymentInfrastructure.Get(entity);
         }
 
         public Task<AllResponse<Payment>> GetAll(AllRequest<Payment> entity)
