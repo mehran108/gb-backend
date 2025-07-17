@@ -4,6 +4,7 @@ using GoldBank.Infrastructure.Extension;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using GoldBank.Models.Product;
+using GoldBank.Models.RequestModels;
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
 using MySqlX.XDevAPI.Common;
@@ -1593,6 +1594,19 @@ namespace GoldBank.Infrastructure.Infrastructure
             var ReturnValue = await base.ExecuteNonQuery(parameters, "UpdateOrderById_gb", CommandType.StoredProcedure);
             return ReturnValue > 0;
         }
-        
+        public async Task<bool> DeleteOrder(Order order)
+        {
+           
+            using var connection = base.GetConnection();
+            var parameters = new DynamicParameters();
+            parameters.Add("p_OrderId", order.OrderId);
+            parameters.Add("P_UpdatedBy", order.UpdatedBy);
+            parameters.Add("o_updated", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            await connection.ExecuteAsync("DeleteOrderById_gb", parameters, commandType: CommandType.StoredProcedure);
+            var succeed = parameters.Get<int>("o_updated");
+            return succeed == 1;            
+        }
+
     }
 }
