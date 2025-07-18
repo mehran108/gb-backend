@@ -17,5 +17,6 @@ namespace GoldBank.Models.Product
         public ICollection<ProductDocument> ProductDocuments { get; set; } = new List<ProductDocument>();
         public string? ReferenceSKU { get; set; }
         public bool IsSold { get; set; }
+        public bool IsReserved { get; set; } = false;
     }
 }

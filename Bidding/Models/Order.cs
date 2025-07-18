@@ -13,11 +13,13 @@
         public decimal EstStartingPrice { get; set; } = 0;
         public decimal EstMaxPrice { get; set; } = 0;
         public decimal Rate { get; set; } = 0;
+        public decimal TotalPayment { get; set; } = 0;
         public bool IsRateLocked { get; set; } = false;
         public decimal AdvancePayment { get; set; } = 0;
         public decimal PendingPayment { get; set; } = 0;
         public decimal PaymentReceived { get; set; } = 0;
         public int OrderStatusId { get; set; }
+        public decimal? AdvancePaymentPct { get; set; } = 0;
         public OrderStatus? OrderStatus { get; set; }
         public List<CustomCharge>? CustomCharge { get; set; }
         public OrderDelievery? OrderDelievery { get; set; }
