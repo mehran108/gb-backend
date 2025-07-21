@@ -268,6 +268,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_MinWeight", product.Jewellery.MinWeight);
                 parameters.Add("p_MaxWeight", product.Jewellery.MaxWeight);
                 parameters.Add("p_IsSold", product.IsSold);
+                parameters.Add("p_IsReserved", product.IsReserved);
 
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
                 parameters.Add("o_JewelleryId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -602,6 +603,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_MinWeight", product.Jewellery.MinWeight);
                 parameters.Add("p_MaxWeight", product.Jewellery.MaxWeight);
                 parameters.Add("p_IsSold", product.IsSold);
+                parameters.Add("p_IsReserved", product.IsReserved);
 
                 // OUT parameters
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -788,7 +790,8 @@ namespace GoldBank.Infrastructure.Infrastructure
             base.GetParameter("@p_StoneShapeId", ToDbValue(product.Data.StoneShapeId)),
             base.GetParameter("@p_StoneWeightTypeId", ToDbValue(product.Data.StoneWeightTypeId)),
             base.GetParameter("@p_ReferenceSKU", ToDbValue(product.Data.ReferenceSKU)),
-            base.GetParameter("@p_IsSold", ToDbValue(product.Data.IsSold))
+            base.GetParameter("@p_IsSold", ToDbValue(product.Data.IsSold)),
+            base.GetParameter("@p_IsReserved", ToDbValue(product.Data.IsReserved))
                 };
             using (var dataReader = await base.ExecuteReader(parameters, "GetAllProductsGb", CommandType.StoredProcedure))
             {
@@ -1260,17 +1263,20 @@ namespace GoldBank.Infrastructure.Infrastructure
                 if (order.OrderTypeId == 2)// bespoke order
                 {
                     order.Product.IsSold = true;
+                    order.Product.IsReserved = true;
                     // Pass connection and transaction to reuse Add logic
                     order.ProductId = await this.AddProduct(order.Product, connection, transaction);
 
                     if (order.ProductId <= 0)
                         throw new Exception("Failed to insert Product inside AddOrder.");
                 }
-                else if(order.OrderTypeId == 1) // direct Sale
+                else if(order.OrderTypeId == 1 || order.OrderTypeId == 3 || order.OrderTypeId == 4) // direct Sale orders + rserved + alteration
                 {
-                    order.Product.IsSold = true;
+                    order.Product.IsReserved = true;
+                    order.Product.IsSold = false;
                     bool isUpdated = await this.UpdateProduct(order.Product, connection, transaction);
                 }
+               
 
                 // Prepare parameters
                 var parameters = new DynamicParameters();

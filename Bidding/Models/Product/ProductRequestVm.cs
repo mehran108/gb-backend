@@ -37,5 +37,6 @@
         public int? StoneWeightTypeId { get; set; }
         public string? ReferenceSKU { get; set; }
         public bool? IsSold { get; set; }
+        public bool? IsReserved { get; set; }
     }
 }
