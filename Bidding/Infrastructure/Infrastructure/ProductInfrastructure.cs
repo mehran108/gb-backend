@@ -1619,6 +1619,200 @@ namespace GoldBank.Infrastructure.Infrastructure
             var succeed = parameters.Get<int>("o_updated");
             return succeed == 1;            
         }
+        public async Task<int> AddAlterationDetails(AlterationDetails alterationDetails)
+        {
+            return await AddAlterationDetails(alterationDetails, null, null);
+        }
+        public async Task<bool> UpdateAlterationDetails(AlterationDetails alterationDetails)
+        {
+            return await UpdateAlterationDetails(alterationDetails, null, null);
+        }
+        private async Task<bool> UpdateAlterationDetails(AlterationDetails alterationDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+             var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_CurrentJewellerySize", alterationDetails.CurrentJewellerySize);
+                parameters.Add("p_DesiredJewellerySize", alterationDetails.DesiredJewellerySize);
+                parameters.Add("p_SizeNote", alterationDetails.SizeNote);
+                parameters.Add("p_ResizingPrice", alterationDetails.ResizingPrice);
+                parameters.Add("p_LacquerTypeId", alterationDetails.LacquerTypeId);
+                parameters.Add("p_LacquerNote", alterationDetails.LacquerNote);
+                parameters.Add("p_LacquerReferenceSKU", alterationDetails.LacquerReferenceSKU);
+                parameters.Add("p_LacquerPrice", alterationDetails.LacquerPrice);
+                parameters.Add("p_OtherDescription", alterationDetails.OtherDescription);
+                parameters.Add("p_OtherPrice", alterationDetails.OtherPrice);
+                parameters.Add("p_ProductTotalPrice", alterationDetails.ProductTotalPrice);
+                parameters.Add("p_WeightChange", alterationDetails.WeightChange);
+                parameters.Add("p_WeightChangePrice", alterationDetails.WeightChangePrice);
+                parameters.Add("p_UpdatedBy", alterationDetails.UpdatedBy);
+                parameters.Add("p_AlterationDetailsId", alterationDetails.AlterationDetailsId);
+                parameters.Add("o_AlterationDetailsId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "UpdateAlterationDetailsGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int alterationDetailsId = parameters.Get<int>("o_AlterationDetailsId");
+
+                if (alterationDetailsId <= 0)
+                {
+                    await transaction.RollbackAsync();
+                    return false;
+                }
+
+                // Product Documents
+                foreach (var doc in alterationDetails.Documents ?? Enumerable.Empty<AlterationDetailsDocument>())
+                {
+                    await connection.ExecuteAsync("InsertUpdateAlterationDetailsDocumentGb", new
+                    {
+                        p_AlterationDetailsId = alterationDetailsId,
+                        p_DocumentId = doc.DocumentId,
+                        p_CreatedBy = doc.CreatedBy,
+                        p_IsPostManufactured = doc.IsPostAlteration,
+                        p_IsLacquer = doc.IsLacquer,
+                    },
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure);
+                }
+
+                // Stone Products and Documents
+                foreach (var stone in alterationDetails.Stones ?? Enumerable.Empty<StoneAlteration>())
+                {
+                    await connection.ExecuteAsync("InsertUpdateAlterationStoneGb", new
+                    {
+                        p_AlterationDetailsId = alterationDetailsId,
+                        p_CurrentStoneTypeId = stone.CurrentStoneTypeId,
+                        p_DesiredStoneTypeId = stone.DesiredStoneTypeId,
+                        p_AdditionalNote = stone.AdditionalNote,
+                        p_ReferenceSKU = stone.ReferenceSKU,
+                        p_WeightTypeId = stone.WeightTypeId,
+                        p_Weight = stone.Weight,
+                        p_Price = stone.Price,
+                        p_CreatedBy = alterationDetails.CreatedBy
+                    },
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure);
+
+                }
+
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+                return alterationDetailsId > 0;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
+
+        
+        private async Task<int> AddAlterationDetails(AlterationDetails alterationDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+             var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_CurrentJewellerySize", alterationDetails.CurrentJewellerySize);
+                parameters.Add("p_DesiredJewellerySize", alterationDetails.DesiredJewellerySize);
+                parameters.Add("p_SizeNote", alterationDetails.SizeNote);
+                parameters.Add("p_ResizingPrice", alterationDetails.ResizingPrice);
+                parameters.Add("p_LacquerTypeId", alterationDetails.LacquerTypeId);
+                parameters.Add("p_LacquerNote", alterationDetails.LacquerNote);
+                parameters.Add("p_LacquerReferenceSKU", alterationDetails.LacquerReferenceSKU);
+                parameters.Add("p_LacquerPrice", alterationDetails.LacquerPrice);
+                parameters.Add("p_OtherDescription", alterationDetails.OtherDescription);
+                parameters.Add("p_OtherPrice", alterationDetails.OtherPrice);
+                parameters.Add("p_ProductTotalPrice", alterationDetails.ProductTotalPrice);
+                parameters.Add("p_WeightChange", alterationDetails.WeightChange);
+                parameters.Add("p_WeightChangePrice", alterationDetails.WeightChangePrice);
+                parameters.Add("p_CreatedBy", alterationDetails.CreatedBy);
+                parameters.Add("o_AlterationDetailsId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "AddAlterationDetailsGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int alterationDetailsId = parameters.Get<int>("o_AlterationDetailsId");
+
+                if (alterationDetailsId <= 0)
+                {
+                    await transaction.RollbackAsync();
+                    throw new Exception("Product  insertion failed.");
+                }
+
+                // Product Documents
+                foreach (var doc in alterationDetails.Documents ?? Enumerable.Empty<AlterationDetailsDocument>())
+                {
+                    await connection.ExecuteAsync("InsertUpdateAlterationDetailsDocumentGb", new
+                    {
+                        p_AlterationDetailsId = alterationDetailsId,
+                        p_DocumentId = doc.DocumentId,
+                        p_CreatedBy = doc.CreatedBy,
+                        p_IsPostManufactured = doc.IsPostAlteration,
+                        p_IsLacquer = doc.IsLacquer,
+                    },
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure);
+                }
+
+                // Stone Products and Documents
+                foreach (var stone in alterationDetails.Stones ?? Enumerable.Empty<StoneAlteration>())
+                {
+                    await connection.ExecuteAsync("InsertUpdateAlterationStoneGb", new
+                    {
+                        p_AlterationDetailsId = alterationDetailsId,
+                        p_CurrentStoneTypeId = stone.CurrentStoneTypeId,
+                        p_DesiredStoneTypeId = stone.DesiredStoneTypeId,
+                        p_AdditionalNote = stone.AdditionalNote,
+                        p_ReferenceSKU = stone.ReferenceSKU,
+                        p_WeightTypeId = stone.WeightTypeId,
+                        p_Weight = stone.Weight,
+                        p_Price = stone.Price,
+                        p_CreatedBy = alterationDetails.CreatedBy
+                    },
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure);
+
+                }
+
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+                return alterationDetailsId;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
+
 
     }
 }
