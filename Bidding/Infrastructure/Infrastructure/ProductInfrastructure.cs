@@ -1274,9 +1274,12 @@ namespace GoldBank.Infrastructure.Infrastructure
                 {
                     order.Product.IsReserved = true;
                     order.Product.IsSold = false;
-                    bool isUpdated = await this.UpdateProduct(order.Product, connection, transaction);
+                    bool isUpdated = await this.UpdateProduct(order.Product, connection, transaction);                    
                 }
-               
+                if (order.AlterationDetails != null && order.OrderTypeId == 4)
+                {
+                    order.AlterationDetailsId = await this.AddAlterationDetails(order.AlterationDetails, connection, transaction);
+                }
 
                 // Prepare parameters
                 var parameters = new DynamicParameters();
@@ -1299,6 +1302,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_DelieveryAddress", order.OrderDelievery?.DelieveryAddress);
                 parameters.Add("p_AdvancePaymentPct", order.AdvancePaymentPct);
                 parameters.Add("p_TotalPayment", order.TotalPayment);
+                parameters.Add("p_AlterationDetailsId", order.AlterationDetailsId);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
@@ -1452,6 +1456,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             try
             {
+                int alterationDetailsId = order.AlterationDetails.AlterationDetailsId;
                 if (order.Product != null)
                 {
                     // Pass connection and transaction to reuse Add logic
@@ -1460,7 +1465,22 @@ namespace GoldBank.Infrastructure.Infrastructure
                     if (!isUpdate)
                         throw new Exception("Failed to update Product inside Order.");
                 }
-
+                if (order.AlterationDetails != null && order.OrderTypeId == 4)
+                {
+                    if (order.AlterationDetails.AlterationDetailsId > 0)
+                    {
+                        bool res = await this.UpdateAlterationDetails(order.AlterationDetails, connection, transaction);
+                        if (!res)
+                            throw new Exception("Failed to update Alteration.");
+                    }
+                    else
+                    {
+                        alterationDetailsId = await this.AddAlterationDetails(order.AlterationDetails, connection, transaction);
+                        if (alterationDetailsId == 0)
+                            throw new Exception("Failed to Add Alteration Details."); 
+                    }
+                }
+                
                 // Prepare parameters
                 var parameters = new DynamicParameters();
                 parameters.Add("p_EstStartingPrice", order.EstStartingPrice);
@@ -1480,6 +1500,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_OrderTypeId", order.OrderTypeId);
                 parameters.Add("p_AdvancePaymentPct", order.AdvancePaymentPct);
                 parameters.Add("p_TotalPayment", order.TotalPayment);
+                parameters.Add("p_AlterationDetailsId", alterationDetailsId);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
@@ -1681,8 +1702,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                     {
                         p_AlterationDetailsId = alterationDetailsId,
                         p_DocumentId = doc.DocumentId,
-                        p_CreatedBy = doc.CreatedBy,
-                        p_IsPostManufactured = doc.IsPostAlteration,
+                        p_CreatedBy = alterationDetails.CreatedBy,
+                        p_IsPostAlteration = doc.IsPostAlteration,
+                        p_IsPrimary = doc.IsPrimary,
                         p_IsLacquer = doc.IsLacquer,
                     },
                     transaction: transaction,
@@ -1702,7 +1724,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         p_WeightTypeId = stone.WeightTypeId,
                         p_Weight = stone.Weight,
                         p_Price = stone.Price,
-                        p_CreatedBy = alterationDetails.CreatedBy
+                        p_CreatedBy = alterationDetails.CreatedBy,
+                        p_StoneAlterationId = stone.StoneAlterationId
                     },
                     transaction: transaction,
                     commandType: CommandType.StoredProcedure);
@@ -1774,8 +1797,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                     {
                         p_AlterationDetailsId = alterationDetailsId,
                         p_DocumentId = doc.DocumentId,
-                        p_CreatedBy = doc.CreatedBy,
-                        p_IsPostManufactured = doc.IsPostAlteration,
+                        p_CreatedBy = alterationDetails.CreatedBy,
+                        p_IsPostAlteration = doc.IsPostAlteration,
+                        p_IsPrimary = doc.IsPrimary,
                         p_IsLacquer = doc.IsLacquer,
                     },
                     transaction: transaction,
@@ -1795,7 +1819,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         p_WeightTypeId = stone.WeightTypeId,
                         p_Weight = stone.Weight,
                         p_Price = stone.Price,
-                        p_CreatedBy = alterationDetails.CreatedBy
+                        p_CreatedBy = alterationDetails.CreatedBy,
+                        p_StoneAlterationId = stone.StoneAlterationId
                     },
                     transaction: transaction,
                     commandType: CommandType.StoredProcedure);

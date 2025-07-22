@@ -7,5 +7,6 @@
         public int DocumentId { get; set; }
         public bool IsLacquer { get; set; }
         public bool IsPostAlteration { get; set; }
+        public bool IsPrimary { get; set; }
     }
 }
