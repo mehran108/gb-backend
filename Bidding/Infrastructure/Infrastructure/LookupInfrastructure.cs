@@ -571,7 +571,25 @@ namespace GoldBank.Infrastructure.Infrastructure
             return list;
         }
 
-
+        public async Task<IEnumerable<LacquerType>> GetAllLacquerTypes()
+        {
+            var list = new List<LacquerType>();
+            using (var dataReader = await ExecuteReader(null, "GetAllLacquerTypes_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new LacquerType
+                        {
+                            LacquerTypeId = dataReader.GetIntegerValue("lacquerTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                        });
+                    }
+                }
+            }
+            return list;
+        }
         public Task<bool> Update(LookupValue lookupValue)
         {
             throw new NotImplementedException();

@@ -121,6 +121,10 @@ namespace GoldBank.Application.Application
         {
             return await this.LookupInfrastructure.GetAllCompanyAccounts();
         }
+        public async Task<IEnumerable<LacquerType>> GetAllLacquerTypes()
+        {
+            return await this.LookupInfrastructure.GetAllLacquerTypes();
+        }
         public Task<bool> Activate(LookupValue entity)
         {
             throw new NotImplementedException();

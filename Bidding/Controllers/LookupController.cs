@@ -194,5 +194,11 @@ namespace GoldBank.Controllers
             var result = await this.LookupApplication.GetAllCompanyAccounts();
             return Ok(result);
         }
+        [HttpGet("GetAllLacquerTypes")]
+        public async Task<ActionResult<IEnumerable<LacquerType>>> GetAllLacquerTypes()
+        {
+            var result = await this.LookupApplication.GetAllLacquerTypes();
+            return Ok(result);
+        }
     }
 }

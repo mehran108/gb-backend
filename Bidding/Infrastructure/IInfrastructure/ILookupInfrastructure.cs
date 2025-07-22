@@ -33,5 +33,6 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<IEnumerable<PaymentType>> GetAllPaymentType();
         Task<IEnumerable<CustomerAccount>> GetAllCustomerAccounts();
         Task<IEnumerable<CompanyAccount>> GetAllCompanyAccounts();
+        Task<IEnumerable<LacquerType>> GetAllLacquerTypes();
     }
 }
