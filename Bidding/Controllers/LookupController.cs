@@ -1,6 +1,7 @@
 ﻿using GoldBank.Application.IApplication;
 using GoldBank.Models;
 using GoldBank.Models.Product;
+using GoldBank.Models.RequestModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -200,5 +201,30 @@ namespace GoldBank.Controllers
             var result = await this.LookupApplication.GetAllLacquerTypes();
             return Ok(result);
         }
+        [HttpGet("GetAllRepairDamageAreas")]
+        public async Task<ActionResult<IEnumerable<RepairDamageArea>>> GetAllRepairDamageAreas()
+        {
+            var result = await this.LookupApplication.GetAllRepairDamageAreas();
+            return Ok(result);
+        }
+        [HttpGet("GetAllRepairDamageTypes")]
+        public async Task<ActionResult<IEnumerable<RepairDamageType>>> GetAllRepairDamageTypes()
+        {
+            var result = await this.LookupApplication.GetAllRepairDamageTypes();
+            return Ok(result);
+        }
+        [HttpGet("GetAllRepairPolishing")]
+        public async Task<ActionResult<IEnumerable<RepairPolishing>>> GetAllRepairPolishing()
+        {
+            var result = await this.LookupApplication.GetAllRepairPolishing();
+            return Ok(result);
+        }
+        [HttpGet("GetAllRepairCleaning")]
+        public async Task<ActionResult<IEnumerable<RepairCleaning>>> GetAllRepairCleaning()
+        {
+            var result = await this.LookupApplication.GetAllRepairCleaning();
+            return Ok(result);
+        }
+
     }
 }

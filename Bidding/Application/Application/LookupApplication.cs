@@ -3,6 +3,7 @@ using GoldBank.Application.IApplication;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using GoldBank.Models.Product;
+using GoldBank.Models.RequestModels;
 using Microsoft.AspNetCore.Mvc;
 using static Amazon.S3.Util.S3EventNotification;
 
@@ -125,6 +126,25 @@ namespace GoldBank.Application.Application
         {
             return await this.LookupInfrastructure.GetAllLacquerTypes();
         }
+
+        public async Task<IEnumerable<RepairDamageArea>> GetAllRepairDamageAreas()
+        {
+            return await this.LookupInfrastructure.GetAllRepairDamageAreas();
+        }
+
+        public async Task<IEnumerable<RepairDamageType>> GetAllRepairDamageTypes()
+        {
+            return await this.LookupInfrastructure.GetAllRepairDamageTypes();
+        }
+        public async Task<IEnumerable<RepairCleaning>> GetAllRepairCleaning()
+        {
+            return await this.LookupInfrastructure.GetAllRepairCleaning();
+        }
+        public async Task<IEnumerable<RepairPolishing>> GetAllRepairPolishing()
+        {
+            return await this.LookupInfrastructure.GetAllRepairPolishing();
+        }
+
         public Task<bool> Activate(LookupValue entity)
         {
             throw new NotImplementedException();

@@ -8,6 +8,7 @@ using Amazon.Runtime.Documents;
 using GoldBank.Models.Product;
 using Collection = GoldBank.Models.Product.Collection;
 using Microsoft.AspNetCore.Mvc;
+using GoldBank.Models.RequestModels;
 
 namespace GoldBank.Infrastructure.Infrastructure
 {
@@ -590,6 +591,84 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return list;
         }
+
+        public async Task<IEnumerable<RepairDamageArea>> GetAllRepairDamageAreas()
+        {
+            var list = new List<RepairDamageArea>();
+            using (var dataReader = await ExecuteReader(null, "GetAllRepairDamageAreaGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new RepairDamageArea
+                        {
+                            RepairDamageAreaId = dataReader.GetIntegerValue("repairDamageAreaId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+        public async Task<IEnumerable<RepairDamageType>> GetAllRepairDamageTypes()
+        {
+            var list = new List<RepairDamageType>();
+            using (var dataReader = await ExecuteReader(null, "GetAllRepairDamageTypesGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new RepairDamageType
+                        {
+                            RepairDamageTypeId = dataReader.GetIntegerValue("repairDamageTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+        public async Task<IEnumerable<RepairPolishing>> GetAllRepairPolishing()
+        {
+            var list = new List<RepairPolishing>();
+            using (var dataReader = await ExecuteReader(null, "GetAllRepairPolishingGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new RepairPolishing
+                        {
+                            RepairPolishingId = dataReader.GetIntegerValue("repairPolishingId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+        public async Task<IEnumerable<RepairCleaning>> GetAllRepairCleaning()
+        {
+            var list = new List<RepairCleaning>();
+            using (var dataReader = await ExecuteReader(null, "GetAllRepairCleaningGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new RepairCleaning
+                        {
+                            RepairCleaningId = dataReader.GetIntegerValue("repairCleaningId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
         public Task<bool> Update(LookupValue lookupValue)
         {
             throw new NotImplementedException();

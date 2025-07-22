@@ -359,8 +359,217 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
         }
 
+        private async Task<int> AddRepairDetails(RepairDetails repairDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
 
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_ProductTypeId", repairDetails.ProductTypeId);
+                parameters.Add("p_MetalTypeId", repairDetails.MetalTypeId);
+                parameters.Add("p_WeightBeforeRepair", repairDetails.WeightBeforeRepair);
+                parameters.Add("p_RepairCleaningId", repairDetails.RepairCleaningId);
+                parameters.Add("p_CleaningNotes", repairDetails.CleaningNotes);
+                parameters.Add("p_CleaningPrice", repairDetails.CleaningPrice);
+                parameters.Add("p_RepairPolishingId", repairDetails.RepairPolishingId);
+                parameters.Add("p_PolishingNotes", repairDetails.PolishingNotes);
+                parameters.Add("p_PolishingPrice", repairDetails.PolishingPrice);
+                parameters.Add("p_CurrentJewellerySize", repairDetails.CurrentJewellerySize);
+                parameters.Add("p_DesiredJewellerySize", repairDetails.DesiredJewellerySize);
+                parameters.Add("p_ResizingNotes", repairDetails.ResizingNotes);
+                parameters.Add("p_ResizingPrice", repairDetails.ResizingPrice);
+                parameters.Add("p_RepairDamageTypeIds", repairDetails.RepairDamageTypeIds);
+                parameters.Add("p_RepairDamageAreaIds", repairDetails.RepairDamageAreaIds);
+                parameters.Add("p_RepairingNotes", repairDetails.RepairingNotes);
+                parameters.Add("p_RepairingPrice", repairDetails.RepairingPrice);
+                parameters.Add("p_EstRepairingCost", repairDetails.EstRepairingCost);
+                parameters.Add("p_WeightChange", repairDetails.WeightChange);
+                parameters.Add("p_WeightChangePrice", repairDetails.WeightChangePrice);
+                parameters.Add("p_ActualWeight", repairDetails.ActualWeight);
+                parameters.Add("p_TotalRepairCost", repairDetails.TotalRepairCost);
+                parameters.Add("p_WeightTypeId", repairDetails.WeightTypeId);
+                parameters.Add("p_CreatedBy", repairDetails.CreatedBy);
 
+                parameters.Add("o_RepairDetailId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "AddRepairDetailsGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int RepairDetailId = parameters.Get<int>("o_RepairDetailId");
+
+               if (RepairDetailId > 0)
+               {
+                    // Repair Documents
+                    foreach (var doc in repairDetails.RepairDocuments ?? Enumerable.Empty<RepairDocument>())
+                    {
+                        await connection.ExecuteAsync("AddUpdateRepairDocumentGb", new
+                        {
+                            p_RepairDocumentId = doc.RepairDocumentId,
+                            p_RepairDetailId = RepairDetailId,
+                            p_IsPrimary = doc.IsPrimary,
+                            p_IsPostRepair = doc.IsPostRepair,
+                            p_CreatedBy = doc.CreatedBy
+                        },
+                        transaction: transaction,
+                        commandType: CommandType.StoredProcedure);
+                    }
+
+                    foreach (var doc in repairDetails.RepairStoneDetails ?? Enumerable.Empty<RepairStoneDetails>())
+                    {
+                        await connection.ExecuteAsync("AddUpdateRepairStoneDetailGb", new
+                        {
+                            p_RepairStoneDetailId = doc.RepairStoneDetailId ,
+                            p_RepairDetailId = doc.RepairDetailId,
+                            p_CurrentStoneId = doc.CurrentStoneId,
+                            p_DesiredStoneId = doc.DesiredStoneId,
+                            p_IsRepaired = doc.IsRepaired,
+                            p_IsReplacement = doc.IsReplacement,
+                            p_Notes = doc.Notes,
+                            p_Price = doc.Price,
+                            p_ActualWeight = doc.ActualWeight,
+                            p_ActualPrice = doc.ActualPrice,
+                            p_CreatedBy = repairDetails.CreatedBy,
+                            p_UpdatedBy = repairDetails.UpdatedBy
+                        },
+                        transaction: transaction,
+                        commandType: CommandType.StoredProcedure);
+                    }
+                }
+                else
+                {
+                     throw new Exception("Repair details insertion failed");
+                }               
+
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+
+                return RepairDetailId;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
+        private async Task<int> UpdateRepairDetails(RepairDetails repairDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_RepairDetailId", repairDetails.RepairDetailId);
+                parameters.Add("p_ProductTypeId", repairDetails.ProductTypeId);
+                parameters.Add("p_MetalTypeId", repairDetails.MetalTypeId);
+                parameters.Add("p_WeightBeforeRepair", repairDetails.WeightBeforeRepair);
+                parameters.Add("p_RepairCleaningId", repairDetails.RepairCleaningId);
+                parameters.Add("p_CleaningNotes", repairDetails.CleaningNotes);
+                parameters.Add("p_CleaningPrice", repairDetails.CleaningPrice);
+                parameters.Add("p_RepairPolishingId", repairDetails.RepairPolishingId);
+                parameters.Add("p_PolishingNotes", repairDetails.PolishingNotes);
+                parameters.Add("p_PolishingPrice", repairDetails.PolishingPrice);
+                parameters.Add("p_CurrentJewellerySize", repairDetails.CurrentJewellerySize);
+                parameters.Add("p_DesiredJewellerySize", repairDetails.DesiredJewellerySize);
+                parameters.Add("p_ResizingNotes", repairDetails.ResizingNotes);
+                parameters.Add("p_ResizingPrice", repairDetails.ResizingPrice);
+                parameters.Add("p_RepairDamageTypeIds", repairDetails.RepairDamageTypeIds);
+                parameters.Add("p_RepairDamageAreaIds", repairDetails.RepairDamageAreaIds);
+                parameters.Add("p_RepairingNotes", repairDetails.RepairingNotes);
+                parameters.Add("p_RepairingPrice", repairDetails.RepairingPrice);
+                parameters.Add("p_EstRepairingCost", repairDetails.EstRepairingCost);
+                parameters.Add("p_WeightChange", repairDetails.WeightChange);
+                parameters.Add("p_WeightChangePrice", repairDetails.WeightChangePrice);
+                parameters.Add("p_ActualWeight", repairDetails.ActualWeight);
+                parameters.Add("p_TotalRepairCost", repairDetails.TotalRepairCost);
+                parameters.Add("p_WeightTypeId", repairDetails.WeightTypeId);
+                parameters.Add("p_UpdatedBy", repairDetails.UpdatedBy);
+                parameters.Add("o_RepairDetailId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "UpdateRepairDetailsGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int RepairDetailId = parameters.Get<int>("o_RepairDetailId");
+
+                if (RepairDetailId > 0) // updated successfully
+                {
+                    // Repair Documents
+                    foreach (var doc in repairDetails.RepairDocuments ?? Enumerable.Empty<RepairDocument>())
+                    {
+                        await connection.ExecuteAsync("AddUpdateRepairDocumentGb", new
+                        {
+                            p_RepairDocumentId = doc.RepairDocumentId,
+                            p_RepairDetailId = RepairDetailId,
+                            p_IsPrimary = doc.IsPrimary,
+                            p_IsPostRepair = doc.IsPostRepair,
+                            p_CreatedBy = repairDetails.CreatedBy,
+                            p_UpdatedBy = repairDetails.UpdatedBy
+                        },
+                        transaction: transaction,
+                        commandType: CommandType.StoredProcedure);
+                    }
+
+                    foreach (var doc in repairDetails.RepairStoneDetails ?? Enumerable.Empty<RepairStoneDetails>())
+                    {
+                        await connection.ExecuteAsync("AddUpdateRepairStoneDetailGb", new
+                        {
+                            p_RepairStoneDetailId = doc.RepairStoneDetailId,
+                            p_RepairDetailId = doc.RepairDetailId,
+                            p_CurrentStoneId = doc.CurrentStoneId,
+                            p_DesiredStoneId = doc.DesiredStoneId,
+                            p_IsRepaired = doc.IsRepaired,
+                            p_IsReplacement = doc.IsReplacement,
+                            p_Notes = doc.Notes,
+                            p_Price = doc.Price,
+                            p_ActualWeight = doc.ActualWeight,
+                            p_ActualPrice = doc.ActualPrice,
+                            p_CreatedBy = repairDetails.CreatedBy,
+                            p_UpdatedBy = repairDetails.UpdatedBy
+                        },
+                        transaction: transaction,
+                        commandType: CommandType.StoredProcedure);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Repair details insertion failed");
+                }
+
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+
+                return RepairDetailId;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
         public async Task<Product> Get(Product entity)
         {
             var parameters = new List<DbParameter>
@@ -1276,9 +1485,13 @@ namespace GoldBank.Infrastructure.Infrastructure
                     order.Product.IsSold = false;
                     bool isUpdated = await this.UpdateProduct(order.Product, connection, transaction);                    
                 }
-                if (order.AlterationDetails != null && order.OrderTypeId == 4)
+                if (order.AlterationDetails != null && order.OrderTypeId == 4) // direct order alteration 
                 {
                     order.AlterationDetailsId = await this.AddAlterationDetails(order.AlterationDetails, connection, transaction);
+                }
+                if(order.RepairDetails != null && order.OrderTypeId == 5) // repair order
+                {
+                    order.RepairDetailsId = await this.AddRepairDetails(order.RepairDetails, connection, transaction);
                 }
 
                 // Prepare parameters

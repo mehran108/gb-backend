@@ -1,6 +1,7 @@
 ﻿using Amazon.Runtime.Documents;
 using GoldBank.Models;
 using GoldBank.Models.Product;
+using GoldBank.Models.RequestModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GoldBank.Infrastructure.IInfrastructure
@@ -34,5 +35,9 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<IEnumerable<CustomerAccount>> GetAllCustomerAccounts();
         Task<IEnumerable<CompanyAccount>> GetAllCompanyAccounts();
         Task<IEnumerable<LacquerType>> GetAllLacquerTypes();
+        Task<IEnumerable<RepairDamageArea>> GetAllRepairDamageAreas();
+        Task<IEnumerable<RepairDamageType>> GetAllRepairDamageTypes();
+        Task<IEnumerable<RepairPolishing>> GetAllRepairPolishing();
+        Task<IEnumerable<RepairCleaning>> GetAllRepairCleaning();
     }
 }
