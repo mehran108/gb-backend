@@ -538,7 +538,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         await connection.ExecuteAsync("AddUpdateRepairStoneDetailGb", new
                         {
                             p_RepairStoneDetailId = doc.RepairStoneDetailId,
-                            p_RepairDetailId = doc.RepairDetailId,
+                            p_RepairDetailId = RepairDetailId,
                             p_CurrentStoneId = doc.CurrentStoneId,
                             p_DesiredStoneId = doc.DesiredStoneId,
                             p_IsFixed = doc.IsFixed,
