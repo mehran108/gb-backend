@@ -428,7 +428,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         await connection.ExecuteAsync("AddUpdateRepairStoneDetailGb", new
                         {
                             p_RepairStoneDetailId = doc.RepairStoneDetailId ,
-                            p_RepairDetailId = doc.RepairDetailId,
+                            p_RepairDetailId = RepairDetailId,
                             p_CurrentStoneId = doc.CurrentStoneId,
                             p_DesiredStoneId = doc.DesiredStoneId,
                             p_StoneTypeIds = doc.StoneTypeIds,
@@ -1474,7 +1474,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             try
             {
-                if (order.OrderTypeId == 2 || order.OrderTypeId == 5)// bespoke order
+                if (order.OrderTypeId == 2 )// bespoke order
                 {
                     order.Product.IsSold = true;
                     order.Product.IsReserved = true;
@@ -1676,7 +1676,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             try
             {
                 int alterationDetailsId = order.AlterationDetails?.AlterationDetailsId == null ? 0 : order.AlterationDetails.AlterationDetailsId;
-                if (order.Product != null)
+                if (order.Product != null && order.OrderTypeId != 5)
                 {
                     // Pass connection and transaction to reuse Add logic
                     bool isUpdate = await this.UpdateProduct(order.Product, connection, transaction);
