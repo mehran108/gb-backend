@@ -386,6 +386,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_RepairingNotes", repairDetails.RepairingNotes);
                 parameters.Add("p_RepairingPrice", repairDetails.RepairingPrice);
                 parameters.Add("p_EstRepairingCost", repairDetails.EstRepairingCost);
+                parameters.Add("p_EstDeliveryDate", repairDetails.EstDeliveryDate);
                 parameters.Add("p_WeightChange", repairDetails.WeightChange);
                 parameters.Add("p_WeightChangePrice", repairDetails.WeightChangePrice);
                 parameters.Add("p_ActualWeight", repairDetails.ActualWeight);
@@ -495,6 +496,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_RepairingNotes", repairDetails.RepairingNotes);
                 parameters.Add("p_RepairingPrice", repairDetails.RepairingPrice);
                 parameters.Add("p_EstRepairingCost", repairDetails.EstRepairingCost);
+                parameters.Add("p_EstDeliveryDate", repairDetails.EstDeliveryDate);
                 parameters.Add("p_WeightChange", repairDetails.WeightChange);
                 parameters.Add("p_WeightChangePrice", repairDetails.WeightChangePrice);
                 parameters.Add("p_ActualWeight", repairDetails.ActualWeight);
@@ -2209,7 +2211,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 
                         item.IsActive = dataReader.GetBooleanValue("isActive");
                         item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
-                        item.CreatedAt = dataReader.GetDateTime("createdAt");
+                        item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
                         item.CreatedBy = dataReader.GetIntegerValue("createdBy");
                         repair = item;
                     }
@@ -2226,7 +2228,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.IsPostRepair = dataReader.GetBooleanValue("isPostRepair");
                             item.IsActive = dataReader.GetBooleanValue("isActive");
                             item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
-                            item.CreatedAt = dataReader.GetDateTime("createdAt");
+                            item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
                             item.CreatedBy = dataReader.GetIntegerValue("createdBy");
                             documents.Add(item);
                         }
