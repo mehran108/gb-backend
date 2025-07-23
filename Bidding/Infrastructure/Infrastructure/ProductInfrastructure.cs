@@ -2221,6 +2221,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.RepairDocumentId = dataReader.GetIntegerValue("repairDocumentId");
                             item.RepairDetailId = dataReader.GetIntegerValue("repairDetailId");
                             item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.Url = dataReader.GetStringValue("url");
                             item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
                             item.IsPostRepair = dataReader.GetBooleanValue("isPostRepair");
                             item.IsActive = dataReader.GetBooleanValue("isActive");
