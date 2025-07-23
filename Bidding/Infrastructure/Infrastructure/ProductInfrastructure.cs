@@ -431,7 +431,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                             p_RepairDetailId = doc.RepairDetailId,
                             p_CurrentStoneId = doc.CurrentStoneId,
                             p_DesiredStoneId = doc.DesiredStoneId,
-                            p_IsRepaired = doc.IsRepaired,
+                            p_StoneTypeIds = doc.StoneTypeIds,
+                            p_IsFixed = doc.IsFixed,
                             p_IsReplacement = doc.IsReplacement,
                             p_Notes = doc.Notes,
                             p_Price = doc.Price,
@@ -538,7 +539,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                             p_RepairDetailId = doc.RepairDetailId,
                             p_CurrentStoneId = doc.CurrentStoneId,
                             p_DesiredStoneId = doc.DesiredStoneId,
-                            p_IsRepaired = doc.IsRepaired,
+                            p_IsFixed = doc.IsFixed,
+                            p_StoneTypeIds = doc.StoneTypeIds,
                             p_IsReplacement = doc.IsReplacement,
                             p_Notes = doc.Notes,
                             p_Price = doc.Price,
@@ -2238,7 +2240,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.RepairDetailId = dataReader.GetIntegerValue("repairDetailId");
                             item.CurrentStoneId = dataReader.GetIntegerValue("currentStoneId");
                             item.DesiredStoneId = dataReader.GetIntegerValue("desiredStoneId");
-                            item.IsRepaired = dataReader.GetBooleanValue("isRepaired");
+                            item.IsFixed = dataReader.GetBooleanValue("isFixed");
                             item.IsReplacement = dataReader.GetBooleanValue("isReplacement");
                             item.Notes = dataReader.GetStringValue("notes");
                             item.Price = dataReader.GetDecimalValue("price");
