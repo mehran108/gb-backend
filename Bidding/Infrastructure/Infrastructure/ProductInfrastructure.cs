@@ -2241,6 +2241,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.CurrentStoneId = dataReader.GetIntegerValue("currentStoneId");
                             item.DesiredStoneId = dataReader.GetIntegerValue("desiredStoneId");
                             item.IsFixed = dataReader.GetBooleanValue("isFixed");
+                            item.StoneTypeIds = dataReader.GetStringValue("stoneTypeIds");
                             item.IsReplacement = dataReader.GetBooleanValue("isReplacement");
                             item.Notes = dataReader.GetStringValue("notes");
                             item.Price = dataReader.GetDecimalValue("price");
