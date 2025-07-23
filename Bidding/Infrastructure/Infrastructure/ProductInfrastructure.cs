@@ -412,10 +412,12 @@ namespace GoldBank.Infrastructure.Infrastructure
                         await connection.ExecuteAsync("AddUpdateRepairDocumentGb", new
                         {
                             p_RepairDocumentId = doc.RepairDocumentId,
+                            p_DocumentId = doc.DocumentId,
                             p_RepairDetailId = RepairDetailId,
                             p_IsPrimary = doc.IsPrimary,
                             p_IsPostRepair = doc.IsPostRepair,
-                            p_CreatedBy = doc.CreatedBy
+                            p_CreatedBy = doc.CreatedBy,
+                            p_UpdatedBy = repairDetails.UpdatedBy
                         },
                         transaction: transaction,
                         commandType: CommandType.StoredProcedure);
@@ -517,6 +519,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         await connection.ExecuteAsync("AddUpdateRepairDocumentGb", new
                         {
                             p_RepairDocumentId = doc.RepairDocumentId,
+                            p_DocumentId = doc.DocumentId,
                             p_RepairDetailId = RepairDetailId,
                             p_IsPrimary = doc.IsPrimary,
                             p_IsPostRepair = doc.IsPostRepair,
@@ -1469,7 +1472,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             try
             {
-                if (order.OrderTypeId == 2)// bespoke order
+                if (order.OrderTypeId == 2 || order.OrderTypeId == 5)// bespoke order
                 {
                     order.Product.IsSold = true;
                     order.Product.IsReserved = true;
@@ -1516,6 +1519,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_AdvancePaymentPct", order.AdvancePaymentPct);
                 parameters.Add("p_TotalPayment", order.TotalPayment);
                 parameters.Add("p_AlterationDetailsId", order.AlterationDetailsId);
+                parameters.Add("p_RepairDetailId", order.RepairDetailsId);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
@@ -1669,7 +1673,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             try
             {
-                int alterationDetailsId = order.AlterationDetails.AlterationDetailsId;
+                int alterationDetailsId = order.AlterationDetails?.AlterationDetailsId == null ? 0 : order.AlterationDetails.AlterationDetailsId;
                 if (order.Product != null)
                 {
                     // Pass connection and transaction to reuse Add logic
@@ -1692,6 +1696,12 @@ namespace GoldBank.Infrastructure.Infrastructure
                         if (alterationDetailsId == 0)
                             throw new Exception("Failed to Add Alteration Details."); 
                     }
+                }
+                if (order.RepairDetails != null && order.OrderTypeId == 5)
+                {
+                    var res = await this.UpdateRepairDetails(order.RepairDetails, connection, transaction);
+                    if (res <1)
+                        throw new Exception("Failed to update repair.");
                 }
                 
                 // Prepare parameters
@@ -1812,6 +1822,14 @@ namespace GoldBank.Infrastructure.Infrastructure
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = await this.CustomerInfrastructure.Get(Customer);
                         item.Product = await this.GetProductById(item.ProductId);
+                        if (item.OrderTypeId == 4)
+                        {
+                            item.AlterationDetails = await this.GetAlterationDetailsById(orderId);
+                        }
+                        else if (item.OrderTypeId == 5)
+                        {
+                            item.RepairDetails = await this.GetRepairDetailsById(orderId);
+                        }
                     }
                     if (dataReader.NextResult())
                     {
@@ -2055,6 +2073,190 @@ namespace GoldBank.Infrastructure.Infrastructure
                 if (isOwnConnection)
                     await connection.DisposeAsync();
             }
+        }
+        public async Task<AlterationDetails> GetAlterationDetailsById(int orderId)
+        {
+
+            var alteration = new AlterationDetails();
+            var documents = new List<AlterationDetailsDocument>();
+            var stones = new List<StoneAlteration>();
+
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_OrderId", ToDbValue(orderId))
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAlterationDetailsByOrderId_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    if (dataReader.Read())
+                    {
+                        var item = new AlterationDetails();
+                        item.AlterationDetailsId = dataReader.GetIntegerValue("alterationDetailsId");
+                        item.CurrentJewellerySize = dataReader.GetStringValue("currentJewellerySize");
+                        item.DesiredJewellerySize = dataReader.GetStringValue("desiredJewellerySize");
+                        item.SizeNote = dataReader.GetStringValue("sizeNote");
+                        item.ResizingPrice = dataReader.GetDecimalValue("resizingPrice");
+                        item.LacquerTypeId = dataReader.GetIntegerValue("lacquerTypeId");
+                        item.LacquerNote = dataReader.GetStringValue("lacquerNote");
+                        item.LacquerReferenceSKU = dataReader.GetStringValue("lacquerReferenceSKU");
+                        item.OtherDescription = dataReader.GetStringValue("otherDescription");
+                        item.LacquerPrice = dataReader.GetDecimalValue("lacquerPrice");
+                        item.WeightChangePrice = dataReader.GetDecimalValue("weightChangePrice");
+                        item.WeightChange = dataReader.GetDecimalValue("weightChange");
+                        item.ProductTotalPrice = dataReader.GetDecimalValue("productTotalPrice");
+                        item.OtherPrice = dataReader.GetDecimalValue("otherPrice");
+                        item.IsActive = dataReader.GetBooleanValue("isActive");
+                        item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        item.CreatedAt = dataReader.GetDateTime("createdAt");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+
+                        alteration = item;
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new AlterationDetailsDocument();
+                            item.AlterationDetailsDocumentId = dataReader.GetIntegerValue("alterationDetailsDocumentId");
+                            item.AlterationDetailsId = dataReader.GetIntegerValue("alterationDetailsId");
+                            item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.IsPrimary = dataReader.GetBooleanValue("IsPrimary");
+                            item.IsPostAlteration = dataReader.GetBooleanValue("isPostAlteration");
+                            item.IsLacquer = dataReader.GetBooleanValue("isLacquer");
+                            item.IsActive = dataReader.GetBooleanValue("isActive");
+                            item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                            item.CreatedAt = dataReader.GetDateTime("createdAt");
+                            item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                            documents.Add(item);
+                        }
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new StoneAlteration();
+
+                            item.StoneAlterationId = dataReader.GetIntegerValue("stoneAlterationId");
+                            item.AlterationDetailsId = dataReader.GetIntegerValue("alterationDetailsId");
+                            item.CurrentStoneTypeId = dataReader.GetIntegerValue("currentStoneTypeId");
+                            item.DesiredStoneTypeId = dataReader.GetIntegerValue("desiredStoneTypeId");
+                            item.AdditionalNote = dataReader.GetStringValue("additionalNote");
+                            item.ReferenceSKU = dataReader.GetStringValue("referenceSKU");
+                            item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
+                            item.Weight = dataReader.GetDecimalValue("weight");
+                            item.Price = dataReader.GetDecimalValue("price");
+                            item.IsActive = dataReader.GetBooleanValue("isActive");
+                            item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                            item.CreatedAt = dataReader.GetDateTime("createdAt");
+                            item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                            stones.Add(item);
+                        }
+                    }
+                   
+                }
+            }
+            alteration.Documents = documents;
+            alteration.Stones = stones;
+            return alteration;
+        }
+        public async Task<RepairDetails> GetRepairDetailsById(int orderId)
+        {
+
+            var repair = new RepairDetails();
+            var documents = new List<RepairDocument>();
+            var stones = new List<RepairStoneDetails>();
+
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_OrderId", ToDbValue(orderId))
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetRepairDetailsByOrderId_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    if (dataReader.Read())
+                    {
+                        var item = new RepairDetails();
+                        item.RepairDetailId = dataReader.GetIntegerValue("repairDetailId");
+                        item.ProductTypeId = dataReader.GetIntegerValue("productTypeId");
+                        item.MetalTypeId = dataReader.GetIntegerValue("metalTypeId");
+                        item.WeightBeforeRepair = dataReader.GetDecimalValue("weightBeforeRepair");
+                        item.RepairCleaningId = dataReader.GetIntegerValue("repairCleaningId");
+                        item.CleaningNotes = dataReader.GetStringValue("cleaningNotes");
+                        item.CleaningPrice = dataReader.GetDecimalValue("cleaningPrice");
+                        item.RepairPolishingId = dataReader.GetIntegerValue("repairPolishingId");
+                        item.PolishingNotes = dataReader.GetStringValue("polishingNotes");
+                        item.PolishingPrice = dataReader.GetDecimalValue("polishingPrice");
+                        item.CurrentJewellerySize = dataReader.GetStringValue("currentJewellerySize");
+                        item.DesiredJewellerySize = dataReader.GetStringValue("desiredJewellerySize");
+                        item.ResizingNotes = dataReader.GetStringValue("resizingNotes");
+                        item.ResizingPrice = dataReader.GetDecimalValue("resizingPrice");
+                        item.RepairDamageTypeIds = dataReader.GetStringValue("repairDamageTypeIds");
+                        item.RepairDamageAreaIds = dataReader.GetStringValue("repairDamageAreaIds");
+                        item.RepairingNotes = dataReader.GetStringValue("repairingNotes");
+                        item.RepairingPrice = dataReader.GetDecimalValue("repairingPrice");
+
+                        item.EstRepairingCost = dataReader.GetDecimalValue("estRepairCost");
+                        item.WeightChange = dataReader.GetDecimalValue("weightChange");
+                        item.WeightChangePrice = dataReader.GetDecimalValue("weightChangePrice");
+                        item.ActualWeight = dataReader.GetDecimalValue("actualWeight");
+                        item.TotalRepairCost = dataReader.GetDecimalValue("totalRepairCost");
+                        item.EstDeliveryDate = dataReader.GetDateTimeValue("estDeliveryDate");
+                        item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
+
+                        item.IsActive = dataReader.GetBooleanValue("isActive");
+                        item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        item.CreatedAt = dataReader.GetDateTime("createdAt");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        repair = item;
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new RepairDocument();
+                            item.RepairDocumentId = dataReader.GetIntegerValue("repairDocumentId");
+                            item.RepairDetailId = dataReader.GetIntegerValue("repairDetailId");
+                            item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+                            item.IsPostRepair = dataReader.GetBooleanValue("isPostRepair");
+                            item.IsActive = dataReader.GetBooleanValue("isActive");
+                            item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                            item.CreatedAt = dataReader.GetDateTime("createdAt");
+                            item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                            documents.Add(item);
+                        }
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new RepairStoneDetails();
+
+                            item.RepairStoneDetailId = dataReader.GetIntegerValue("repairStoneDetailId");
+                            item.RepairDetailId = dataReader.GetIntegerValue("repairDetailId");
+                            item.CurrentStoneId = dataReader.GetIntegerValue("currentStoneId");
+                            item.DesiredStoneId = dataReader.GetIntegerValue("desiredStoneId");
+                            item.IsRepaired = dataReader.GetBooleanValue("isRepaired");
+                            item.IsReplacement = dataReader.GetBooleanValue("isReplacement");
+                            item.Notes = dataReader.GetStringValue("notes");
+                            item.Price = dataReader.GetDecimalValue("price");
+                            item.ActualWeight = dataReader.GetDecimalValue("actualWeight");
+                            item.ActualPrice = dataReader.GetDecimalValue("actualPrice");
+                            item.IsActive = dataReader.GetBooleanValue("isActive");
+                            item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                            item.CreatedAt = dataReader.GetDateTime("createdAt");
+                            item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                            stones.Add(item);
+                        }
+                    }
+
+                }
+            }
+            repair.RepairDocuments = documents;
+            repair.RepairStoneDetails = stones;
+            return repair;
         }
 
 
