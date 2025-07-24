@@ -1626,6 +1626,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.AdvancePaymentPct = dataReader.GetDecimalValue("advancePaymentPct");
                         item.TotalPayment = dataReader.GetDecimalValue("totalPayment");
                         item.OrderStatusId = dataReader.GetIntegerValue("OrderStatusId");
+                        item.RepairDetailsId = dataReader.GetIntegerValue("repairDetailId");
+                        item.AlterationDetailsId = dataReader.GetIntegerValue("alterationDetailsId");
                         item.OrderDelievery.DelieveryMethodId = dataReader.GetIntegerValue("delieveryMethodId");
                         item.OrderDelievery.EstDelieveryDate = dataReader.GetDateTimeValue("estDelieveryDate");
                         item.OrderDelievery.ShippingCost = dataReader.GetIntegerValue("shippingCost");
@@ -1639,6 +1641,14 @@ namespace GoldBank.Infrastructure.Infrastructure
                         //    item.Product = productItem;
                         //}
                         item.Product = await this.GetProductById(item.ProductId);
+                        if (item.RepairDetailsId > 0)
+                        {
+                            item.RepairDetails = await this.GetRepairDetailsById((int)item.OrderId );
+                        }
+                        if (item.AlterationDetailsId > 0)
+                        {
+                            item.AlterationDetails = await this.GetAlterationDetailsById((int)item.OrderId);
+                        }
                         OrderList.Add(item);
                     }
                 }
