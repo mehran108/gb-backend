@@ -23,8 +23,7 @@
         public decimal EstRepairingCost { get; set; }
         public decimal WeightChange { get; set; }
         public decimal WeightChangePrice { get; set; }
-        public decimal ActualWeight { get; set; } // Actual Weight
-        public decimal WeightAfterRepair { get; set; } // Actual Weight After Repair
+        public decimal ActualWeight { get; set; } // Actual Weight after repair
         public decimal TotalRepairCost { get; set; }
         public DateTime EstDeliveryDate { get; set; }
         public int WeightTypeId { get; set; }      
