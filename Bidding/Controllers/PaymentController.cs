@@ -3,6 +3,8 @@ using GoldBank.Models;
 using GoldBank.Models.RequestModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Text;
 
 namespace GoldBank.Controllers
 {
@@ -82,5 +84,45 @@ namespace GoldBank.Controllers
             this.PaymentApplication.CancelOnlinePayment(onlinePaymentId);
         }
 
+        [HttpPost("GetAccessToken")]
+        public async Task<ActionResult<string>> GetAccessToken([FromBody] PaymentTransaction request)
+        {
+            var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
+
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
+                .Build();
+
+            var url = config["Transaction:URL"];
+
+            PaymentTransaction payload = new PaymentTransaction();
+            payload.MERCHANT_ID = request.MERCHANT_ID;
+            payload.TXNAMT = request.TXNAMT;
+            payload.CURRENCY_CODE = request.CURRENCY_CODE;
+            payload.SECURED_KEY = config["Transaction:SECURED_KEY"] ?? "zWHjBp2AlttNu1sK";
+            var accessToken = "";
+
+            var json = JsonSerializer.Serialize(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    var response = await client.PostAsync(url, content);
+                    response.EnsureSuccessStatusCode();
+
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    accessToken = responseBody;
+                }
+                catch (HttpRequestException e)
+                {
+                    Console.WriteLine("HTTP Request Error:");
+                    Console.WriteLine(e.Message);
+                }
+            }
+            return Ok(accessToken);
+        }
     }
 }
