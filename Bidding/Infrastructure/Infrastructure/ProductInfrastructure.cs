@@ -2127,6 +2127,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.DocumentId = dataReader.GetIntegerValue("documentId");
                             item.IsPrimary = dataReader.GetBooleanValue("IsPrimary");
                             item.IsPostAlteration = dataReader.GetBooleanValue("isPostAlteration");
+                            item.Url = dataReader.GetStringValue("url");
                             item.IsLacquer = dataReader.GetBooleanValue("isLacquer");
                             item.IsActive = dataReader.GetBooleanValue("isActive");
                             item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
