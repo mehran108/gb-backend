@@ -500,6 +500,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_WeightChange", repairDetails.WeightChange);
                 parameters.Add("p_WeightChangePrice", repairDetails.WeightChangePrice);
                 parameters.Add("p_ActualWeight", repairDetails.ActualWeight);
+                parameters.Add("p_WeightAfterRepair", repairDetails.WeightAfterRepair);
                 parameters.Add("p_TotalRepairCost", repairDetails.TotalRepairCost);
                 parameters.Add("p_WeightTypeId", repairDetails.WeightTypeId);
                 parameters.Add("p_UpdatedBy", repairDetails.UpdatedBy);
@@ -2208,6 +2209,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.TotalRepairCost = dataReader.GetDecimalValue("totalRepairCost");
                         item.EstDeliveryDate = dataReader.GetDateTimeValue("estDeliveryDate");
                         item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
+                        item.WeightAfterRepair = dataReader.GetIntegerValue("weightAfterRepair");
 
                         item.IsActive = dataReader.GetBooleanValue("isActive");
                         item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
