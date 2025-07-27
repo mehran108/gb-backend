@@ -1476,7 +1476,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             try
             {
-                if (order.OrderTypeId == 2 )// bespoke order
+                if (order.OrderTypeId == 2 || order.OrderTypeId == 5)// bespoke order
                 {
                     order.Product.IsSold = true;
                     order.Product.IsReserved = true;
