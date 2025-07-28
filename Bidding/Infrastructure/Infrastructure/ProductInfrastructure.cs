@@ -1970,7 +1970,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         p_Weight = stone.Weight,
                         p_Price = stone.Price,
                         p_CreatedBy = alterationDetails.CreatedBy,
-                        p_StoneAlterationId = stone.StoneAlterationId
+                        p_StoneAlterationId = stone.StoneAlterationId,
+                        p_ActualPrice = stone.ActualPrice,
+                        p_ActualWeight = stone.ActualWeight
                     },
                     transaction: transaction,
                     commandType: CommandType.StoredProcedure);
@@ -2065,7 +2067,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         p_Weight = stone.Weight,
                         p_Price = stone.Price,
                         p_CreatedBy = alterationDetails.CreatedBy,
-                        p_StoneAlterationId = stone.StoneAlterationId
+                        p_StoneAlterationId = stone.StoneAlterationId,
+                        p_ActualPrice = stone.ActualPrice,
+                        p_ActualWeight = stone.ActualWeight
                     },
                     transaction: transaction,
                     commandType: CommandType.StoredProcedure);
@@ -2161,6 +2165,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
                             item.Weight = dataReader.GetDecimalValue("weight");
                             item.Price = dataReader.GetDecimalValue("price");
+                            item.ActualWeight = dataReader.GetDecimalValue("actualWeight");
+                            item.ActualPrice = dataReader.GetDecimalValue("actualPrice");
                             item.IsActive = dataReader.GetBooleanValue("isActive");
                             item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
                             item.CreatedAt = dataReader.GetDateTime("createdAt");

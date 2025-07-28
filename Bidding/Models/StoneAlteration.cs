@@ -11,6 +11,8 @@
         public int WeightTypeId { get; set; }
         public decimal Weight { get; set; }
         public decimal Price { get; set; }
+        public decimal ActualWeight { get; set; }
+        public decimal ActualPrice { get; set; }
 
     }
 }
