@@ -1505,6 +1505,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                 {
                     order.Product.IsReserved = true;
                     order.Product.IsSold = false;
+                    order.ProductId = await this.AddProduct(order.Product, connection, transaction);
+                    if (order.ProductId <= 0)
+                        throw new Exception("Failed to insert Product inside AddOrder.");
                     order.AppraisalDetailsId = await this.AddAppraisalDetail(order.AppraisalDetails, connection, transaction);
                 }
 
