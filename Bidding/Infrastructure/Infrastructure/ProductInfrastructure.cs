@@ -15,6 +15,7 @@ using System.Data;
 using System.Data.Common;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Transactions;
 
@@ -1500,6 +1501,12 @@ namespace GoldBank.Infrastructure.Infrastructure
                 {
                     order.RepairDetailsId = await this.AddRepairDetails(order.RepairDetails, connection, transaction);
                 }
+                if (order.AppraisalDetails != null && order.OrderTypeId == 6) // appraisal
+                {
+                    order.Product.IsReserved = true;
+                    order.Product.IsSold = false;
+                    order.AppraisalDetailsId = await this.AddAppraisalDetail(order.AppraisalDetails, connection, transaction);
+                }
 
                 // Prepare parameters
                 var parameters = new DynamicParameters();
@@ -1524,6 +1531,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_TotalPayment", order.TotalPayment);
                 parameters.Add("p_AlterationDetailsId", order.AlterationDetailsId);
                 parameters.Add("p_RepairDetailId", order.RepairDetailsId);
+                parameters.Add("p_AppraisalDetailId", order.AppraisalDetailsId);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
@@ -1649,6 +1657,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                         {
                             item.AlterationDetails = await this.GetAlterationDetailsById((int)item.OrderId);
                         }
+                        if (item.AppraisalDetailsId > 0)
+                        {
+                            item.AppraisalDetails = await this.GetAppraisalDetailsById((int)item.OrderId);
+                        }
                         OrderList.Add(item);
                     }
                 }
@@ -1711,13 +1723,19 @@ namespace GoldBank.Infrastructure.Infrastructure
                             throw new Exception("Failed to Add Alteration Details."); 
                     }
                 }
-                if (order.RepairDetails != null && order.OrderTypeId == 5)
+                if (order.RepairDetails != null && order.OrderTypeId == 5) // Repair
                 {
                     var res = await this.UpdateRepairDetails(order.RepairDetails, connection, transaction);
                     if (res <1)
                         throw new Exception("Failed to update repair.");
                 }
-                
+                if (order.AppraisalDetails != null && order.OrderTypeId == 6) // Appraisal
+                {
+                    var res = await this.UpdateAppraisalDetail(order.AppraisalDetails, connection, transaction);
+                    if (!res)
+                        throw new Exception("Failed to update appraisal.");
+                }
+
                 // Prepare parameters
                 var parameters = new DynamicParameters();
                 parameters.Add("p_EstStartingPrice", order.EstStartingPrice);
@@ -1843,6 +1861,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                         else if (item.OrderTypeId == 5)
                         {
                             item.RepairDetails = await this.GetRepairDetailsById(orderId);
+                        }
+                        else if (item.OrderTypeId == 6)
+                        {
+                            item.AppraisalDetails = await this.GetAppraisalDetailsById(orderId);
                         }
                     }
                     if (dataReader.NextResult())
@@ -2283,6 +2305,245 @@ namespace GoldBank.Infrastructure.Infrastructure
             return repair;
         }
 
+        private async Task<int> AddAppraisalDetail(AppraisalDetail appraisalDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
 
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_TotalProductWeight", appraisalDetails.TotalProductWeight, DbType.Decimal);
+                parameters.Add("p_NetGoldWeight", appraisalDetails.NetGoldWeight, DbType.Decimal);
+                parameters.Add("p_PureGoldWeight", appraisalDetails.PureGoldWeight, DbType.Decimal);
+                parameters.Add("p_DeductionPercentage", appraisalDetails.DeductionPercentage, DbType.Decimal);
+                parameters.Add("p_AppraisalPrice", appraisalDetails.AppraisalPrice, DbType.Decimal);
+                parameters.Add("p_Notes", appraisalDetails.Notes, DbType.String, size: 1000);
+                parameters.Add("p_WeightTypeId", appraisalDetails.WeightTypeId, DbType.Int32);
+                parameters.Add("o_AppraisalDetailId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "AddAppraisalDetailGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int AppraisalDetailId = parameters.Get<int>("o_AppraisalDetailId");
+
+                if (AppraisalDetailId > 0)
+                {
+                    // Repair Documents
+                    foreach (var doc in appraisalDetails.AppraisalDocuments ?? Enumerable.Empty<AppraisalDocument>())
+                    {
+                        await connection.ExecuteAsync("AddUpdateAppraisalDocumentGb", new
+                        {
+                            p_AppraisalDocumentId = doc.AppraisalDocumentId,
+                            p_DocumentId = doc.DocumentId,
+                            p_AppraisalDetailId = AppraisalDetailId,
+                            p_IsPrimary = doc.IsPrimary,
+                            p_CreatedBy = appraisalDetails.UpdatedBy
+                        },
+                        transaction: transaction,
+                        commandType: CommandType.StoredProcedure);
+                    }
+
+                    foreach (var doc in appraisalDetails.AppraisalStoneDetails ?? Enumerable.Empty<AppraisalStoneDetail>())
+                    {
+                        await connection.ExecuteAsync(
+                        "AddUpdateAppraisalStoneDetailGb",
+                        new
+                        {
+                            p_AppraisalStoneDetailId = doc.AppraisalStoneDetailId,
+                            p_AppraisalDetailId = AppraisalDetailId,          
+                            p_StoneTypeId = doc.StoneTypeId,
+                            p_StoneQuantity = doc.StoneQuantity,
+                            p_StoneWeight = doc.StoneWeight,
+                            p_StonePrice = doc.StonePrice,
+                            p_UpdatedBy = appraisalDetails.UpdatedBy,
+                            p_StoneWeightTypeId = doc.StoneWeightTypeId
+                        },
+                        transaction: transaction,
+                        commandType: CommandType.StoredProcedure);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Repair details insertion failed");
+                }
+
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+
+                return AppraisalDetailId;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
+        private async Task<bool> UpdateAppraisalDetail(AppraisalDetail appraisalDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_AppraisalDetailId", appraisalDetails.AppraisalDetailId, dbType: DbType.Int32);
+                parameters.Add("p_TotalProductWeight", appraisalDetails.TotalProductWeight, DbType.Decimal);
+                parameters.Add("p_NetGoldWeight", appraisalDetails.NetGoldWeight, DbType.Decimal);
+                parameters.Add("p_PureGoldWeight", appraisalDetails.PureGoldWeight, DbType.Decimal);
+                parameters.Add("p_DeductionPercentage", appraisalDetails.DeductionPercentage, DbType.Decimal);
+                parameters.Add("p_AppraisalPrice", appraisalDetails.AppraisalPrice, DbType.Decimal);
+                parameters.Add("p_Notes", appraisalDetails.Notes, DbType.String, size: 1000);
+                parameters.Add("p_WeightTypeId", appraisalDetails.WeightTypeId, DbType.Int32);
+                parameters.Add("o_IsUpdated",  DbType.Int32);
+
+                await connection.ExecuteAsync(
+                    "UpdateAppraisalDetailGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int o_IsUpdated = parameters.Get<int>("o_IsUpdated");
+
+                if (o_IsUpdated > 0)
+                {
+                    // Repair Documents
+                    foreach (var doc in appraisalDetails.AppraisalDocuments ?? Enumerable.Empty<AppraisalDocument>())
+                    {
+                        await connection.ExecuteAsync("AddUpdateAppraisalDocumentGb", new
+                        {
+                            p_AppraisalDocumentId = doc.AppraisalDocumentId,
+                            p_DocumentId = doc.DocumentId,
+                            p_AppraisalDetailId = appraisalDetails.AppraisalDetailId,
+                            p_IsPrimary = doc.IsPrimary,
+                            p_CreatedBy = appraisalDetails.UpdatedBy
+                        },
+                        transaction: transaction,
+                        commandType: CommandType.StoredProcedure);
+                    }
+
+                    foreach (var doc in appraisalDetails.AppraisalStoneDetails ?? Enumerable.Empty<AppraisalStoneDetail>())
+                    {
+                        await connection.ExecuteAsync(
+                        "AddUpdateAppraisalStoneDetailGb",
+                        new
+                        {
+                            p_AppraisalStoneDetailId = doc.AppraisalStoneDetailId,
+                            p_AppraisalDetailId = appraisalDetails.AppraisalDetailId,
+                            p_StoneTypeId = doc.StoneTypeId,
+                            p_StoneQuantity = doc.StoneQuantity,
+                            p_StoneWeight = doc.StoneWeight,
+                            p_StonePrice = doc.StonePrice,
+                            p_UpdatedBy = appraisalDetails.UpdatedBy,
+                            p_StoneWeightTypeId = doc.StoneWeightTypeId
+                        },
+                        transaction: transaction,
+                        commandType: CommandType.StoredProcedure);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Appraisal details insertion failed");
+                }
+
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+
+                return o_IsUpdated > 0;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
+        public async Task<AppraisalDetail> GetAppraisalDetailsById(int orderId)
+        {
+
+            var appraisal = new AppraisalDetail();
+            var documents = new List<AppraisalDocument>();
+            var stones = new List<AppraisalStoneDetail>();
+
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_OrderId", ToDbValue(orderId))
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAppraisalDetailsByOrderIdGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    if (dataReader.Read())
+                    {
+                        var item = new AppraisalDetail();
+                        item.AppraisalDetailId = dataReader.GetIntegerValue("appraisalDetailId");
+                        item.TotalProductWeight = dataReader.GetDecimalValue("totalProductWeight");
+                        item.NetGoldWeight = dataReader.GetIntegerValue("netGoldWeight");
+                        item.PureGoldWeight = dataReader.GetDecimalValue("pureGoldWeight");
+                        item.DeductionPercentage = dataReader.GetDecimalValue("deductionPercentage");
+                        item.AppraisalPrice = dataReader.GetDecimalValue("appraisalPrice");
+                        item.Notes = dataReader.GetStringValue("notes");
+                        item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId"); 
+                        
+                        item.IsActive = dataReader.GetBooleanValue("isActive");
+                        item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        appraisal = item;
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new AppraisalDocument();
+                            item.AppraisalDetailId = dataReader.GetIntegerValue("appraisalDetailId");
+                            item.AppraisalDocumentId = dataReader.GetIntegerValue("appraisalDocumentId");
+                            item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.Url = dataReader.GetStringValue("url");
+                            item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+                            documents.Add(item);
+                        }
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new AppraisalStoneDetail();
+
+                            item.AppraisalStoneDetailId = dataReader.GetIntegerValue("appraisalStoneDetailId");
+                            item.AppraisalDetailId = dataReader.GetIntegerValue("appraisalDetailId");
+                            item.StoneTypeId = dataReader.GetIntegerValue("stoneTypeId");
+                            item.StoneQuantity = dataReader.GetIntegerValue("stoneQuantity");
+                            item.StoneWeight = dataReader.GetDecimalValue("stoneWeight");
+                            item.StonePrice = dataReader.GetDecimalValue("stonePrice");
+                            item.StoneWeightTypeId = dataReader.GetIntegerValue("stoneWeightTypeId");
+
+                            stones.Add(item);
+                        }
+                    }
+                }
+            }
+            appraisal.AppraisalDocuments = documents;
+            appraisal.AppraisalStoneDetails = stones;
+            return appraisal;
+        }
     }
 }
