@@ -18,5 +18,6 @@ namespace GoldBank.Models.Product
         public string? ReferenceSKU { get; set; }
         public bool IsSold { get; set; }
         public bool IsReserved { get; set; } = false;
+        public int? ReferenceOrderId { get; set; }
     }
 }

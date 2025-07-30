@@ -138,6 +138,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_MaxWeight", product.Jewellery.MaxWeight);
                 parameters.Add("p_IsSold", product.IsSold);
                 parameters.Add("p_IsReserved", product.IsReserved);
+                parameters.Add("p_ReferenceOrderId", product.ReferenceOrderId);
 
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
                 parameters.Add("o_JewelleryId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -907,6 +908,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.ReferenceSKU = dataReader.GetStringValue("referenceSKU");
                         item.IsSold = dataReader.GetBooleanValue("isSold");
                         item.IsReserved = dataReader.GetBooleanValue("isReserved");
+                        item.ReferenceOrderId = dataReader.GetIntegerValueNullable("referenceOrderId");
 
                         ProductList.Add(item);
                     }
@@ -1218,6 +1220,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.ReferenceSKU = dataReader.GetStringValue("referenceSKU");
                         item.IsSold = dataReader.GetBooleanValue("isSold");
                         item.IsReserved = dataReader.GetBooleanValue("isReserved");
+                        item.ReferenceOrderId = dataReader.GetIntegerValueNullable("referenceOrderId");
 
                         Product = item;
                     }
