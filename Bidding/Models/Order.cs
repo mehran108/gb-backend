@@ -23,11 +23,13 @@
         public int? AlterationDetailsId { get; set; }
         public int? RepairDetailsId { get; set; }
         public int? AppraisalDetailsId { get; set; }
+        public int? ExchangeDetailsId { get; set; }
         public OrderStatus? OrderStatus { get; set; }
         public List<CustomCharge>? CustomCharge { get; set; }
         public OrderDelievery? OrderDelievery { get; set; }
         public AlterationDetails? AlterationDetails { get; set; }
         public RepairDetails? RepairDetails { get; set; }
         public AppraisalDetail? AppraisalDetails { get; set; }
+        public ExchangeDetail? ExchangeDetails { get; set; }
     }
 }

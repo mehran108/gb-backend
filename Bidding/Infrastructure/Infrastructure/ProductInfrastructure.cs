@@ -1510,6 +1510,15 @@ namespace GoldBank.Infrastructure.Infrastructure
                         throw new Exception("Failed to insert Product inside AddOrder.");
                     order.AppraisalDetailsId = await this.AddAppraisalDetail(order.AppraisalDetails, connection, transaction);
                 }
+                if (order.ExchangeDetails != null && order.OrderTypeId == 7) // exchange
+                {
+                    order.Product.IsReserved = true;
+                    order.Product.IsSold = false;
+                    order.ProductId = await this.AddProduct(order.Product, connection, transaction);
+                    if (order.ProductId <= 0)
+                        throw new Exception("Failed to insert Product inside AddOrder.");
+                    order.ExchangeDetailsId = await this.AddExchangeDetail(order.ExchangeDetails, connection, transaction);
+                }
 
                 // Prepare parameters
                 var parameters = new DynamicParameters();
@@ -1535,6 +1544,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_AlterationDetailsId", order.AlterationDetailsId);
                 parameters.Add("p_RepairDetailId", order.RepairDetailsId);
                 parameters.Add("p_AppraisalDetailId", order.AppraisalDetailsId);
+                parameters.Add("p_ExchangeDetailId", order.ExchangeDetailsId);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
@@ -1738,6 +1748,12 @@ namespace GoldBank.Infrastructure.Infrastructure
                     if (!res)
                         throw new Exception("Failed to update appraisal.");
                 }
+                if (order.ExchangeDetails != null && order.OrderTypeId == 7) // Exchange
+                {
+                    var res = await this.UpdateExchangeDetail(order.ExchangeDetails, connection, transaction);
+                    if (!res)
+                        throw new Exception("Failed to update exchange.");
+                }
 
                 // Prepare parameters
                 var parameters = new DynamicParameters();
@@ -1868,6 +1884,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                         else if (item.OrderTypeId == 6)
                         {
                             item.AppraisalDetails = await this.GetAppraisalDetailsById(orderId);
+                        }
+                        else if (item.OrderTypeId == 7)
+                        {
+                            item.ExchangeDetails = await this.GetExchangeDetailsById(orderId);
                         }
                     }
                     if (dataReader.NextResult())
@@ -2547,6 +2567,184 @@ namespace GoldBank.Infrastructure.Infrastructure
             appraisal.AppraisalDocuments = documents;
             appraisal.AppraisalStoneDetails = stones;
             return appraisal;
+        }
+        private async Task<int> AddExchangeDetail(ExchangeDetail exchangeDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_DeductionPercentage", exchangeDetails.DeductionPercentage, DbType.Decimal);
+                parameters.Add("p_DeductionValue", exchangeDetails.DeductionValue, DbType.Decimal);
+                parameters.Add("p_OriginalPrice", exchangeDetails.OriginalPrice, DbType.Decimal);
+                parameters.Add("p_ExchangePrice", exchangeDetails.ExchangePrice, DbType.Decimal);
+                parameters.Add("p_Notes", exchangeDetails.Notes, DbType.String, size: 1000);
+                parameters.Add("p_CreatedBy", exchangeDetails.CreatedBy, DbType.String, size: 1000);
+                parameters.Add("o_ExchangeDetailId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "AddExchangeDetailGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int ExchangeDetailId = parameters.Get<int>("o_ExchangeDetailId");
+
+                if (ExchangeDetailId > 0)
+                {
+                    // Repair Documents
+                    foreach (var doc in exchangeDetails.ExchangeDocuments ?? Enumerable.Empty<ExchangeDocument>())
+                    {
+                        await connection.ExecuteAsync("AddUpdateExchangeDocumentGb", new
+                        {
+                            p_ExchangeDocumentId = doc.ExchangeDocumentId,
+                            p_DocumentId = doc.DocumentId,
+                            p_ExchangeDetailId = ExchangeDetailId,
+                            p_IsPrimary = doc.IsPrimary,
+                            p_CreatedBy = exchangeDetails.CreatedBy
+                        },
+                        transaction: transaction,
+                        commandType: CommandType.StoredProcedure);
+                    }                  
+                }
+                else
+                {
+                    throw new Exception("Exchange details insertion failed");
+                }
+
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+
+                return ExchangeDetailId;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
+        private async Task<bool> UpdateExchangeDetail(ExchangeDetail exchangeDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_DeductionPercentage", exchangeDetails.DeductionPercentage, DbType.Decimal);
+                parameters.Add("p_DeductionValue", exchangeDetails.DeductionValue, DbType.Decimal);
+                parameters.Add("p_OriginalPrice", exchangeDetails.OriginalPrice, DbType.Decimal);
+                parameters.Add("p_ExchangePrice", exchangeDetails.ExchangePrice, DbType.Decimal);
+                parameters.Add("p_Notes", exchangeDetails.Notes, DbType.String, size: 1000);
+                parameters.Add("p_UpdatedBy", exchangeDetails.UpdatedBy, DbType.Int32, size: 1000);
+                parameters.Add("p_ExchangeDetailId", exchangeDetails.ExchangeDetailId, dbType: DbType.Int32);
+                parameters.Add("o_IsUpdated", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "UpdateExchangeDetailGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int o_IsUpdated = parameters.Get<int>("o_IsUpdated");
+
+                if (o_IsUpdated > 0)
+                {
+                    // Repair Documents
+                    foreach (var doc in exchangeDetails.ExchangeDocuments ?? Enumerable.Empty<ExchangeDocument>())
+                    {
+                        await connection.ExecuteAsync("AddUpdateExchangeDocumentGb", new
+                        {
+                            p_ExchangeDocumentId = doc.ExchangeDocumentId,
+                            p_DocumentId = doc.DocumentId,
+                            p_ExchangeDetailId = exchangeDetails.ExchangeDetailId,
+                            p_IsPrimary = doc.IsPrimary,
+                            p_CreatedBy = exchangeDetails.UpdatedBy
+                        },
+                        transaction: transaction,
+                        commandType: CommandType.StoredProcedure);
+                    }                   
+                }
+                else
+                {
+                    throw new Exception("Exchange details updation failed");
+                }
+
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+
+                return o_IsUpdated > 0;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
+        public async Task<ExchangeDetail> GetExchangeDetailsById(int orderId)
+        {
+            var exchange = new ExchangeDetail();
+            var documents = new List<ExchangeDocument>();
+
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_OrderId", ToDbValue(orderId))
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetExchangeDetailsByOrderIdGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    if (dataReader.Read())
+                    {
+                        var item = new ExchangeDetail();
+                        item.DeductionPercentage = dataReader.GetDecimalValue("deductionPercentage");
+                        item.DeductionValue = dataReader.GetDecimalValue("deductionValue");
+                        item.ExchangeDetailId = dataReader.GetIntegerValue("exchangeDetailId");
+                        item.OriginalPrice = dataReader.GetDecimalValue("originalPrice");
+                        item.ExchangePrice = dataReader.GetDecimalValue("exchangePrice");
+                        item.Notes = dataReader.GetStringValue("notes");
+
+                        item.IsActive = dataReader.GetBooleanValue("isActive");
+                        item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        exchange = item;
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new ExchangeDocument();
+                            item.ExchangeDetailId = dataReader.GetIntegerValue("exchangeDetailId");
+                            item.ExchangeDocumentId = dataReader.GetIntegerValue("exchangeDocumentId");
+                            item.DocumentId = dataReader.GetIntegerValue("documentId");
+                            item.Url = dataReader.GetStringValue("url");
+                            item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+                            documents.Add(item);
+                        }
+                    }                   
+                }
+            }
+            exchange.ExchangeDocuments = documents;
+            return exchange;
         }
     }
 }
