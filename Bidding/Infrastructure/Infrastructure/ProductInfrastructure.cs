@@ -82,145 +82,13 @@ namespace GoldBank.Infrastructure.Infrastructure
             return true;
         }
 
-        private async Task<int> AddOld(Product product)
-        {
-            using var connection = base.GetConnection();
-            using var transaction = await connection.BeginTransactionAsync();
-
-            try
-            {
-                // Step 1: Insert Product + Jewellery and get new IDs
-                var insertResult = await connection.QueryFirstOrDefaultAsync<(int ProductId, int JewelleryId)>(
-                    "AddProductWithJewelleryGb",
-                    new
-                    {
-                        p_ProductTypeId = product.ProductTypeId,
-                        p_SKU = product.SKU,
-                        p_ProductSourceId = product.ProductSourceId,
-                        p_VendorId = product.VendorId,
-                        p_StoreId = product.StoreId,
-                        p_CreatedBy = product.CreatedBy,
-                        p_PrimaryCategoryIds = product.Jewellery.PrimaryCategoryIds,
-                        p_CategoryId = product.Jewellery.CategoryId,
-                        p_SubCategoryId = product.Jewellery.SubCategoryId,
-                        p_WearingTypeIds = product.Jewellery.WearingTypeIds,
-                        p_CollectionIds = product.Jewellery.CollectionIds,
-                        p_GenderId = product.Jewellery.GenderId,
-                        p_OccasionIds = product.Jewellery.OccasionIds,
-                        p_Description = product.Jewellery.Description,
-                        p_MetalTypeId = product.Jewellery.MetalTypeId,
-                        p_MetalPurityTypeId = product.Jewellery.MetalPurityTypeId,
-                        p_MetalColorTypeId = product.Jewellery.MetalColorTypeId,
-                        p_WeightTypeId = product.Jewellery.WeightTypeId,
-                        p_NetWeight = product.Jewellery.NetWeight,
-                        p_WastageWeight = product.Jewellery.WastageWeight,
-                        p_WastagePct = product.Jewellery.WastagePct,
-                        p_TotalWeight = product.Jewellery.TotalWeight,
-                        p_Width = product.Jewellery.Width,
-                        p_Bandwidth = product.Jewellery.Bandwidth,
-                        p_Thickness = product.Jewellery.Thickness,
-                        p_Size = product.Jewellery.Size,
-                        p_IsEcommerce = product.Jewellery.IsEcommerce,
-                        p_IsEngravingAvailable = product.Jewellery.IsEngravingAvailable,
-                        p_IsSizeAlterationAvailable = product.Jewellery.IsSizeAlterationAvailable,
-                        p_LacquerPrice = product.Jewellery.LacquerPrice,
-                        p_MakingPrice = product.Jewellery.MakingPrice,
-                        p_TotalPrice = product.Jewellery.TotalPrice,
-                        p_Title = product.Title
-                    },
-                    transaction: transaction,
-                    commandType: CommandType.StoredProcedure
-                );
-
-                int productId = insertResult.ProductId;
-                int jewelleryId = insertResult.JewelleryId;
-
-                if (productId <= 0 || jewelleryId <= 0)
-                {
-                    await transaction.RollbackAsync();
-                    return 0;
-                }
-
-                // Step 2: Add product documents
-                if (product.ProductDocuments?.Count > 0)
-                {
-                    foreach (var doc in product.ProductDocuments)
-                    {
-                        await connection.ExecuteAsync(
-                            "AddProductDocumentGb",
-                            new
-                            {
-                                p_ProductId = productId,
-                                p_DocumentId = doc.DocumentId,
-                                p_CreatedBy = product.CreatedBy,
-                                p_IsPrimary = doc.IsPrimary
-                            },
-                            transaction,
-                            commandType: CommandType.StoredProcedure
-                        );
-                    }
-                }
-                if(product.StoneProducts?.Count > 0)
-                {
-                    // Step 3: Add stone products and their documents
-                    foreach (var stone in product.StoneProducts)
-                    {
-                        var stoneId = await connection.QuerySingleAsync<int>(
-                            "AddStoneProductGb",
-                            new
-                            {
-                                p_ProductId = productId,
-                                p_StoneTypeId = stone.StoneTypeId,
-                                p_Quantity = stone.Quantity,
-                                p_StoneWeightTypeId = stone.StoneWeightTypeId,
-                                p_TotalPrice = stone.TotalPrice,
-                                p_TotalWeight = stone.TotalWeight,
-                                p_StoneShapeId = stone.StoneShapeId,
-                                p_CreatedBy = product.CreatedBy
-                            },
-                            transaction,
-                            commandType: CommandType.StoredProcedure
-                        );
-
-                        foreach(var doc in stone.StoneDocuments)
-                        {
-                            await connection.ExecuteAsync(
-                           "AddStoneDocumentGb",
-                           new
-                           {
-                               p_StoneId = stoneId,
-                               p_DocumentId = doc.DocumentId,
-                               p_CreatedBy = product.CreatedBy,
-                               p_IsPrimary = doc.IsPrimary
-                           },
-                           transaction,
-                           commandType: CommandType.StoredProcedure
-                           );
-                        }
-                    }
-                }
-                else
-                {
-                    //empty stone product;
-                }
-
-                await transaction.CommitAsync();
-                return productId;
-            }
-            catch(Exception ex)
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-        }
+      
         public async Task<int> Add(Product product)
         {
-            //return await this.AddOld(product); //old method
             return await this.AddProduct(product,null,null);
         }
         public async Task<bool> Update(Product product)
         {
-            //return await this.UpdateOld(product); //old method
             return await this.UpdateProduct(product, null, null);
         }
         private async Task<int> AddProduct(Product product, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
@@ -1653,6 +1521,11 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.OrderDelievery.EstDelieveryDate = dataReader.GetDateTimeValue("estDelieveryDate");
                         item.OrderDelievery.ShippingCost = dataReader.GetIntegerValue("shippingCost");
                         item.OrderDelievery.DelieveryAddress = dataReader.GetStringValue("delieveryAddress");
+                        item.AppraisalDetailsId = dataReader.GetIntegerValue("appraisalDetailId");
+                        item.ExchangeDetailsId = dataReader.GetIntegerValue("exchangeDetailId");
+
+                        //item.AppraisalDetails.AppraisalPrice = dataReader.GetDecimalValue("appraisalPrice");
+                        //item.ExchangeDetails.ExchangePrice = dataReader.GetDecimalValue("exchangePrice");
 
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = await this.CustomerInfrastructure.Get(Customer);
@@ -1673,6 +1546,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                         if (item.AppraisalDetailsId > 0)
                         {
                             item.AppraisalDetails = await this.GetAppraisalDetailsById((int)item.OrderId);
+                        }
+                        if (item.ExchangeDetailsId > 0)
+                        {
+                            item.ExchangeDetails = await this.GetExchangeDetailsById((int)item.OrderId);
                         }
                         OrderList.Add(item);
                     }
