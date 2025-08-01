@@ -23,7 +23,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 {
     public class ProductInfrastructure : BaseInfrastructure, IProductInfrastructure
     {
-        public ProductInfrastructure(IConfiguration configuration,ICustomerInfrastructure customerInfrastructure) : base(configuration)
+        public ProductInfrastructure(IConfiguration configuration, ICustomerInfrastructure customerInfrastructure) : base(configuration)
         {
             this.CustomerInfrastructure = customerInfrastructure;
         }
@@ -39,11 +39,6 @@ namespace GoldBank.Infrastructure.Infrastructure
         public ICustomerInfrastructure CustomerInfrastructure { get; set; }
 
         #endregion
-
-        public Task<bool> Activate(Product entity)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<bool> BulkImport(Document document)
         {
@@ -81,372 +76,26 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return true;
         }
-
-      
-        public async Task<int> Add(Product product)
+        private object ToDbValue(object? value)
         {
-            return await this.AddProduct(product,null,null);
-        }
-        public async Task<bool> Update(Product product)
-        {
-            return await this.UpdateProduct(product, null, null);
-        }
-        private async Task<int> AddProduct(Product product, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
-        {
-            var isOwnConnection = externalConnection == null;
-            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
-            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+            if (value == null) return DBNull.Value;
 
-            try
+            switch (value)
             {
-                var parameters = new DynamicParameters();
-                parameters.Add("p_ProductTypeId", product.ProductTypeId);
-                parameters.Add("p_SKU", product.SKU);
-                parameters.Add("p_ProductSourceId", product.ProductSourceId);
-                parameters.Add("p_VendorId", product.VendorId);
-                parameters.Add("p_StoreId", product.StoreId);
-                parameters.Add("p_CreatedBy", product.CreatedBy);
-                parameters.Add("p_PrimaryCategoryIds", product.Jewellery.PrimaryCategoryIds);
-                parameters.Add("p_CategoryId", product.Jewellery.CategoryId);
-                parameters.Add("p_SubCategoryId", product.Jewellery.SubCategoryId);
-                parameters.Add("p_WearingTypeIds", product.Jewellery.WearingTypeIds);
-                parameters.Add("p_CollectionIds", product.Jewellery.CollectionIds);
-                parameters.Add("p_GenderId", product.Jewellery.GenderId);
-                parameters.Add("p_OccasionIds", product.Jewellery.OccasionIds);
-                parameters.Add("p_Description", product.Jewellery.Description);
-                parameters.Add("p_MetalTypeId", product.Jewellery.MetalTypeId);
-                parameters.Add("p_MetalPurityTypeId", product.Jewellery.MetalPurityTypeId);
-                parameters.Add("p_MetalColorTypeId", product.Jewellery.MetalColorTypeId);
-                parameters.Add("p_WeightTypeId", product.Jewellery.WeightTypeId);
-                parameters.Add("p_NetWeight", product.Jewellery.NetWeight);
-                parameters.Add("p_WastageWeight", product.Jewellery.WastageWeight);
-                parameters.Add("p_WastagePct", product.Jewellery.WastagePct);
-                parameters.Add("p_TotalWeight", product.Jewellery.TotalWeight);
-                parameters.Add("p_Width", product.Jewellery.Width);
-                parameters.Add("p_Bandwidth", product.Jewellery.Bandwidth);
-                parameters.Add("p_Thickness", product.Jewellery.Thickness);
-                parameters.Add("p_Size", product.Jewellery.Size);
-                parameters.Add("p_IsEcommerce", product.Jewellery.IsEcommerce);
-                parameters.Add("p_IsEngravingAvailable", product.Jewellery.IsEngravingAvailable);
-                parameters.Add("p_IsSizeAlterationAvailable", product.Jewellery.IsSizeAlterationAvailable);
-                parameters.Add("p_LacquerPrice", product.Jewellery.LacquerPrice);
-                parameters.Add("p_MakingPrice", product.Jewellery.MakingPrice);
-                parameters.Add("p_TotalPrice", product.Jewellery.TotalPrice);
-                parameters.Add("p_Title", product.Title);
-                parameters.Add("p_ReferenceSKU", product.ReferenceSKU);
-                parameters.Add("p_MinWeight", product.Jewellery.MinWeight);
-                parameters.Add("p_MaxWeight", product.Jewellery.MaxWeight);
-                parameters.Add("p_IsSold", product.IsSold);
-                parameters.Add("p_IsReserved", product.IsReserved);
-                parameters.Add("p_ReferenceOrderId", product.ReferenceOrderId);
+                case int intVal when intVal <= 0:
+                    return DBNull.Value;
 
-                parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
-                parameters.Add("o_JewelleryId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                case decimal decVal when decVal <= 0:
+                    return DBNull.Value;
 
-                await connection.ExecuteAsync(
-                    "AddProductWithJewelleryGb",
-                    parameters,
-                    transaction: transaction,
-                    commandType: CommandType.StoredProcedure
-                );
+                case string strVal when string.IsNullOrWhiteSpace(strVal):
+                    return DBNull.Value;
 
-                int productId = parameters.Get<int>("o_ProductId");
-                int jewelleryId = parameters.Get<int>("o_JewelleryId");
-
-                if (productId <= 0 || jewelleryId <= 0)
-                    throw new Exception("Product or Jewellery insert failed.");
-
-                // Product Documents
-                foreach (var doc in product.ProductDocuments ?? Enumerable.Empty<ProductDocument>())
-                {
-                    await connection.ExecuteAsync("InsertUpdateProductDocumentGb", new
-                    {
-                        p_ProductId = productId,
-                        p_DocumentId = doc.DocumentId,
-                        p_IsPrimary = doc.IsPrimary,
-                        p_CreatedBy = product.CreatedBy,
-                        p_IsPostManufactured = doc.IsPostManufactured
-                    }, 
-                    transaction: transaction,
-                    commandType: CommandType.StoredProcedure);
-                }
-
-                // Stone Products and Documents
-                foreach (var stone in product.StoneProducts ?? Enumerable.Empty<StoneProduct>())
-                {
-                    await connection.ExecuteAsync("InsertUpdateStoneProductGb", new
-                    {
-                        p_ProductId = productId,
-                        p_StoneTypeId = stone.StoneTypeId,
-                        p_StoneShapeId = stone.StoneShapeId,
-                        p_StoneWeightTypeId = stone.StoneWeightTypeId,
-                        p_Quantity = stone.Quantity,
-                        p_TotalWeight = stone.TotalWeight,
-                        p_TotalPrice = stone.TotalPrice,
-                        p_MinStoneWeight = stone.MinStoneWeight,
-                        p_MaxStoneWeight = stone.MaxStoneWeight,
-                        p_MinStonePrice = stone.MinStonePrice,
-                        p_MaxStonePrice = stone.MaxStonePrice,
-                        p_CreatedBy = product.CreatedBy
-                    },
-        transaction: transaction,
-                    commandType: CommandType.StoredProcedure);
-
-                    int stoneId = await connection.QueryFirstOrDefaultAsync<int>(
-                        "SELECT stoneProductId FROM stoneProduct_gb WHERE productId = @productId AND stoneTypeId = @stoneTypeId AND stoneShapeId = @stoneShapeId",
-                        new { productId, stone.StoneTypeId, stone.StoneShapeId },
-                        transaction
-                    );
-
-                    foreach (var doc in stone.StoneDocuments ?? Enumerable.Empty<StoneDocument>())
-                    {
-                        await connection.ExecuteAsync("InsertUpdateStoneDocumentGb", new
-                        {
-                            p_StoneId = stoneId,
-                            p_DocumentId = doc.DocumentId,
-                            p_IsPrimary = doc.IsPrimary,
-                            p_CreatedBy = product.CreatedBy
-                        }, transaction: transaction,
-                    commandType: CommandType.StoredProcedure);
-                    }
-                }
-
-                if (isOwnConnection)
-                    await transaction.CommitAsync();
-
-                return productId;
-            }
-            catch(Exception ex)
-            {
-                if (isOwnConnection)
-                    await transaction.RollbackAsync();
-                throw;
-            }
-            finally
-            {
-                if (isOwnConnection)
-                    await connection.DisposeAsync();
+                default:
+                    return value;
             }
         }
 
-        private async Task<int> AddRepairDetails(RepairDetails repairDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
-        {
-            var isOwnConnection = externalConnection == null;
-            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
-            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
-
-            try
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("p_ProductTypeId", repairDetails.ProductTypeId);
-                parameters.Add("p_MetalTypeId", repairDetails.MetalTypeId);
-                parameters.Add("p_WeightBeforeRepair", repairDetails.WeightBeforeRepair);
-                parameters.Add("p_RepairCleaningId", repairDetails.RepairCleaningId);
-                parameters.Add("p_CleaningNotes", repairDetails.CleaningNotes);
-                parameters.Add("p_CleaningPrice", repairDetails.CleaningPrice);
-                parameters.Add("p_RepairPolishingId", repairDetails.RepairPolishingId);
-                parameters.Add("p_PolishingNotes", repairDetails.PolishingNotes);
-                parameters.Add("p_PolishingPrice", repairDetails.PolishingPrice);
-                parameters.Add("p_CurrentJewellerySize", repairDetails.CurrentJewellerySize);
-                parameters.Add("p_DesiredJewellerySize", repairDetails.DesiredJewellerySize);
-                parameters.Add("p_ResizingNotes", repairDetails.ResizingNotes);
-                parameters.Add("p_ResizingPrice", repairDetails.ResizingPrice);
-                parameters.Add("p_RepairDamageTypeIds", repairDetails.RepairDamageTypeIds);
-                parameters.Add("p_RepairDamageAreaIds", repairDetails.RepairDamageAreaIds);
-                parameters.Add("p_RepairingNotes", repairDetails.RepairingNotes);
-                parameters.Add("p_RepairingPrice", repairDetails.RepairingPrice);
-                parameters.Add("p_EstRepairingCost", repairDetails.EstRepairingCost);
-                parameters.Add("p_EstDeliveryDate", repairDetails.EstDeliveryDate);
-                parameters.Add("p_WeightChange", repairDetails.WeightChange);
-                parameters.Add("p_WeightChangePrice", repairDetails.WeightChangePrice);
-                parameters.Add("p_ActualWeight", repairDetails.ActualWeight);
-                parameters.Add("p_TotalRepairCost", repairDetails.TotalRepairCost);
-                parameters.Add("p_WeightTypeId", repairDetails.WeightTypeId);
-                parameters.Add("p_CreatedBy", repairDetails.CreatedBy);
-
-                parameters.Add("o_RepairDetailId", dbType: DbType.Int32, direction: ParameterDirection.Output);
-
-                await connection.ExecuteAsync(
-                    "AddRepairDetailsGb",
-                    parameters,
-                    transaction: transaction,
-                    commandType: CommandType.StoredProcedure
-                );
-
-                int RepairDetailId = parameters.Get<int>("o_RepairDetailId");
-
-               if (RepairDetailId > 0)
-               {
-                    // Repair Documents
-                    foreach (var doc in repairDetails.RepairDocuments ?? Enumerable.Empty<RepairDocument>())
-                    {
-                        await connection.ExecuteAsync("AddUpdateRepairDocumentGb", new
-                        {
-                            p_RepairDocumentId = doc.RepairDocumentId,
-                            p_DocumentId = doc.DocumentId,
-                            p_RepairDetailId = RepairDetailId,
-                            p_IsPrimary = doc.IsPrimary,
-                            p_IsPostRepair = doc.IsPostRepair,
-                            p_CreatedBy = doc.CreatedBy,
-                            p_UpdatedBy = repairDetails.UpdatedBy
-                        },
-                        transaction: transaction,
-                        commandType: CommandType.StoredProcedure);
-                    }
-
-                    foreach (var doc in repairDetails.RepairStoneDetails ?? Enumerable.Empty<RepairStoneDetails>())
-                    {
-                        await connection.ExecuteAsync("AddUpdateRepairStoneDetailGb", new
-                        {
-                            p_RepairStoneDetailId = doc.RepairStoneDetailId ,
-                            p_RepairDetailId = RepairDetailId,
-                            p_CurrentStoneId = doc.CurrentStoneId,
-                            p_DesiredStoneId = doc.DesiredStoneId,
-                            p_StoneTypeIds = doc.StoneTypeIds,
-                            p_IsFixed = doc.IsFixed,
-                            p_IsReplacement = doc.IsReplacement,
-                            p_Notes = doc.Notes,
-                            p_Price = doc.Price,
-                            p_ActualWeight = doc.ActualWeight,
-                            p_ActualPrice = doc.ActualPrice,
-                            p_CreatedBy = repairDetails.CreatedBy,
-                            p_UpdatedBy = repairDetails.UpdatedBy
-                        },
-                        transaction: transaction,
-                        commandType: CommandType.StoredProcedure);
-                    }
-                }
-                else
-                {
-                     throw new Exception("Repair details insertion failed");
-                }               
-
-                if (isOwnConnection)
-                    await transaction.CommitAsync();
-
-                return RepairDetailId;
-            }
-            catch (Exception ex)
-            {
-                if (isOwnConnection)
-                    await transaction.RollbackAsync();
-                throw;
-            }
-            finally
-            {
-                if (isOwnConnection)
-                    await connection.DisposeAsync();
-            }
-        }
-        private async Task<int> UpdateRepairDetails(RepairDetails repairDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
-        {
-            var isOwnConnection = externalConnection == null;
-            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
-            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
-
-            try
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("p_RepairDetailId", repairDetails.RepairDetailId);
-                parameters.Add("p_ProductTypeId", repairDetails.ProductTypeId);
-                parameters.Add("p_MetalTypeId", repairDetails.MetalTypeId);
-                parameters.Add("p_WeightBeforeRepair", repairDetails.WeightBeforeRepair);
-                parameters.Add("p_RepairCleaningId", repairDetails.RepairCleaningId);
-                parameters.Add("p_CleaningNotes", repairDetails.CleaningNotes);
-                parameters.Add("p_CleaningPrice", repairDetails.CleaningPrice);
-                parameters.Add("p_RepairPolishingId", repairDetails.RepairPolishingId);
-                parameters.Add("p_PolishingNotes", repairDetails.PolishingNotes);
-                parameters.Add("p_PolishingPrice", repairDetails.PolishingPrice);
-                parameters.Add("p_CurrentJewellerySize", repairDetails.CurrentJewellerySize);
-                parameters.Add("p_DesiredJewellerySize", repairDetails.DesiredJewellerySize);
-                parameters.Add("p_ResizingNotes", repairDetails.ResizingNotes);
-                parameters.Add("p_ResizingPrice", repairDetails.ResizingPrice);
-                parameters.Add("p_RepairDamageTypeIds", repairDetails.RepairDamageTypeIds);
-                parameters.Add("p_RepairDamageAreaIds", repairDetails.RepairDamageAreaIds);
-                parameters.Add("p_RepairingNotes", repairDetails.RepairingNotes);
-                parameters.Add("p_RepairingPrice", repairDetails.RepairingPrice);
-                parameters.Add("p_EstRepairingCost", repairDetails.EstRepairingCost);
-                parameters.Add("p_EstDeliveryDate", repairDetails.EstDeliveryDate);
-                parameters.Add("p_WeightChange", repairDetails.WeightChange);
-                parameters.Add("p_WeightChangePrice", repairDetails.WeightChangePrice);
-                parameters.Add("p_ActualWeight", repairDetails.ActualWeight);
-                parameters.Add("p_TotalRepairCost", repairDetails.TotalRepairCost);
-                parameters.Add("p_WeightTypeId", repairDetails.WeightTypeId);
-                parameters.Add("p_UpdatedBy", repairDetails.UpdatedBy);
-                parameters.Add("o_RepairDetailId", dbType: DbType.Int32, direction: ParameterDirection.Output);
-
-                await connection.ExecuteAsync(
-                    "UpdateRepairDetailsGb",
-                    parameters,
-                    transaction: transaction,
-                    commandType: CommandType.StoredProcedure
-                );
-
-                int RepairDetailId = parameters.Get<int>("o_RepairDetailId");
-
-                if (RepairDetailId > 0) // updated successfully
-                {
-                    // Repair Documents
-                    foreach (var doc in repairDetails.RepairDocuments ?? Enumerable.Empty<RepairDocument>())
-                    {
-                        await connection.ExecuteAsync("AddUpdateRepairDocumentGb", new
-                        {
-                            p_RepairDocumentId = doc.RepairDocumentId,
-                            p_DocumentId = doc.DocumentId,
-                            p_RepairDetailId = RepairDetailId,
-                            p_IsPrimary = doc.IsPrimary,
-                            p_IsPostRepair = doc.IsPostRepair,
-                            p_CreatedBy = repairDetails.CreatedBy,
-                            p_UpdatedBy = repairDetails.UpdatedBy
-                        },
-                        transaction: transaction,
-                        commandType: CommandType.StoredProcedure);
-                    }
-
-                    foreach (var doc in repairDetails.RepairStoneDetails ?? Enumerable.Empty<RepairStoneDetails>())
-                    {
-                        await connection.ExecuteAsync("AddUpdateRepairStoneDetailGb", new
-                        {
-                            p_RepairStoneDetailId = doc.RepairStoneDetailId,
-                            p_RepairDetailId = RepairDetailId,
-                            p_CurrentStoneId = doc.CurrentStoneId,
-                            p_DesiredStoneId = doc.DesiredStoneId,
-                            p_IsFixed = doc.IsFixed,
-                            p_StoneTypeIds = doc.StoneTypeIds,
-                            p_IsReplacement = doc.IsReplacement,
-                            p_Notes = doc.Notes,
-                            p_Price = doc.Price,
-                            p_ActualWeight = doc.ActualWeight,
-                            p_ActualPrice = doc.ActualPrice,
-                            p_CreatedBy = repairDetails.CreatedBy,
-                            p_UpdatedBy = repairDetails.UpdatedBy
-                        },
-                        transaction: transaction,
-                        commandType: CommandType.StoredProcedure);
-                    }
-                }
-                else
-                {
-                    throw new Exception("Repair details insertion failed");
-                }
-
-                if (isOwnConnection)
-                    await transaction.CommitAsync();
-
-                return RepairDetailId;
-            }
-            catch (Exception ex)
-            {
-                if (isOwnConnection)
-                    await transaction.RollbackAsync();
-                throw;
-            }
-            finally
-            {
-                if (isOwnConnection)
-                    await connection.DisposeAsync();
-            }
-        }
         public async Task<Product> Get(Product entity)
         {
             var parameters = new List<DbParameter>
@@ -467,6 +116,12 @@ namespace GoldBank.Infrastructure.Infrastructure
             return res;
         }
 
+        #region Not Used
+
+        public Task<bool> Activate(Product entity)
+        {
+            throw new NotImplementedException();
+        }
         public async Task<List<Product>> GetList(Product entity)
         {
             var parameters = new List<DbParameter>
@@ -488,7 +143,6 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return result;
         }
-
         public async Task<bool> UpdateOld(Product product)
         {
             using var connection = base.GetConnection();
@@ -637,6 +291,165 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                 await transaction.RollbackAsync();
                 throw; // Optionally log ex
+            }
+        }
+        public Task<AllResponse<Product>> GetAll(AllRequest<Product> entity)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<bool> BulkImport(ProductBulkImport productBulkImport)
+        {
+            throw new NotImplementedException();
+
+        }
+
+        #endregion
+
+        #region Product Details
+
+        public async Task<int> Add(Product product)
+        {
+            return await this.AddProduct(product, null, null);
+        }
+        public async Task<bool> Update(Product product)
+        {
+            return await this.UpdateProduct(product, null, null);
+        }
+        private async Task<int> AddProduct(Product product, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_ProductTypeId", product.ProductTypeId);
+                parameters.Add("p_SKU", product.SKU);
+                parameters.Add("p_ProductSourceId", product.ProductSourceId);
+                parameters.Add("p_VendorId", product.VendorId);
+                parameters.Add("p_StoreId", product.StoreId);
+                parameters.Add("p_CreatedBy", product.CreatedBy);
+                parameters.Add("p_PrimaryCategoryIds", product.Jewellery.PrimaryCategoryIds);
+                parameters.Add("p_CategoryId", product.Jewellery.CategoryId);
+                parameters.Add("p_SubCategoryId", product.Jewellery.SubCategoryId);
+                parameters.Add("p_WearingTypeIds", product.Jewellery.WearingTypeIds);
+                parameters.Add("p_CollectionIds", product.Jewellery.CollectionIds);
+                parameters.Add("p_GenderId", product.Jewellery.GenderId);
+                parameters.Add("p_OccasionIds", product.Jewellery.OccasionIds);
+                parameters.Add("p_Description", product.Jewellery.Description);
+                parameters.Add("p_MetalTypeId", product.Jewellery.MetalTypeId);
+                parameters.Add("p_MetalPurityTypeId", product.Jewellery.MetalPurityTypeId);
+                parameters.Add("p_MetalColorTypeId", product.Jewellery.MetalColorTypeId);
+                parameters.Add("p_WeightTypeId", product.Jewellery.WeightTypeId);
+                parameters.Add("p_NetWeight", product.Jewellery.NetWeight);
+                parameters.Add("p_WastageWeight", product.Jewellery.WastageWeight);
+                parameters.Add("p_WastagePct", product.Jewellery.WastagePct);
+                parameters.Add("p_TotalWeight", product.Jewellery.TotalWeight);
+                parameters.Add("p_Width", product.Jewellery.Width);
+                parameters.Add("p_Bandwidth", product.Jewellery.Bandwidth);
+                parameters.Add("p_Thickness", product.Jewellery.Thickness);
+                parameters.Add("p_Size", product.Jewellery.Size);
+                parameters.Add("p_IsEcommerce", product.Jewellery.IsEcommerce);
+                parameters.Add("p_IsEngravingAvailable", product.Jewellery.IsEngravingAvailable);
+                parameters.Add("p_IsSizeAlterationAvailable", product.Jewellery.IsSizeAlterationAvailable);
+                parameters.Add("p_LacquerPrice", product.Jewellery.LacquerPrice);
+                parameters.Add("p_MakingPrice", product.Jewellery.MakingPrice);
+                parameters.Add("p_TotalPrice", product.Jewellery.TotalPrice);
+                parameters.Add("p_Title", product.Title);
+                parameters.Add("p_ReferenceSKU", product.ReferenceSKU);
+                parameters.Add("p_MinWeight", product.Jewellery.MinWeight);
+                parameters.Add("p_MaxWeight", product.Jewellery.MaxWeight);
+                parameters.Add("p_IsSold", product.IsSold);
+                parameters.Add("p_IsReserved", product.IsReserved);
+                parameters.Add("p_ReferenceOrderId", product.ReferenceOrderId);
+
+                parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                parameters.Add("o_JewelleryId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "AddProductWithJewelleryGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int productId = parameters.Get<int>("o_ProductId");
+                int jewelleryId = parameters.Get<int>("o_JewelleryId");
+
+                if (productId <= 0 || jewelleryId <= 0)
+                    throw new Exception("Product or Jewellery insert failed.");
+
+                // Product Documents
+                foreach (var doc in product.ProductDocuments ?? Enumerable.Empty<ProductDocument>())
+                {
+                    await connection.ExecuteAsync("InsertUpdateProductDocumentGb", new
+                    {
+                        p_ProductId = productId,
+                        p_DocumentId = doc.DocumentId,
+                        p_IsPrimary = doc.IsPrimary,
+                        p_CreatedBy = product.CreatedBy,
+                        p_IsPostManufactured = doc.IsPostManufactured
+                    },
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure);
+                }
+
+                // Stone Products and Documents
+                foreach (var stone in product.StoneProducts ?? Enumerable.Empty<StoneProduct>())
+                {
+                    await connection.ExecuteAsync("InsertUpdateStoneProductGb", new
+                    {
+                        p_ProductId = productId,
+                        p_StoneTypeId = stone.StoneTypeId,
+                        p_StoneShapeId = stone.StoneShapeId,
+                        p_StoneWeightTypeId = stone.StoneWeightTypeId,
+                        p_Quantity = stone.Quantity,
+                        p_TotalWeight = stone.TotalWeight,
+                        p_TotalPrice = stone.TotalPrice,
+                        p_MinStoneWeight = stone.MinStoneWeight,
+                        p_MaxStoneWeight = stone.MaxStoneWeight,
+                        p_MinStonePrice = stone.MinStonePrice,
+                        p_MaxStonePrice = stone.MaxStonePrice,
+                        p_CreatedBy = product.CreatedBy
+                    },
+        transaction: transaction,
+                    commandType: CommandType.StoredProcedure);
+
+                    int stoneId = await connection.QueryFirstOrDefaultAsync<int>(
+                        "SELECT stoneProductId FROM stoneProduct_gb WHERE productId = @productId AND stoneTypeId = @stoneTypeId AND stoneShapeId = @stoneShapeId",
+                        new { productId, stone.StoneTypeId, stone.StoneShapeId },
+                        transaction
+                    );
+
+                    foreach (var doc in stone.StoneDocuments ?? Enumerable.Empty<StoneDocument>())
+                    {
+                        await connection.ExecuteAsync("InsertUpdateStoneDocumentGb", new
+                        {
+                            p_StoneId = stoneId,
+                            p_DocumentId = doc.DocumentId,
+                            p_IsPrimary = doc.IsPrimary,
+                            p_CreatedBy = product.CreatedBy
+                        }, transaction: transaction,
+                    commandType: CommandType.StoredProcedure);
+                    }
+                }
+
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+
+                return productId;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
             }
         }
         public async Task<bool> UpdateProduct(Product product, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
@@ -791,7 +604,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             catch (Exception ex)
             {
-                 if (isOwnConnection)
+                if (isOwnConnection)
                     await transaction.RollbackAsync();
                 throw;
             }
@@ -801,37 +614,6 @@ namespace GoldBank.Infrastructure.Infrastructure
                     await connection.DisposeAsync();
             }
         }
-
-
-        public Task<AllResponse<Product>> GetAll(AllRequest<Product> entity)
-        {
-            throw new NotImplementedException();
-        }
-        public Task<bool> BulkImport(ProductBulkImport productBulkImport)
-        {
-            throw new NotImplementedException();
-
-        }
-        private object ToDbValue(object? value)
-        {
-            if (value == null) return DBNull.Value;
-
-            switch (value)
-            {
-                case int intVal when intVal <= 0:
-                    return DBNull.Value;
-
-                case decimal decVal when decVal <= 0:
-                    return DBNull.Value;
-
-                case string strVal when string.IsNullOrWhiteSpace(strVal):
-                    return DBNull.Value;
-
-                default:
-                    return value;
-            }
-        }
-
         public async Task<AllResponse<Product>> GetAllProducts(AllRequest<ProductRequestVm> product)
         {
             var Response = new AllResponse<Product>();
@@ -953,7 +735,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.MaxWeight = dataReader.GetDecimalValue("maxWeight");
 
                             var productItem = ProductList.FirstOrDefault(x => x.ProductId == item.ProductId);
-                            if(productItem != null)
+                            if (productItem != null)
                             {
                                 productItem.Jewellery = item;
                             }
@@ -1184,7 +966,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                                 productItem.ProductDocuments.Add(item);
                             }
                         }
-                    }                  
+                    }
                 }
             }
             return ProductList;
@@ -1255,7 +1037,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.IsEcommerce = dataReader.GetBooleanValue("isEcommerce");
                             item.IsEngravingAvailable = dataReader.GetBooleanValue("isEngravingAvailable");
                             item.LacquerPrice = dataReader.GetDecimalValue("lacquerPrice");
-                            item.MakingPrice = dataReader.GetDecimalValue("makingPrice"); 
+                            item.MakingPrice = dataReader.GetDecimalValue("makingPrice");
                             item.TotalPrice = dataReader.GetDecimalValue("totalPrice");
                             item.IsActive = dataReader.GetBooleanValue("isActive");
                             item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
@@ -1264,10 +1046,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.MinWeight = dataReader.GetDecimalValue("minWeight");
                             item.MaxWeight = dataReader.GetDecimalValue("maxWeight");
 
-                            if(Product.ProductId == item.ProductId)
+                            if (Product.ProductId == item.ProductId)
                             {
                                 Product.Jewellery = item;
-                            }                          
+                            }
                         }
                     }
                     if (dataReader.NextResult())
@@ -1336,11 +1118,15 @@ namespace GoldBank.Infrastructure.Infrastructure
                                 Product.ProductDocuments.Add(item);
                             }
                         }
-                    }                   
+                    }
                 }
             }
             return Product;
         }
+
+        #endregion
+
+        #region Order Details
         public async Task<int> AddOrder(Order order)
         {
             using var connection = base.GetConnection();
@@ -1358,17 +1144,17 @@ namespace GoldBank.Infrastructure.Infrastructure
                     if (order.ProductId <= 0)
                         throw new Exception("Failed to insert Product inside AddOrder.");
                 }
-                else if(order.OrderTypeId == 1 || order.OrderTypeId == 3 || order.OrderTypeId == 4) // direct Sale orders + rserved + alteration
+                else if (order.OrderTypeId == 1 || order.OrderTypeId == 3 || order.OrderTypeId == 4) // direct Sale orders + rserved + alteration
                 {
                     order.Product.IsReserved = true;
                     order.Product.IsSold = false;
-                    bool isUpdated = await this.UpdateProduct(order.Product, connection, transaction);                    
+                    bool isUpdated = await this.UpdateProduct(order.Product, connection, transaction);
                 }
                 if (order.AlterationDetails != null && order.OrderTypeId == 4) // direct order alteration 
                 {
                     order.AlterationDetailsId = await this.AddAlterationDetails(order.AlterationDetails, connection, transaction);
                 }
-                if(order.RepairDetails != null && order.OrderTypeId == 5) // repair order
+                if (order.RepairDetails != null && order.OrderTypeId == 5) // repair order
                 {
                     order.RepairDetailsId = await this.AddRepairDetails(order.RepairDetails, connection, transaction);
                 }
@@ -1389,6 +1175,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                     if (order.ProductId <= 0)
                         throw new Exception("Failed to insert Product inside AddOrder.");
                     order.ExchangeDetailsId = await this.AddExchangeDetail(order.ExchangeDetails, connection, transaction);
+                }
+                if (order.GoldBookingDetails != null && order.OrderTypeId == 8) // gold booking 
+                {
+                    order.GoldBookingDetailsId = await this.AddGoldBookingDetail(order.GoldBookingDetails, connection, transaction);
                 }
 
                 // Prepare parameters
@@ -1416,6 +1206,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_RepairDetailId", order.RepairDetailsId);
                 parameters.Add("p_AppraisalDetailId", order.AppraisalDetailsId);
                 parameters.Add("p_ExchangeDetailId", order.ExchangeDetailsId);
+                parameters.Add("p_GoldBookingDetailId", order.GoldBookingDetailsId);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
@@ -1526,21 +1317,15 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.OrderDelievery.DelieveryAddress = dataReader.GetStringValue("delieveryAddress");
                         item.AppraisalDetailsId = dataReader.GetIntegerValue("appraisalDetailId");
                         item.ExchangeDetailsId = dataReader.GetIntegerValue("exchangeDetailId");
-
-                        //item.AppraisalDetails.AppraisalPrice = dataReader.GetDecimalValue("appraisalPrice");
-                        //item.ExchangeDetails.ExchangePrice = dataReader.GetDecimalValue("exchangePrice");
+                        item.GoldBookingDetailsId = dataReader.GetIntegerValue("goldBookingDetailId");
 
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = await this.CustomerInfrastructure.Get(Customer);
-                        //var productItem = AllProducts.FirstOrDefault(p => p.ProductId == item.ProductId);
-                        //if (productItem != null)
-                        //{
-                        //    item.Product = productItem;
-                        //}
+
                         item.Product = await this.GetProductById(item.ProductId);
                         if (item.RepairDetailsId > 0)
                         {
-                            item.RepairDetails = await this.GetRepairDetailsById((int)item.OrderId );
+                            item.RepairDetails = await this.GetRepairDetailsById((int)item.OrderId);
                         }
                         if (item.AlterationDetailsId > 0)
                         {
@@ -1554,13 +1339,17 @@ namespace GoldBank.Infrastructure.Infrastructure
                         {
                             item.ExchangeDetails = await this.GetExchangeDetailsById((int)item.OrderId);
                         }
+                        if (item.GoldBookingDetailsId > 0)
+                        {
+                            item.GoldBookingDetails = await this.GetGoldBookingDetailsById((int)item.OrderId);
+                        }
                         OrderList.Add(item);
                     }
                 }
 
                 if (dataReader.NextResult())
                 {
-                    while(dataReader.Read())
+                    while (dataReader.Read())
                     {
                         var item = new CustomCharge();
                         item.CustomChargesId = dataReader.GetIntegerValue("customChargesId");
@@ -1613,13 +1402,13 @@ namespace GoldBank.Infrastructure.Infrastructure
                     {
                         alterationDetailsId = await this.AddAlterationDetails(order.AlterationDetails, connection, transaction);
                         if (alterationDetailsId == 0)
-                            throw new Exception("Failed to Add Alteration Details."); 
+                            throw new Exception("Failed to Add Alteration Details.");
                     }
                 }
                 if (order.RepairDetails != null && order.OrderTypeId == 5) // Repair
                 {
                     var res = await this.UpdateRepairDetails(order.RepairDetails, connection, transaction);
-                    if (res <1)
+                    if (res < 1)
                         throw new Exception("Failed to update repair.");
                 }
                 if (order.AppraisalDetails != null && order.OrderTypeId == 6) // Appraisal
@@ -1633,6 +1422,12 @@ namespace GoldBank.Infrastructure.Infrastructure
                     var res = await this.UpdateExchangeDetail(order.ExchangeDetails, connection, transaction);
                     if (!res)
                         throw new Exception("Failed to update exchange.");
+                }
+                if (order.GoldBookingDetails != null && order.OrderTypeId == 8) // Gold Booking
+                {
+                    var res = await this.UpdateGoldBookingDetail(order.GoldBookingDetails, connection, transaction);
+                    if (!res)
+                        throw new Exception("Failed to update gold booking.");
                 }
 
                 // Prepare parameters
@@ -1744,7 +1539,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.AdvancePaymentPct = dataReader.GetDecimalValue("advancePaymentPct");
                         item.TotalPayment = dataReader.GetDecimalValue("totalPayment");
 
-                        item.OrderDelievery.DelieveryMethodId = dataReader.GetIntegerValue("delieveryMethodId") ;
+                        item.OrderDelievery.DelieveryMethodId = dataReader.GetIntegerValue("delieveryMethodId");
                         item.OrderDelievery.EstDelieveryDate = dataReader.GetDateTimeValue("estDelieveryDate");
                         item.OrderDelievery.ShippingCost = dataReader.GetIntegerValue("shippingCost");
                         item.OrderDelievery.DelieveryAddress = dataReader.GetStringValue("delieveryAddress");
@@ -1753,21 +1548,25 @@ namespace GoldBank.Infrastructure.Infrastructure
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = await this.CustomerInfrastructure.Get(Customer);
                         item.Product = await this.GetProductById(item.ProductId);
-                        if (item.OrderTypeId == 4)
+                        if (item.OrderTypeId == 4) //Alteration
                         {
                             item.AlterationDetails = await this.GetAlterationDetailsById(orderId);
                         }
-                        else if (item.OrderTypeId == 5)
+                        else if (item.OrderTypeId == 5) //repair
                         {
                             item.RepairDetails = await this.GetRepairDetailsById(orderId);
                         }
-                        else if (item.OrderTypeId == 6)
+                        else if (item.OrderTypeId == 6) //appraisal
                         {
                             item.AppraisalDetails = await this.GetAppraisalDetailsById(orderId);
                         }
-                        else if (item.OrderTypeId == 7)
+                        else if (item.OrderTypeId == 7) //exchange
                         {
                             item.ExchangeDetails = await this.GetExchangeDetailsById(orderId);
+                        }
+                        else if (item.OrderTypeId == 8) //gold booking
+                        {
+                            item.GoldBookingDetails = await this.GetGoldBookingDetailsById(orderId);
                         }
                     }
                     if (dataReader.NextResult())
@@ -1792,12 +1591,13 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return item;
         }
-        public async Task<bool> UpdateOrderById(Order order)
+        public async Task<bool> UpdateOrderById(OrderStatusReqVm order)
         {
             var parameters = new List<DbParameter>
             {
                 base.GetParameter("p_OrderId",order.OrderId),
                 base.GetParameter("p_OrderStatusId", order.OrderStatusId),
+                base.GetParameter("p_ReservationDate", order.ReservationDate),
                 base.GetParameter("p_UpdatedBy", order.UpdatedBy)
             };
             var ReturnValue = await base.ExecuteNonQuery(parameters, "UpdateOrderById_gb", CommandType.StoredProcedure);
@@ -1805,7 +1605,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         }
         public async Task<bool> DeleteOrder(Order order)
         {
-           
+
             using var connection = base.GetConnection();
             var parameters = new DynamicParameters();
             parameters.Add("p_OrderId", order.OrderId);
@@ -1814,8 +1614,11 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             await connection.ExecuteAsync("DeleteOrderById_gb", parameters, commandType: CommandType.StoredProcedure);
             var succeed = parameters.Get<int>("o_updated");
-            return succeed == 1;            
+            return succeed == 1;
         }
+        #endregion
+
+        #region Alteration Details
         public async Task<int> AddAlterationDetails(AlterationDetails alterationDetails)
         {
             return await AddAlterationDetails(alterationDetails, null, null);
@@ -1826,7 +1629,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         }
         private async Task<bool> UpdateAlterationDetails(AlterationDetails alterationDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
         {
-             var isOwnConnection = externalConnection == null;
+            var isOwnConnection = externalConnection == null;
             DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
             DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
 
@@ -1920,11 +1723,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                     await connection.DisposeAsync();
             }
         }
-
-        
         private async Task<int> AddAlterationDetails(AlterationDetails alterationDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
         {
-             var isOwnConnection = externalConnection == null;
+            var isOwnConnection = externalConnection == null;
             DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
             DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
 
@@ -2099,13 +1900,17 @@ namespace GoldBank.Infrastructure.Infrastructure
                             stones.Add(item);
                         }
                     }
-                   
+
                 }
             }
             alteration.Documents = documents;
             alteration.Stones = stones;
             return alteration;
         }
+        #endregion
+
+        #region Repair Details
+
         public async Task<RepairDetails> GetRepairDetailsById(int orderId)
         {
 
@@ -2207,6 +2012,227 @@ namespace GoldBank.Infrastructure.Infrastructure
             repair.RepairStoneDetails = stones;
             return repair;
         }
+        private async Task<int> AddRepairDetails(RepairDetails repairDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_ProductTypeId", repairDetails.ProductTypeId);
+                parameters.Add("p_MetalTypeId", repairDetails.MetalTypeId);
+                parameters.Add("p_WeightBeforeRepair", repairDetails.WeightBeforeRepair);
+                parameters.Add("p_RepairCleaningId", repairDetails.RepairCleaningId);
+                parameters.Add("p_CleaningNotes", repairDetails.CleaningNotes);
+                parameters.Add("p_CleaningPrice", repairDetails.CleaningPrice);
+                parameters.Add("p_RepairPolishingId", repairDetails.RepairPolishingId);
+                parameters.Add("p_PolishingNotes", repairDetails.PolishingNotes);
+                parameters.Add("p_PolishingPrice", repairDetails.PolishingPrice);
+                parameters.Add("p_CurrentJewellerySize", repairDetails.CurrentJewellerySize);
+                parameters.Add("p_DesiredJewellerySize", repairDetails.DesiredJewellerySize);
+                parameters.Add("p_ResizingNotes", repairDetails.ResizingNotes);
+                parameters.Add("p_ResizingPrice", repairDetails.ResizingPrice);
+                parameters.Add("p_RepairDamageTypeIds", repairDetails.RepairDamageTypeIds);
+                parameters.Add("p_RepairDamageAreaIds", repairDetails.RepairDamageAreaIds);
+                parameters.Add("p_RepairingNotes", repairDetails.RepairingNotes);
+                parameters.Add("p_RepairingPrice", repairDetails.RepairingPrice);
+                parameters.Add("p_EstRepairingCost", repairDetails.EstRepairingCost);
+                parameters.Add("p_EstDeliveryDate", repairDetails.EstDeliveryDate);
+                parameters.Add("p_WeightChange", repairDetails.WeightChange);
+                parameters.Add("p_WeightChangePrice", repairDetails.WeightChangePrice);
+                parameters.Add("p_ActualWeight", repairDetails.ActualWeight);
+                parameters.Add("p_TotalRepairCost", repairDetails.TotalRepairCost);
+                parameters.Add("p_WeightTypeId", repairDetails.WeightTypeId);
+                parameters.Add("p_CreatedBy", repairDetails.CreatedBy);
+
+                parameters.Add("o_RepairDetailId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "AddRepairDetailsGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int RepairDetailId = parameters.Get<int>("o_RepairDetailId");
+
+                if (RepairDetailId > 0)
+                {
+                    // Repair Documents
+                    foreach (var doc in repairDetails.RepairDocuments ?? Enumerable.Empty<RepairDocument>())
+                    {
+                        await connection.ExecuteAsync("AddUpdateRepairDocumentGb", new
+                        {
+                            p_RepairDocumentId = doc.RepairDocumentId,
+                            p_DocumentId = doc.DocumentId,
+                            p_RepairDetailId = RepairDetailId,
+                            p_IsPrimary = doc.IsPrimary,
+                            p_IsPostRepair = doc.IsPostRepair,
+                            p_CreatedBy = doc.CreatedBy,
+                            p_UpdatedBy = repairDetails.UpdatedBy
+                        },
+                        transaction: transaction,
+                        commandType: CommandType.StoredProcedure);
+                    }
+
+                    foreach (var doc in repairDetails.RepairStoneDetails ?? Enumerable.Empty<RepairStoneDetails>())
+                    {
+                        await connection.ExecuteAsync("AddUpdateRepairStoneDetailGb", new
+                        {
+                            p_RepairStoneDetailId = doc.RepairStoneDetailId,
+                            p_RepairDetailId = RepairDetailId,
+                            p_CurrentStoneId = doc.CurrentStoneId,
+                            p_DesiredStoneId = doc.DesiredStoneId,
+                            p_StoneTypeIds = doc.StoneTypeIds,
+                            p_IsFixed = doc.IsFixed,
+                            p_IsReplacement = doc.IsReplacement,
+                            p_Notes = doc.Notes,
+                            p_Price = doc.Price,
+                            p_ActualWeight = doc.ActualWeight,
+                            p_ActualPrice = doc.ActualPrice,
+                            p_CreatedBy = repairDetails.CreatedBy,
+                            p_UpdatedBy = repairDetails.UpdatedBy
+                        },
+                        transaction: transaction,
+                        commandType: CommandType.StoredProcedure);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Repair details insertion failed");
+                }
+
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+
+                return RepairDetailId;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
+        private async Task<int> UpdateRepairDetails(RepairDetails repairDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_RepairDetailId", repairDetails.RepairDetailId);
+                parameters.Add("p_ProductTypeId", repairDetails.ProductTypeId);
+                parameters.Add("p_MetalTypeId", repairDetails.MetalTypeId);
+                parameters.Add("p_WeightBeforeRepair", repairDetails.WeightBeforeRepair);
+                parameters.Add("p_RepairCleaningId", repairDetails.RepairCleaningId);
+                parameters.Add("p_CleaningNotes", repairDetails.CleaningNotes);
+                parameters.Add("p_CleaningPrice", repairDetails.CleaningPrice);
+                parameters.Add("p_RepairPolishingId", repairDetails.RepairPolishingId);
+                parameters.Add("p_PolishingNotes", repairDetails.PolishingNotes);
+                parameters.Add("p_PolishingPrice", repairDetails.PolishingPrice);
+                parameters.Add("p_CurrentJewellerySize", repairDetails.CurrentJewellerySize);
+                parameters.Add("p_DesiredJewellerySize", repairDetails.DesiredJewellerySize);
+                parameters.Add("p_ResizingNotes", repairDetails.ResizingNotes);
+                parameters.Add("p_ResizingPrice", repairDetails.ResizingPrice);
+                parameters.Add("p_RepairDamageTypeIds", repairDetails.RepairDamageTypeIds);
+                parameters.Add("p_RepairDamageAreaIds", repairDetails.RepairDamageAreaIds);
+                parameters.Add("p_RepairingNotes", repairDetails.RepairingNotes);
+                parameters.Add("p_RepairingPrice", repairDetails.RepairingPrice);
+                parameters.Add("p_EstRepairingCost", repairDetails.EstRepairingCost);
+                parameters.Add("p_EstDeliveryDate", repairDetails.EstDeliveryDate);
+                parameters.Add("p_WeightChange", repairDetails.WeightChange);
+                parameters.Add("p_WeightChangePrice", repairDetails.WeightChangePrice);
+                parameters.Add("p_ActualWeight", repairDetails.ActualWeight);
+                parameters.Add("p_TotalRepairCost", repairDetails.TotalRepairCost);
+                parameters.Add("p_WeightTypeId", repairDetails.WeightTypeId);
+                parameters.Add("p_UpdatedBy", repairDetails.UpdatedBy);
+                parameters.Add("o_RepairDetailId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "UpdateRepairDetailsGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int RepairDetailId = parameters.Get<int>("o_RepairDetailId");
+
+                if (RepairDetailId > 0) // updated successfully
+                {
+                    // Repair Documents
+                    foreach (var doc in repairDetails.RepairDocuments ?? Enumerable.Empty<RepairDocument>())
+                    {
+                        await connection.ExecuteAsync("AddUpdateRepairDocumentGb", new
+                        {
+                            p_RepairDocumentId = doc.RepairDocumentId,
+                            p_DocumentId = doc.DocumentId,
+                            p_RepairDetailId = RepairDetailId,
+                            p_IsPrimary = doc.IsPrimary,
+                            p_IsPostRepair = doc.IsPostRepair,
+                            p_CreatedBy = repairDetails.CreatedBy,
+                            p_UpdatedBy = repairDetails.UpdatedBy
+                        },
+                        transaction: transaction,
+                        commandType: CommandType.StoredProcedure);
+                    }
+
+                    foreach (var doc in repairDetails.RepairStoneDetails ?? Enumerable.Empty<RepairStoneDetails>())
+                    {
+                        await connection.ExecuteAsync("AddUpdateRepairStoneDetailGb", new
+                        {
+                            p_RepairStoneDetailId = doc.RepairStoneDetailId,
+                            p_RepairDetailId = RepairDetailId,
+                            p_CurrentStoneId = doc.CurrentStoneId,
+                            p_DesiredStoneId = doc.DesiredStoneId,
+                            p_IsFixed = doc.IsFixed,
+                            p_StoneTypeIds = doc.StoneTypeIds,
+                            p_IsReplacement = doc.IsReplacement,
+                            p_Notes = doc.Notes,
+                            p_Price = doc.Price,
+                            p_ActualWeight = doc.ActualWeight,
+                            p_ActualPrice = doc.ActualPrice,
+                            p_CreatedBy = repairDetails.CreatedBy,
+                            p_UpdatedBy = repairDetails.UpdatedBy
+                        },
+                        transaction: transaction,
+                        commandType: CommandType.StoredProcedure);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Repair details insertion failed");
+                }
+
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+
+                return RepairDetailId;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
+        #endregion
+
+        #region Appraisal Details
 
         private async Task<int> AddAppraisalDetail(AppraisalDetail appraisalDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
         {
@@ -2259,7 +2285,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         new
                         {
                             p_AppraisalStoneDetailId = doc.AppraisalStoneDetailId,
-                            p_AppraisalDetailId = AppraisalDetailId,          
+                            p_AppraisalDetailId = AppraisalDetailId,
                             p_StoneTypeId = doc.StoneTypeId,
                             p_StoneQuantity = doc.StoneQuantity,
                             p_StoneWeight = doc.StoneWeight,
@@ -2310,7 +2336,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_AppraisalPrice", appraisalDetails.AppraisalPrice, DbType.Decimal);
                 parameters.Add("p_Notes", appraisalDetails.Notes, DbType.String, size: 1000);
                 parameters.Add("p_WeightTypeId", appraisalDetails.WeightTypeId, DbType.Int32);
-                parameters.Add("o_IsUpdated",  DbType.Int32);
+                parameters.Add("o_IsUpdated", DbType.Int32);
 
                 await connection.ExecuteAsync(
                     "UpdateAppraisalDetailGb",
@@ -2404,8 +2430,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.DeductionPercentage = dataReader.GetDecimalValue("deductionPercentage");
                         item.AppraisalPrice = dataReader.GetDecimalValue("appraisalPrice");
                         item.Notes = dataReader.GetStringValue("notes");
-                        item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId"); 
-                        
+                        item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
+
                         item.IsActive = dataReader.GetBooleanValue("isActive");
                         item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
                         item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
@@ -2448,6 +2474,10 @@ namespace GoldBank.Infrastructure.Infrastructure
             appraisal.AppraisalStoneDetails = stones;
             return appraisal;
         }
+
+        #endregion
+
+        #region Exchange Details
         private async Task<int> AddExchangeDetail(ExchangeDetail exchangeDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
         {
             var isOwnConnection = externalConnection == null;
@@ -2489,7 +2519,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         },
                         transaction: transaction,
                         commandType: CommandType.StoredProcedure);
-                    }                  
+                    }
                 }
                 else
                 {
@@ -2555,7 +2585,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         },
                         transaction: transaction,
                         commandType: CommandType.StoredProcedure);
-                    }                   
+                    }
                 }
                 else
                 {
@@ -2620,11 +2650,142 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
                             documents.Add(item);
                         }
-                    }                   
+                    }
                 }
             }
             exchange.ExchangeDocuments = documents;
             return exchange;
         }
+
+        #endregion
+
+        #region Gold Booking Details
+        private async Task<int> AddGoldBookingDetail(GoldBookingDetail goldBookingDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_WeightTypeId", goldBookingDetails.WeightTypeId, DbType.Int32);
+                parameters.Add("p_BookingWeight", goldBookingDetails.BookingWeight, DbType.Decimal);
+                parameters.Add("p_BookingPrice", goldBookingDetails.BookingPrice, DbType.Decimal);
+                parameters.Add("p_Notes", goldBookingDetails.Notes, DbType.String, size: 1000);
+                parameters.Add("p_Sku", goldBookingDetails.Sku, DbType.String, size: 200);
+                parameters.Add("p_CreatedBy", goldBookingDetails.CreatedBy, DbType.Int32, size: 1000);
+                parameters.Add("o_GoldBookingDetailId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "AddGoldBookingDetailGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int GoldBookingDetailId = parameters.Get<int>("o_GoldBookingDetailId");
+
+                if (GoldBookingDetailId < 0)
+                {
+                    throw new Exception("GoldBooking details insertion failed");
+                }
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+
+                return GoldBookingDetailId;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
+        private async Task<bool> UpdateGoldBookingDetail(GoldBookingDetail goldBookingDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_GoldBookingDetailId", goldBookingDetails.GoldBookingDetailId, DbType.Int32);
+                parameters.Add("p_WeightTypeId", goldBookingDetails.WeightTypeId, DbType.Int32);
+                parameters.Add("p_BookingWeight", goldBookingDetails.BookingWeight, DbType.Decimal);
+                parameters.Add("p_BookingPrice", goldBookingDetails.BookingPrice, DbType.Decimal);
+                parameters.Add("p_Notes", goldBookingDetails.Notes, DbType.String, size: 1000);
+                parameters.Add("p_UpdatedBy", goldBookingDetails.UpdatedBy, DbType.Int32);
+                parameters.Add("o_IsUpdated", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "UpdateGoldBookingDetailGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int IsUpdated = parameters.Get<int>("o_IsUpdated");
+
+                if (IsUpdated < 0)
+                {
+                    throw new Exception("GoldBooking details updation failed");
+                }
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+
+                return IsUpdated > 0;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
+        public async Task<GoldBookingDetail> GetGoldBookingDetailsById(int orderId)
+        {
+            var exchange = new GoldBookingDetail();
+
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_OrderId", ToDbValue(orderId))
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetGoldBookingDetailsByOrderIdGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    if (dataReader.Read())
+                    {
+                        var item = new GoldBookingDetail();
+                        item.GoldBookingDetailId = dataReader.GetIntegerValue("goldBookingDetailId");
+                        item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
+                        item.BookingWeight = dataReader.GetDecimalValue("bookingWeight");
+                        item.BookingPrice = dataReader.GetDecimalValue("bookingPrice");
+                        item.ReservationDate = dataReader.GetDateTimeValue("reservationDate");
+                        item.Notes = dataReader.GetStringValue("notes");
+                        item.IsActive = dataReader.GetBooleanValue("isActive");
+                        item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        exchange = item;
+                    }
+                }
+            }
+            return exchange;
+        }
+
+        #endregion
     }
 }

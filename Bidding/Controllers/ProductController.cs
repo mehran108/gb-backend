@@ -81,7 +81,7 @@ namespace GoldBank.Controllers
             return await ProductApplication.GetOrderById(orderId);
         }
         [HttpPost("UpdateOrderById")]
-        public async Task<bool> UpdateOrderById([FromBody] Order order)
+        public async Task<bool> UpdateOrderById([FromBody] OrderStatusReqVm order)
         {
             return await ProductApplication.UpdateOrderById(order);
         }

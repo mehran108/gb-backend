@@ -24,6 +24,7 @@
         public int? RepairDetailsId { get; set; }
         public int? AppraisalDetailsId { get; set; }
         public int? ExchangeDetailsId { get; set; }
+        public int? GoldBookingDetailsId { get; set; }
         public OrderStatus? OrderStatus { get; set; }
         public List<CustomCharge>? CustomCharge { get; set; }
         public OrderDelievery? OrderDelievery { get; set; }
@@ -31,5 +32,13 @@
         public RepairDetails? RepairDetails { get; set; }
         public AppraisalDetail? AppraisalDetails { get; set; }
         public ExchangeDetail? ExchangeDetails { get; set; }
+        public GoldBookingDetail? GoldBookingDetails { get; set; }
+    }
+
+    public class OrderStatusReqVm : BaseDomain
+    { 
+        public int OrderId { get; set; }
+        public int OrderStatusId { get; set; }
+        public DateTime? ReservationDate { get; set; }
     }
 }
