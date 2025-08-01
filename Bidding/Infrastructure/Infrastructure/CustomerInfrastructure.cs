@@ -57,6 +57,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                      base.GetParameter(CustomerInfrastructure.WeddingAnniversaryParameterName,Customer.WeddingAnniversary),
                      base.GetParameter(CustomerInfrastructure.IsNewsSubscribeParameterName,Customer.IsNewsSubscribe),
                      base.GetParameter(CustomerInfrastructure.PasswordHashParameterName,Customer.PasswordHash),
+                     base.GetParameter("PRingSize",Customer.RingSize),
+                     base.GetParameter("PBangleSize",Customer.BangleSize)
 
             };
             await base.ExecuteNonQuery(parameters, "AddCustomer_gb", CommandType.StoredProcedure);
@@ -82,7 +84,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                 base.GetParameter(CustomerInfrastructure.BirthAnniversaryParameterName,Customer.BirthAnniversary),
                 base.GetParameter(CustomerInfrastructure.WeddingAnniversaryParameterName,Customer.WeddingAnniversary),
                 base.GetParameter(CustomerInfrastructure.IsNewsSubscribeParameterName,Customer.IsNewsSubscribe),
-                base.GetParameter(CustomerInfrastructure.ActiveParameterName,Customer.IsActive)
+                base.GetParameter(CustomerInfrastructure.ActiveParameterName,Customer.IsActive),
+                base.GetParameter("PRingSize",Customer.RingSize),
+                base.GetParameter("PBangleSize",Customer.BangleSize)
 
             };
             var ReturnValue = await base.ExecuteNonQuery(parameters, "UpdateCustomer_gb", CommandType.StoredProcedure);
@@ -121,6 +125,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         customerItem.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
                         customerItem.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
                         customerItem.PasswordHash = dataReader.GetStringValue("PasswordHash");
+                        customerItem.RingSize = dataReader.GetStringValue("ringSize");
+                        customerItem.BangleSize = dataReader.GetStringValue("bangleSize");
                         
                     }
                     if (!dataReader.IsClosed)
@@ -165,6 +171,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                             customerItem.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
                             customerItem.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
                             customerItem.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
+                            customerItem.RingSize = dataReader.GetStringValue("ringSize");
+                            customerItem.BangleSize = dataReader.GetStringValue("bangleSize");
 
                             CustomerList.Add(customerItem);
                         }
@@ -244,6 +252,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                             customerItem.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
                             customerItem.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
                             customerItem.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
+                            customerItem.RingSize = dataReader.GetStringValue("ringSize");
+                            customerItem.BangleSize = dataReader.GetStringValue("bangleSize");
 
                             result.Data.Add(customerItem);
                         }

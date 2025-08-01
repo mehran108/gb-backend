@@ -20,6 +20,8 @@
         public string? PasswordHash { get; set; }
         public string? OldPwd {  get; set; }
         public string? NewPwd { get; set; }
+        public string? RingSize { get; set; }
+        public string? BangleSize { get; set; }
     }
 
 }
