@@ -34,6 +34,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             var res = new Payment();
             res.OnlinePayment = new List<OnlinePayment>();
             res.PaymentOrder = new List<PaymentOrder>();
+            res.Customer = new Customer();
             var onlinePaymentDocuments = new List<OnlinePaymentDocument>();
             var parameters = new List<DbParameter>
             {
@@ -97,6 +98,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.DocumentId = dataReader.GetIntegerValue("documentId");
                             item.OnlinePaymentId = dataReader.GetIntegerValue("OnlinePaymentId");
                             item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+                            item.Url = dataReader.GetStringValue("url");
 
                             var orderItem = res.OnlinePayment?.FirstOrDefault(o => o.OnlinePaymentId == item.OnlinePaymentId);
 
@@ -108,6 +110,32 @@ namespace GoldBank.Infrastructure.Infrastructure
                                 }
                                 orderItem.OnlinePaymentDocument.Add(item);
                             }
+                        }
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            res.Customer.CustomerId = dataReader.GetIntegerValue("CustomerId");
+                            res.Customer.ReferenceCustomerId = dataReader.GetIntegerValue("ReferenceCustomerId");
+                            res.Customer.FirstName = dataReader.GetStringValue("FirstName");
+                            res.Customer.LastName = dataReader.GetStringValue("LastName");
+                            res.Customer.Email = dataReader.GetStringValue("Email");
+                            res.Customer.Mobile = dataReader.GetStringValue("Mobile");
+                            res.Customer.PostalAddress = dataReader.GetStringValue("PostalAddress");
+                            res.Customer.CountryId = dataReader.GetIntegerValue("CountryId");
+                            res.Customer.CityId = dataReader.GetIntegerValue("CityId");
+                            res.Customer.IsPOS = dataReader.GetBooleanValueNullable("IsPOS");
+                            res.Customer.BirthAnniversary = dataReader.GetDateTimeValue("BirthAnniversary");
+                            res.Customer.WeddingAnniversary = dataReader.GetDateTimeValue("WeddingAnniversary");
+                            res.Customer.IsActive = dataReader.GetBooleanValue("IsActive");
+                            res.Customer.CreatedBy = dataReader.GetIntegerValue("CreatedBy");
+                            res.Customer.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
+                            res.Customer.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
+                            res.Customer.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");                            
+                            res.Customer.RingSize = dataReader.GetStringValue("ringSize");
+                            res.Customer.BangleSize = dataReader.GetStringValue("bangleSize");
+
                         }
                     }
                 }
@@ -318,6 +346,54 @@ namespace GoldBank.Infrastructure.Infrastructure
             var parameters = new DynamicParameters();
             parameters.Add("p_OnlinePaymentId", onlinePaymentId);
             await connection.ExecuteAsync("CancelOnlinePaymentGb", parameters, commandType: CommandType.StoredProcedure);
+        }
+        public async Task<AllResponse<OnlinePaymentVerificationVM>> GetAllOnlinePayments(AllRequest<OnlinePaymentVerificationRM> Payment)
+        {
+            var res = new AllResponse<OnlinePaymentVerificationVM>();
+            var paymentItems = new List<OnlinePaymentVerificationVM>();
+            var parameters = new List<DbParameter>
+            {
+                 base.GetParameter("p_PageNumber", Payment.Offset),
+                 base.GetParameter("p_PageSize", Payment.PageSize),
+                 base.GetParameter("p_CustomerId", Payment.Data.CustomerId),
+                 base.GetParameter("p_IsVerificationRequested", Payment.Data.IsVerficationPassed),
+                 base.GetParameter("p_IsVerficationFailed", Payment.Data.IsVerficationFailed),
+                 base.GetParameter("p_IsVerficationPassed",Payment.Data.IsVerficationPassed)
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAllOnlinePayment_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        var paymentItem = new OnlinePaymentVerificationVM();
+                        paymentItem.PaymentId = dataReader.GetIntegerValue("paymentId");
+                        paymentItem.OnlinePaymentId = dataReader.GetIntegerValue("onlinePaymentId");
+                        paymentItem.Amount = dataReader.GetDecimalValue("amount");
+                        paymentItem.TransactionId = dataReader.GetStringValue("transactionId");
+                        paymentItem.CustomerAccountId = dataReader.GetIntegerValue("customerAccountId");
+                        paymentItem.CustomerAccount = dataReader.GetStringValue("customerAccount");
+                        paymentItem.CustomerAccountNumber = dataReader.GetStringValue("customerAccountNumber");
+                        paymentItem.CompanyAccountId = dataReader.GetIntegerValue("companyAccountId");
+                        paymentItem.CompanyAccount = dataReader.GetStringValue("CompanyAccount");
+                        paymentItem.IsVerficationRequested = dataReader.GetBooleanValue("isVerificationRequested");
+                        paymentItem.IsVerficationPassed = dataReader.GetBooleanValue("isVerificationPassed");
+                        paymentItem.IsVerficationFailed = dataReader.GetBooleanValue("isVerificationFailed");
+                        paymentItem.CustomerFirstName = dataReader.GetStringValue("firstName");
+                        paymentItem.CustomerLastName = dataReader.GetStringValue("lastName");
+                        paymentItems.Add(paymentItem);
+                    }
+                }
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        res.TotalRecord = dataReader.GetIntegerValue("TotalRecords");
+                    }
+                }
+            }
+            res.Data = paymentItems;
+            return res;
         }
     }
 }

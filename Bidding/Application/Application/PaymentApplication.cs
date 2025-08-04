@@ -43,6 +43,10 @@ namespace GoldBank.Application.Application
         {
             throw new NotImplementedException();
         }
+        public async Task<AllResponse<OnlinePaymentVerificationVM>> GetAllOnlinePayments(AllRequest<OnlinePaymentVerificationRM> Payment)
+        {
+            return await this.PaymentInfrastructure.GetAllOnlinePayments(Payment);
+        }
         public async Task<int> AddPayment(AddPaymentRequest paymentRM)
         {
             return await this.PaymentInfrastructure.AddPayment(paymentRM);

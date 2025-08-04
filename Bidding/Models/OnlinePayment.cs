@@ -22,7 +22,7 @@ namespace GoldBank.Models
         public int OnlinePaymentId { get; set; }
         public int DocumentId { get; set; }
         public bool IsPrimary { get; set; }
-
+        public string Url { get; set; }
     }
 }
    

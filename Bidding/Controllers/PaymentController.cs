@@ -32,17 +32,23 @@ namespace GoldBank.Controllers
             return await this.PaymentApplication.Update(Payment);
         }
 
-        [HttpGet("Get")]
+        [HttpGet("GetPaymentById")]
         public async Task<Payment> GetById([FromQuery] int paymentId)
         {
             var Payment = new Payment { PaymentId = paymentId };
             return await this.PaymentApplication.Get(Payment);
         }
 
-        [HttpPost("GetAll")]
-        public async Task<AllResponse<Payment>> GetAll(AllRequest<Payment> Payment)
+        //[HttpPost("GetAll")]
+        //public async Task<AllResponse<Payment>> GetAll(AllRequest<Payment> Payment)
+        //{
+        //    return await this.PaymentApplication.GetAll(Payment);
+        //}
+
+        [HttpPost("GetAllOnlinePayments")]
+        public async Task<AllResponse<OnlinePaymentVerificationVM>> GetAllOnlinePayments(AllRequest<OnlinePaymentVerificationRM> Payment)
         {
-            return await this.PaymentApplication.GetAll(Payment);
+            return await this.PaymentApplication.GetAllOnlinePayments(Payment);
         }
         [HttpPost("AddPayment")]
         public async Task<int> AddPayment([FromBody] AddPaymentRequest paymentRM)
