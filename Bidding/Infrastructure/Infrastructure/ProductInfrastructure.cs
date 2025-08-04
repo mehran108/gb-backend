@@ -2336,7 +2336,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_AppraisalPrice", appraisalDetails.AppraisalPrice, DbType.Decimal);
                 parameters.Add("p_Notes", appraisalDetails.Notes, DbType.String, size: 1000);
                 parameters.Add("p_WeightTypeId", appraisalDetails.WeightTypeId, DbType.Int32);
-                parameters.Add("o_IsUpdated", DbType.Int32);
+                parameters.Add("o_IsUpdated", DbType.Int32, direction: ParameterDirection.Output);
 
                 await connection.ExecuteAsync(
                     "UpdateAppraisalDetailGb",
