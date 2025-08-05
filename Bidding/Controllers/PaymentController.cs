@@ -130,5 +130,26 @@ namespace GoldBank.Controllers
             }
             return Ok(accessToken);
         }
+        [HttpPost("AddECommercePayment")]
+        public async Task<int> AddOnlinePayment([FromBody] ECommercePayment eCommercePayment)
+        {
+            return await this.PaymentApplication.AddECommercePayment(eCommercePayment);
+        }
+        [HttpPost("VerifyECommercePayment")]
+        public async Task<int> VerifyECommercePayment([FromBody] ECommercePayment eCommercePayment)
+        {
+            return await this.PaymentApplication.VerifyECommercePayment(eCommercePayment);
+        }
+        [HttpPost("UpdateECommercePayment")]
+        public async Task<bool> UpdateECommercePayment([FromBody] ECommercePayment eCommercePayment)
+        {
+            return await this.PaymentApplication.UpdateECommercePayment(eCommercePayment);
+        }
+        [HttpGet("GetECommercePaymentById")]
+        public async Task<ECommercePayment> GetECommercePaymentById([FromQuery] string basketId)
+        {
+            return await this.PaymentApplication.GetECommercePaymentById(basketId);
+        }
+
     }
 }

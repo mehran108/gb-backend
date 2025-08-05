@@ -13,5 +13,9 @@ namespace GoldBank.Infrastructure.IInfrastructure
         void CancelOnlinePayment(int onlinePaymentId);
         void CancelPayment(int paymentId);
         Task<AllResponse<OnlinePaymentVerificationVM>> GetAllOnlinePayments(AllRequest<OnlinePaymentVerificationRM> Payment);
+        Task<int> AddECommercePayment(ECommercePayment eCommercePayment);
+        Task<int> VerifyECommercePayment(ECommercePayment eCommercePayment);
+        Task<ECommercePayment> GetECommercePaymentById(string basketId);
+        Task<bool> UpdateECommercePayment(ECommercePayment eCommercePayment);
     }
 }

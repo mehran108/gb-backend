@@ -75,6 +75,22 @@ namespace GoldBank.Application.Application
         {
             this.PaymentInfrastructure.CancelOnlinePayment(onlinePaymentId);
         }
+        public async Task<int> AddECommercePayment(ECommercePayment eCommercePayment)
+        {
+            return await this.PaymentInfrastructure.AddECommercePayment(eCommercePayment);
+        }
+        public async Task<int> VerifyECommercePayment(ECommercePayment eCommercePayment)
+        {
+            return await this.PaymentInfrastructure.VerifyECommercePayment(eCommercePayment);
+        }
+        public async Task<ECommercePayment> GetECommercePaymentById(string basketId)
+        {
+            return await this.PaymentInfrastructure.GetECommercePaymentById(basketId);
+        }
+        public async Task<bool> UpdateECommercePayment(ECommercePayment eCommercePayment)
+        { 
+            return await this.PaymentInfrastructure.UpdateECommercePayment(eCommercePayment);
+        }
 
     }
 }

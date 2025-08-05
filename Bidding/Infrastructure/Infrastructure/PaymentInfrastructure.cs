@@ -397,5 +397,108 @@ namespace GoldBank.Infrastructure.Infrastructure
             res.Data = paymentItems;
             return res;
         }
+        public async Task<int> AddECommercePayment(ECommercePayment eCommercePayment)
+        {
+            using var connection = base.GetConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("p_ProductIds", eCommercePayment.ProductIds);
+            parameters.Add("p_CustomerId", eCommercePayment.CustomerId);
+            parameters.Add("p_BasketId", eCommercePayment.BasketId);
+            parameters.Add("p_MerchantId", eCommercePayment.MerchantId);
+            parameters.Add("p_Amount", eCommercePayment.Amount);
+            parameters.Add("p_Currency", eCommercePayment.Currency);
+            parameters.Add("p_DelieveryMethodId", eCommercePayment.DelieveryMethodId);
+            parameters.Add("p_EstDelieveryDate", eCommercePayment.EstDelieveryDate);
+            parameters.Add("p_ShippingCost", eCommercePayment.ShippingCost);
+            parameters.Add("p_DelieveryAddress", eCommercePayment.DelieveryAddress);
+            parameters.Add("p_Status", eCommercePayment.Status);
+            parameters.Add("p_CreatedBy", eCommercePayment.CreatedBy);
+            parameters.Add("o_ECommercePaymentId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            await connection.ExecuteAsync("AddECommercePaymentGb", parameters, commandType: CommandType.StoredProcedure);
+
+            var onlinePaymentId = parameters.Get<int>("o_ECommercePaymentId");
+            return onlinePaymentId;
+        }
+        public async Task<bool> UpdateECommercePayment(ECommercePayment eCommercePayment)
+        {
+            using var connection = base.GetConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("p_ProductIds", eCommercePayment.ProductIds);
+            parameters.Add("p_ECommercePaymentId", eCommercePayment.ECommercePaymentId);
+            parameters.Add("p_CustomerId", eCommercePayment.CustomerId);
+            parameters.Add("p_BasketId", eCommercePayment.BasketId);
+            parameters.Add("p_MerchantId", eCommercePayment.MerchantId);
+            parameters.Add("p_Amount", eCommercePayment.Amount);
+            parameters.Add("p_Currency", eCommercePayment.Currency);
+            parameters.Add("p_DelieveryMethodId", eCommercePayment.DelieveryMethodId);
+            parameters.Add("p_EstDelieveryDate", eCommercePayment.EstDelieveryDate);
+            parameters.Add("p_ShippingCost", eCommercePayment.ShippingCost);
+            parameters.Add("p_DelieveryAddress", eCommercePayment.DelieveryAddress);
+            parameters.Add("p_Status", eCommercePayment.Status);
+            parameters.Add("p_UpdatedBy", eCommercePayment.UpdatedBy);
+            parameters.Add("o_IsUpdated", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            await connection.ExecuteAsync("UpdateECommercePaymentGb", parameters, commandType: CommandType.StoredProcedure);
+
+            var onlinePaymentId = parameters.Get<int>("o_IsUpdated");
+            return onlinePaymentId > 0;
+        }
+        public async Task<int> VerifyECommercePayment(ECommercePayment eCommercePayment)
+        {
+            using var connection = base.GetConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("p_BasketId", eCommercePayment.BasketId);
+            parameters.Add("p_transactionDetail", eCommercePayment.TransactionDetail);
+            parameters.Add("p_transactionId", eCommercePayment.TransactionId);
+            parameters.Add("p_BasketId", eCommercePayment.BasketId);
+            parameters.Add("p_UpdatedBy", eCommercePayment.UpdatedBy);
+            parameters.Add("o_IsUpdated", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            await connection.ExecuteAsync("ConfirmECommercePaymentGb", parameters, commandType: CommandType.StoredProcedure);
+
+            var onlinePaymentId = parameters.Get<int>("o_IsUpdated");
+            return onlinePaymentId;
+        }
+        public async Task<ECommercePayment> GetECommercePaymentById(string basketId)
+        {
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_BasketId",basketId)
+            };
+            var result = new ECommercePayment();
+            using (var dataReader = await base.ExecuteReader(parameters, "GetPaymentDetailsByBasketIdGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        result.ECommercePaymentId = dataReader.GetIntegerValue("eCommercePaymentId");
+                        result.ProductIds = dataReader.GetStringValue("productIds");
+                        result.CustomerId = dataReader.GetIntegerValue("customerId");
+                        result.BasketId = dataReader.GetStringValue("basketId");
+                        result.MerchantId = dataReader.GetStringValue("merchantId");
+                        result.Amount = dataReader.GetDecimalValue("amount");
+                        result.Currency = dataReader.GetStringValue("currency");
+                        result.DelieveryMethodId = dataReader.GetIntegerValue("delieveryMethodId");
+                        result.EstDelieveryDate = dataReader.GetDateTimeValue("estDelieveryDate");
+                        result.ShippingCost = dataReader.GetDecimalValue("shippingCost");
+                        result.DelieveryAddress = dataReader.GetStringValue("delieveryAddress");
+                        result.Status = dataReader.GetStringValue("status");
+                        result.UpdatedBy = dataReader.GetIntegerValue("updatedBy");
+                        result.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        result.UpdatedAt = dataReader.GetDateTimeValue("updatedAt");
+                        result.UpdatedBy = dataReader.GetIntegerValue("updatedBy");
+                        result.IsActive = dataReader.GetBooleanValue("isActive");
+                        result.TransactionDetail = dataReader.GetStringValue("TransactionDetail");
+                        result.TransactionId = dataReader.GetStringValue("TransactionId");
+                    }
+                }
+            }
+            return result;
+        }
     }
 }
