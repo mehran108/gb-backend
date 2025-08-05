@@ -135,7 +135,7 @@ namespace GoldBank.Controllers
         {
             return await this.PaymentApplication.AddECommercePayment(eCommercePayment);
         }
-        [HttpPost("VerifyECommercePayment")]
+        [HttpPost("ConfirmECommercePayment")]
         public async Task<int> VerifyECommercePayment([FromBody] ECommercePayment eCommercePayment)
         {
             return await this.PaymentApplication.VerifyECommercePayment(eCommercePayment);
