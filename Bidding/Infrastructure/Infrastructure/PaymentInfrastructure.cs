@@ -83,6 +83,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                             onlinepayment.CustomerAccountNumber = dataReader.GetStringValue("customerAccountNumber");
                             onlinepayment.IsVerficationRequested = dataReader.GetBooleanValue("isVerificationRequested");
                             onlinepayment.IsVerficationPassed = dataReader.GetBooleanValue("isVerificationPassed");
+                            onlinepayment.CustomerAccount = dataReader.GetStringValue("customerAccount");
+                            onlinepayment.CompanyAccount = dataReader.GetStringValue("CompanyAccount");
                             onlinepayment.IsVerficationFailed = dataReader.GetBooleanValue("isVerificationFailed");
                             onlinepayment.OnlinePaymentDocument = new List<OnlinePaymentDocument>();
                             res.OnlinePayment.Add(onlinepayment);
