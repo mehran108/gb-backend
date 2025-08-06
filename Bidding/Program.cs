@@ -38,6 +38,9 @@ builder.Services.AddTransient<IOrderInfrastructure, OrderInfrastructure>();
 builder.Services.AddTransient<IPaymentApplication, PaymentApplication>();
 builder.Services.AddTransient<IPaymentInfrastructure, PaymentInfrastructure>();
 
+builder.Services.AddTransient<IDiscountApplication, DiscountApplication>();
+builder.Services.AddTransient<IDiscountInfrastructure, DiscountInfrastructure>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyAllowedOrigins",
