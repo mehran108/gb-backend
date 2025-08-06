@@ -144,7 +144,14 @@ namespace GoldBank.Application.Application
         {
             return await this.LookupInfrastructure.GetAllRepairPolishing();
         }
-
+        public async Task<IEnumerable<DiscountType>> GetAllDiscountType()
+        {
+            return await this.LookupInfrastructure.GetAllDiscountType();
+        }
+        public async Task<IEnumerable<ExpiryDurationType>> GetAllExpiryDuration()
+        {
+            return await this.LookupInfrastructure.GetAllExpiryDuration();
+        }
         public Task<bool> Activate(LookupValue entity)
         {
             throw new NotImplementedException();

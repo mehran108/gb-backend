@@ -38,6 +38,8 @@ namespace GoldBank.Application.IApplication
         Task<IEnumerable<RepairDamageType>> GetAllRepairDamageTypes();
         Task<IEnumerable<RepairPolishing>> GetAllRepairPolishing();
         Task<IEnumerable<RepairCleaning>> GetAllRepairCleaning();
+        Task<IEnumerable<DiscountType>> GetAllDiscountType();
+        Task<IEnumerable<ExpiryDurationType>> GetAllExpiryDuration();
 
     }
 }

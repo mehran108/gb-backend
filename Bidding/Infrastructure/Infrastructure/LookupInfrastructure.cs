@@ -670,6 +670,44 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return list;
         }
+        public async Task<IEnumerable<DiscountType>> GetAllDiscountType()
+        {
+            var list = new List<DiscountType>();
+            using (var dataReader = await ExecuteReader(null, "GetAllDiscountTypeGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new DiscountType
+                        {
+                            DiscountTypeId = dataReader.GetIntegerValue("discountTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+        public async Task<IEnumerable<ExpiryDurationType>> GetAllExpiryDuration()
+        {
+            var list = new List<ExpiryDurationType>();
+            using (var dataReader = await ExecuteReader(null, "GetAllExpiryDurationGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new ExpiryDurationType
+                        {
+                            ExpiryDurationTypeId = dataReader.GetIntegerValue("expiryDurationTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                        });
+                    }
+                }
+            }
+            return list;
+        }
 
         public Task<bool> Update(LookupValue lookupValue)
         {

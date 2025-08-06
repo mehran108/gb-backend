@@ -225,6 +225,18 @@ namespace GoldBank.Controllers
             var result = await this.LookupApplication.GetAllRepairCleaning();
             return Ok(result);
         }
+        [HttpGet("GetAllExpiryDuration")]
+        public async Task<ActionResult<IEnumerable<ExpiryDurationType>>> GetAllExpiryDuration()
+        {
+            var result = await this.LookupApplication.GetAllExpiryDuration();
+            return Ok(result);
+        }
+        [HttpGet("GetAllDiscountType")]
+        public async Task<ActionResult<IEnumerable<DiscountType>>> GetAllDiscountType()
+        {
+            var result = await this.LookupApplication.GetAllDiscountType();
+            return Ok(result);
+        }
 
     }
 }
