@@ -1180,6 +1180,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                 {
                     order.GoldBookingDetailsId = await this.AddGoldBookingDetail(order.GoldBookingDetails, connection, transaction);
                 }
+                if (order.GiftCardDetails != null && order.OrderTypeId == 9) // gift card  
+                {
+                    order.GiftCardDetailsId = await this.AddGiftCardDetail(order.GiftCardDetails, connection, transaction);
+                }
 
                 // Prepare parameters
                 var parameters = new DynamicParameters();
@@ -1207,6 +1211,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_AppraisalDetailId", order.AppraisalDetailsId);
                 parameters.Add("p_ExchangeDetailId", order.ExchangeDetailsId);
                 parameters.Add("p_GoldBookingDetailId", order.GoldBookingDetailsId);
+                parameters.Add("p_GiftCardDetailsId", order.GiftCardDetailsId);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
