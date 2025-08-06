@@ -1211,7 +1211,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_AppraisalDetailId", order.AppraisalDetailsId);
                 parameters.Add("p_ExchangeDetailId", order.ExchangeDetailsId);
                 parameters.Add("p_GoldBookingDetailId", order.GoldBookingDetailsId);
-                parameters.Add("p_GiftCardDetailsId", order.GiftCardDetailsId);
+                parameters.Add("p_GiftCardDetailId", order.GiftCardDetailsId);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
