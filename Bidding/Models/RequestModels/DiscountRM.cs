@@ -2,6 +2,6 @@
 {
     public class DiscountRM
     {
-        public int DiscountTypeId { get; set; }
+        public int? DiscountTypeId { get; set; }
     }
 }
