@@ -2926,7 +2926,6 @@ namespace GoldBank.Infrastructure.Infrastructure
                 {
                     if (dataReader.Read())
                     {
-                        var item = new GiftCardDetail();
                         giftCard.GiftCardDetailId = dataReader.GetIntegerValue("giftCardDetailId");
                         giftCard.RecipientName = dataReader.GetStringValue("recipientName");
                         giftCard.RecipientMobileNumber = dataReader.GetStringValue("recipientMobileNumber");
@@ -2942,8 +2941,6 @@ namespace GoldBank.Infrastructure.Infrastructure
                         giftCard.UpdatedAt = dataReader.GetDateTimeValue("updatedAt");
                         giftCard.CreatedBy = dataReader.GetIntegerValue("createdBy");
                         giftCard.UpdatedBy = dataReader.GetIntegerValue("updatedBy");
-
-                        giftCard = item;
                     }
                 }
             }
