@@ -1318,32 +1318,33 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.AppraisalDetailsId = dataReader.GetIntegerValue("appraisalDetailId");
                         item.ExchangeDetailsId = dataReader.GetIntegerValue("exchangeDetailId");
                         item.GoldBookingDetailsId = dataReader.GetIntegerValue("goldBookingDetailId");
+                        item.GiftCardDetailsId = dataReader.GetIntegerValue("giftCardDetailId");
 
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = await this.CustomerInfrastructure.Get(Customer);
 
                         item.Product = await this.GetProductById(item.ProductId);
-                        if (item.RepairDetailsId > 0)
-                        {
-                            item.RepairDetails = await this.GetRepairDetailsById((int)item.OrderId);
-                        }
-                        if (item.AlterationDetailsId > 0)
+                        if (item.OrderTypeId == 4) // alteration
                         {
                             item.AlterationDetails = await this.GetAlterationDetailsById((int)item.OrderId);
                         }
-                        if (item.AppraisalDetailsId > 0)
+                        if (item.OrderTypeId == 5) // repair
+                        {
+                            item.RepairDetails = await this.GetRepairDetailsById((int)item.OrderId);
+                        }                      
+                        if (item.OrderTypeId == 6) // appraisal
                         {
                             item.AppraisalDetails = await this.GetAppraisalDetailsById((int)item.OrderId);
                         }
-                        if (item.ExchangeDetailsId > 0)
+                        if (item.OrderTypeId == 7) // exchange 
                         {
                             item.ExchangeDetails = await this.GetExchangeDetailsById((int)item.OrderId);
                         }
-                        if (item.GoldBookingDetailsId > 0)
+                        if (item.OrderTypeId == 8) // gold booking
                         {
                             item.GoldBookingDetails = await this.GetGoldBookingDetailsById((int)item.OrderId);
                         }
-                        if (item.GiftCardDetailsId > 0)
+                        if (item.OrderTypeId == 9) // gift card
                         {
                             item.GiftCardDetails = await this.GetGiftCardDetailsById((int)item.OrderId);
                         }
