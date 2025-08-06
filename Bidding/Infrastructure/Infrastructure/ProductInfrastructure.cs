@@ -2935,7 +2935,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         giftCard.DepositorName = dataReader.GetStringValue("depositorName");
                         giftCard.DepositorMobileNumber = dataReader.GetStringValue("depositorMobileNumber");
                         giftCard.Code = dataReader.GetStringValue("code");
-                        giftCard.RedeemDate = dataReader.GetDateTimeValueNullable("redeemDate");
+                        giftCard.RedeemDate = dataReader.GetDateTimeValue("redeemDate");
                         giftCard.IsActive = dataReader.GetBooleanValue("isActive");
                         giftCard.IsDeleted = dataReader.GetBooleanValue("isDeleted");
                         giftCard.CreatedAt = dataReader.GetDateTimeValue("createdAt");
