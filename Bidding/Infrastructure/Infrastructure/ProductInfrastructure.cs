@@ -1343,6 +1343,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                         {
                             item.GoldBookingDetails = await this.GetGoldBookingDetailsById((int)item.OrderId);
                         }
+                        if (item.GiftCardDetailsId > 0)
+                        {
+                            item.GiftCardDetails = await this.GetGiftCardDetailsById((int)item.OrderId);
+                        }
                         OrderList.Add(item);
                     }
                 }
@@ -1428,6 +1432,12 @@ namespace GoldBank.Infrastructure.Infrastructure
                     var res = await this.UpdateGoldBookingDetail(order.GoldBookingDetails, connection, transaction);
                     if (!res)
                         throw new Exception("Failed to update gold booking.");
+                }
+                if (order.GiftCardDetails != null && order.OrderTypeId == 9) // Gift Card 
+                {
+                    var res = await this.UpdateGiftCardDetail(order.GiftCardDetails, connection, transaction);
+                    if (!res)
+                        throw new Exception("Failed to update gift card details.");
                 }
 
                 // Prepare parameters
@@ -1567,6 +1577,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                         else if (item.OrderTypeId == 8) //gold booking
                         {
                             item.GoldBookingDetails = await this.GetGoldBookingDetailsById(orderId);
+                        }
+                        else if (item.OrderTypeId == 9) //gift card 
+                        {
+                            item.GiftCardDetails = await this.GetGiftCardDetailsById(orderId);
                         }
                     }
                     if (dataReader.NextResult())
@@ -2784,6 +2798,150 @@ namespace GoldBank.Infrastructure.Infrastructure
                 }
             }
             return exchange;
+        }
+
+        #endregion
+
+        #region Gift Card Details
+        private async Task<int> AddGiftCardDetail(GiftCardDetail giftCardDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_RecipientName", giftCardDetails.RecipientName, DbType.String, size:500);
+                parameters.Add("p_RecipientMobileNumber", giftCardDetails.RecipientMobileNumber, DbType.String, size: 500);
+                parameters.Add("p_RecipientCnic", giftCardDetails.RecipientCnic, DbType.String, size: 500);
+                parameters.Add("p_Amount", giftCardDetails.Amount, DbType.Decimal);
+                parameters.Add("p_DepositorName", giftCardDetails.DepositorName, DbType.String, size: 500);
+                parameters.Add("p_DepositorMobileNumber", giftCardDetails.DepositorMobileNumber, DbType.String, size: 1000);
+                parameters.Add("p_Code", giftCardDetails.Code, DbType.String, size: 1000);
+                parameters.Add("p_Sku", giftCardDetails.Sku, DbType.String);
+                parameters.Add("p_RedeemDate", giftCardDetails.RedeemDate, DbType.DateTime);
+                parameters.Add("p_CreatedBy", giftCardDetails.CreatedBy, DbType.Int32);
+                parameters.Add("o_GiftCardDetailId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "AddGiftCardDetailGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int GiftCardDetailId = parameters.Get<int>("o_GiftCardDetailId");
+
+                if (GiftCardDetailId < 0)
+                {
+                    throw new Exception("Gift Card insertion failed");
+                }
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+
+                return GiftCardDetailId;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
+        private async Task<bool> UpdateGiftCardDetail(GiftCardDetail giftCardDetails, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_GiftCardDetailId", giftCardDetails.GiftCardDetailId, dbType: DbType.Int32);
+                parameters.Add("p_RecipientName", giftCardDetails.RecipientName, DbType.String, size: 500);
+                parameters.Add("p_RecipientMobileNumber", giftCardDetails.RecipientMobileNumber, DbType.String, size: 500);
+                parameters.Add("p_RecipientCnic", giftCardDetails.RecipientCnic, DbType.String, size: 500);
+                parameters.Add("p_Amount", giftCardDetails.Amount, DbType.Decimal);
+                parameters.Add("p_DepositorName", giftCardDetails.DepositorName, DbType.String, size: 500);
+                parameters.Add("p_DepositorMobileNumber", giftCardDetails.DepositorMobileNumber, DbType.String, size: 1000);
+                parameters.Add("p_Code", giftCardDetails.Code, DbType.String, size: 1000);
+                parameters.Add("p_Sku", giftCardDetails.Sku, DbType.String);
+                parameters.Add("p_RedeemDate", giftCardDetails.RedeemDate, DbType.DateTime);
+                parameters.Add("p_CreatedBy", giftCardDetails.CreatedBy, DbType.Int32);
+                parameters.Add("o_IsUpdated", giftCardDetails.GiftCardDetailId, dbType: DbType.Int32 , direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "UpdateGiftCardDetailGb",
+                    parameters,
+                    transaction: transaction,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                int IsUpdated = parameters.Get<int>("o_IsUpdated");
+
+                if (IsUpdated < 0)
+                {
+                    throw new Exception("Gift Card updation failed");
+                }
+                if (isOwnConnection)
+                    await transaction.CommitAsync();
+
+                return IsUpdated > 0;
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
+        }
+        public async Task<GiftCardDetail> GetGiftCardDetailsById(int orderId)
+        {
+            var giftCard = new GiftCardDetail();
+
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_OrderId", ToDbValue(orderId))
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetGiftCardDetailsByOrderIdGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    if (dataReader.Read())
+                    {
+                        var item = new GiftCardDetail();
+                        giftCard.GiftCardDetailId = dataReader.GetIntegerValue("giftCardDetailId");
+                        giftCard.RecipientName = dataReader.GetStringValue("recipientName");
+                        giftCard.RecipientMobileNumber = dataReader.GetStringValue("recipientMobileNumber");
+                        giftCard.RecipientCnic = dataReader.GetStringValue("recipientCnic");
+                        giftCard.Amount = dataReader.GetDecimalValue("amount");
+                        giftCard.DepositorName = dataReader.GetStringValue("depositorName");
+                        giftCard.DepositorMobileNumber = dataReader.GetStringValue("depositorMobileNumber");
+                        giftCard.Code = dataReader.GetStringValue("code");
+                        giftCard.RedeemDate = dataReader.GetDateTimeValueNullable("redeemDate");
+                        giftCard.IsActive = dataReader.GetBooleanValue("isActive");
+                        giftCard.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        giftCard.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        giftCard.UpdatedAt = dataReader.GetDateTimeValue("updatedAt");
+                        giftCard.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        giftCard.UpdatedBy = dataReader.GetIntegerValue("updatedBy");
+
+                        giftCard = item;
+                    }
+                }
+            }
+            return giftCard;
         }
 
         #endregion
