@@ -1392,7 +1392,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             try
             {
                 int alterationDetailsId = order.AlterationDetails?.AlterationDetailsId == null ? 0 : order.AlterationDetails.AlterationDetailsId;
-                if (order.Product != null && order.OrderTypeId != 5)
+                if (order.Product != null && order.OrderTypeId != 5 && order.OrderTypeId != 9)
                 {
                     // Pass connection and transaction to reuse Add logic
                     bool isUpdate = await this.UpdateProduct(order.Product, connection, transaction);
@@ -2879,7 +2879,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_Code", giftCardDetails.Code, DbType.String, size: 1000);
                 parameters.Add("p_Sku", giftCardDetails.Sku, DbType.String);
                 parameters.Add("p_RedeemDate", giftCardDetails.RedeemDate, DbType.DateTime);
-                parameters.Add("p_CreatedBy", giftCardDetails.CreatedBy, DbType.Int32);
+                parameters.Add("p_UpdatedBy", giftCardDetails.UpdatedBy, DbType.Int32);
                 parameters.Add("o_IsUpdated", giftCardDetails.GiftCardDetailId, dbType: DbType.Int32 , direction: ParameterDirection.Output);
 
                 await connection.ExecuteAsync(
