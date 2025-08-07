@@ -10,5 +10,9 @@ namespace GoldBank.Application.IApplication
         Task<bool> UpdateVoucherType(VoucherType voucherType);
         Task<VoucherType> GetVoucherType(VoucherType voucherType);
         Task<List<VoucherType>> GetAllVoucherType(VoucherType voucherType);
+        Task<int> AddLoyaltyCardType(LoyaltyCardType LoyaltyCardType);
+        Task<bool> UpdateLoyaltyCardType(LoyaltyCardType LoyaltyCardType);
+        Task<LoyaltyCardType> GetLoyaltyCardType(LoyaltyCardType LoyaltyCardType);
+        Task<List<LoyaltyCardType>> GetAllLoyaltyCardType(LoyaltyCardType LoyaltyCardType);
     }
 }

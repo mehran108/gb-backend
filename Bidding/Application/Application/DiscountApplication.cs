@@ -64,5 +64,21 @@ namespace GoldBank.Application.Application
         {
             return await this.DiscountInfrastructure.GetAllVoucherType(voucherType);
         }
+        public async Task<int> AddLoyaltyCardType(LoyaltyCardType LoyaltyCardType)
+        {
+            return await this.DiscountInfrastructure.AddLoyaltyCardType(LoyaltyCardType);
+        }
+        public async Task<bool> UpdateLoyaltyCardType(LoyaltyCardType LoyaltyCardType)
+        {
+            return await this.DiscountInfrastructure.UpdateLoyaltyCardType(LoyaltyCardType);
+        }
+        public async Task<LoyaltyCardType> GetLoyaltyCardType(LoyaltyCardType LoyaltyCardType)
+        {
+            return await this.DiscountInfrastructure.GetLoyaltyCardType(LoyaltyCardType);
+        }
+        public async Task<List<LoyaltyCardType>> GetAllLoyaltyCardType(LoyaltyCardType LoyaltyCardType)
+        {
+            return await this.DiscountInfrastructure.GetAllLoyaltyCardType(LoyaltyCardType);
+        }
     }
 }

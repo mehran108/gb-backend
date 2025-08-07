@@ -68,6 +68,31 @@ namespace GoldBank.Controllers
             var voucherType = new VoucherType();
             return await this.DiscountApplication.GetAllVoucherType(voucherType);
         }
-        
+
+        [HttpPost("AddLoyaltyCardType")]
+        public async Task<int> AddLoyaltyCardType(LoyaltyCardType LoyaltyCardType)
+        {
+            return await this.DiscountApplication.AddLoyaltyCardType(LoyaltyCardType);
+        }
+
+        [HttpPost("UpdateLoyaltyCardType")]
+        public async Task<bool> UpdateLoyaltyCardType(LoyaltyCardType LoyaltyCardType)
+        {
+            return await this.DiscountApplication.UpdateLoyaltyCardType(LoyaltyCardType);
+        }
+
+        [HttpGet("GetLoyaltyCardTypeById")]
+        public async Task<LoyaltyCardType> GetLoyaltyCardTypeById([FromQuery] int LoyaltyCardTypeId)
+        {
+            var LoyaltyCardType = new LoyaltyCardType { LoyaltyCardTypeId = LoyaltyCardTypeId };
+            return await this.DiscountApplication.GetLoyaltyCardType(LoyaltyCardType);
+        }
+
+        [HttpPost("GetAllLoyaltyCardType")]
+        public async Task<List<LoyaltyCardType>> GetAllLoyaltyCardType()
+        {
+            var LoyaltyCardType = new LoyaltyCardType();
+            return await this.DiscountApplication.GetAllLoyaltyCardType(LoyaltyCardType);
+        }
     }
 }

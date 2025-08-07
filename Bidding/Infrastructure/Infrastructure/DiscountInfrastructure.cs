@@ -249,6 +249,8 @@ namespace GoldBank.Infrastructure.Infrastructure
             var discountId = parameters.Get<int>("o_IsUpdated");
             return discountId > 0;
         }
+
+        #region Voucher Type
         public async Task<int> AddVoucherType(VoucherType entity)
         {
             using var connection = base.GetConnection();
@@ -390,5 +392,127 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             return result;
         }
+        #endregion
+        #region Loyalty Card Type
+        public async Task<int> AddLoyaltyCardType(LoyaltyCardType entity)
+        {
+            using var connection = base.GetConnection();
+
+            var parameters = new DynamicParameters(); ;
+            parameters.Add("p_Name", entity.Name);
+            parameters.Add("p_ExpiryDuration", entity.ExpiryDuration);
+            parameters.Add("p_ExpiryDurationType", entity.ExpiryDurationType);
+            parameters.Add("p_PrimaryCategories", entity.PrimaryCategories);
+            parameters.Add("p_CategoryIds", entity.CategoryIds);
+            parameters.Add("p_SubCategoryIds", entity.SubCategoryIds);
+            parameters.Add("p_CollectionTypeIds", entity.CollectionTypeIds);
+            parameters.Add("p_LabelTypeIds", entity.LabelTypeIds);
+            parameters.Add("p_DiscountAmount", entity.DiscountAmount);
+            parameters.Add("p_DiscountPct", entity.DiscountPct);
+            parameters.Add("p_CreatedBy", entity.CreatedBy);
+            parameters.Add("o_LoyaltyCardTypeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            await connection.ExecuteAsync("AddLoyaltyCardTypeGb", parameters, commandType: CommandType.StoredProcedure);
+
+            var discountId = parameters.Get<int>("o_LoyaltyCardTypeId");
+            return discountId;
+        }
+        public async Task<bool> UpdateLoyaltyCardType(LoyaltyCardType entity)
+        {
+            using var connection = base.GetConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("p_Name", entity.Name);
+            parameters.Add("p_ExpiryDuration", entity.ExpiryDuration);
+            parameters.Add("p_ExpiryDurationType", entity.ExpiryDurationType);
+            parameters.Add("p_LoyaltyCardTypeId", entity.LoyaltyCardTypeId);
+            parameters.Add("p_PrimaryCategories", entity.PrimaryCategories);
+            parameters.Add("p_CategoryIds", entity.CategoryIds);
+            parameters.Add("p_SubCategoryIds", entity.SubCategoryIds);
+            parameters.Add("p_CollectionTypeIds", entity.CollectionTypeIds);
+            parameters.Add("p_LabelTypeIds", entity.LabelTypeIds);
+            parameters.Add("p_DiscountAmount", entity.DiscountAmount);
+            parameters.Add("p_DiscountPct", entity.DiscountPct);
+            parameters.Add("p_CreatedBy", entity.UpdatedBy);
+            parameters.Add("o_IsUpdated", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            await connection.ExecuteAsync("UpdateLoyaltyCardTypeGb", parameters, commandType: CommandType.StoredProcedure);
+
+            var updated = parameters.Get<int>("o_IsUpdated");
+            return updated > 0;
+        }
+        public async Task<LoyaltyCardType> GetLoyaltyCardType(LoyaltyCardType LoyaltyCardType)
+        {
+            var discount = new LoyaltyCardType();
+            var parameters = new List<DbParameter>
+     {
+          base.GetParameter("p_LoyaltyCardTypeId", LoyaltyCardType.LoyaltyCardTypeId),
+     };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetLoyaltyCardTypeById_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        discount.Name = dataReader.GetStringValue("Name");                        
+                        discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");
+                        discount.ExpiryDurationType = dataReader.GetIntegerValue("ExpiryDurationType");
+                        discount.LoyaltyCardTypeId = dataReader.GetIntegerValue("LoyaltyCardTypeId");
+                        discount.PrimaryCategories = dataReader.GetStringValue("PrimaryCategories");
+                        discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
+                        discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
+                        discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
+                        discount.LabelTypeIds = dataReader.GetStringValue("LabelTypeIds");
+                        discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
+                        discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
+                        discount.IsActive = dataReader.GetBooleanValue("IsActive");
+                        discount.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
+                        discount.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
+                        discount.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
+                        discount.CreatedBy = dataReader.GetIntegerValue("CreatedBy");
+                    }
+                }
+            }
+
+            return discount;
+        }
+
+        public async Task<List<LoyaltyCardType>> GetAllLoyaltyCardType(LoyaltyCardType LoyaltyCardType)
+        {
+            var result = new List<LoyaltyCardType>();
+            var parameters = new List<DbParameter>
+            {
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAllLoyaltyCardType_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        var discount = new LoyaltyCardType();
+                        discount.Name = dataReader.GetStringValue("Name");
+                        discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");
+                        discount.ExpiryDurationType = dataReader.GetIntegerValue("ExpiryDurationType");
+                        discount.LoyaltyCardTypeId = dataReader.GetIntegerValue("LoyaltyCardTypeId");
+                        discount.PrimaryCategories = dataReader.GetStringValue("PrimaryCategories");
+                        discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
+                        discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
+                        discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
+                        discount.LabelTypeIds = dataReader.GetStringValue("LabelTypeIds");
+                        discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
+                        discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
+                        discount.IsActive = dataReader.GetBooleanValue("IsActive");
+                        discount.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
+                        discount.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
+                        discount.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
+                        discount.CreatedBy = dataReader.GetIntegerValue("CreatedBy");
+                        result.Add(discount);
+                    }
+                }
+            }
+
+            return result;
+        }
+        #endregion
     }
 }
