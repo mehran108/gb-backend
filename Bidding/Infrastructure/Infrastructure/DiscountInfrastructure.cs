@@ -6,6 +6,7 @@ using GoldBank.Models.RequestModels;
 using MySqlX.XDevAPI.Common;
 using System.Data;
 using System.Data.Common;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GoldBank.Infrastructure.Infrastructure
@@ -144,8 +145,8 @@ namespace GoldBank.Infrastructure.Infrastructure
             var parameters = new List<DbParameter>
             {
                 base.GetParameter("p_PageNumber", entity.Offset),
-                 base.GetParameter("p_PageSize", entity.PageSize),
-                 base.GetParameter("p_DiscountTypeId", entity.Data.DiscountTypeId)
+                base.GetParameter("p_PageSize", entity.PageSize),
+                base.GetParameter("p_DiscountTypeId", entity.Data.DiscountTypeId > 0 ? (object)entity.Data.DiscountTypeId : DBNull.Value)
             };
             using (var dataReader = await base.ExecuteReader(parameters, "GetAllDiscount_gb", CommandType.StoredProcedure))
             {
@@ -247,6 +248,147 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             var discountId = parameters.Get<int>("o_IsUpdated");
             return discountId > 0;
+        }
+        public async Task<int> AddVoucherType(VoucherType entity)
+        {
+            using var connection = base.GetConnection();
+
+            var parameters = new DynamicParameters();;
+            parameters.Add("p_Name", entity.Name);
+            parameters.Add("p_MinInvoiceAmount", entity.MinInvoiceAmount);
+            parameters.Add("p_MaxUsage", entity.MaxUsage);
+            parameters.Add("p_Description", entity.Description);            
+            parameters.Add("p_ExpiryDuration", entity.ExpiryDuration);
+            parameters.Add("p_ExpiryDurationType", entity.ExpiryDurationType);
+            parameters.Add("p_PrimaryCategories", entity.PrimaryCategories);
+            parameters.Add("p_CategoryIds", entity.CategoryIds);
+            parameters.Add("p_SubCategoryIds", entity.SubCategoryIds);
+            parameters.Add("p_CollectionTypeIds", entity.CollectionTypeIds);
+            parameters.Add("p_LabelTypeIds", entity.LabelTypeIds);
+            parameters.Add("p_DiscountAmount", entity.DiscountAmount);
+            parameters.Add("p_DiscountPct", entity.DiscountPct);
+            parameters.Add("p_IsEcommerce", entity.IsEcommerce);
+            parameters.Add("p_IsInStore", entity.IsInStore);
+            parameters.Add("p_CreatedBy", entity.CreatedBy);
+            parameters.Add("o_VoucherTypeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            await connection.ExecuteAsync("AddVoucherTypeGb", parameters, commandType: CommandType.StoredProcedure);
+
+            var discountId = parameters.Get<int>("o_VoucherTypeId");
+            return discountId;
+        }
+        public async Task<bool> UpdateVoucherType(VoucherType entity)
+        {
+            using var connection = base.GetConnection();
+
+            var parameters = new DynamicParameters(); 
+            parameters.Add("p_Name", entity.Name);
+            parameters.Add("p_MinInvoiceAmount", entity.MinInvoiceAmount);
+            parameters.Add("p_MaxUsage", entity.MaxUsage);
+            parameters.Add("p_Description", entity.Description);
+            parameters.Add("p_ExpiryDuration", entity.ExpiryDuration);
+            parameters.Add("p_ExpiryDurationType", entity.ExpiryDurationType);
+            parameters.Add("p_VoucherTypeId", entity.VoucherTypeId);
+            parameters.Add("p_PrimaryCategories", entity.PrimaryCategories);
+            parameters.Add("p_CategoryIds", entity.CategoryIds);
+            parameters.Add("p_SubCategoryIds", entity.SubCategoryIds);
+            parameters.Add("p_CollectionTypeIds", entity.CollectionTypeIds);
+            parameters.Add("p_LabelTypeIds", entity.LabelTypeIds);
+            parameters.Add("p_DiscountAmount", entity.DiscountAmount);
+            parameters.Add("p_DiscountPct", entity.DiscountPct);
+            parameters.Add("p_IsEcommerce", entity.IsEcommerce);
+            parameters.Add("p_IsInStore", entity.IsInStore);
+            parameters.Add("p_CreatedBy", entity.UpdatedBy);
+            parameters.Add("o_IsUpdated", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            await connection.ExecuteAsync("UpdateVoucherTypeGb", parameters, commandType: CommandType.StoredProcedure);
+
+            var updated = parameters.Get<int>("o_IsUpdated");
+            return updated > 0;
+        }
+        public async Task<VoucherType> GetVoucherType(VoucherType voucherType)
+        {
+            var discount = new VoucherType();
+            var parameters = new List<DbParameter>
+            {
+                 base.GetParameter("p_VoucherTypeId", voucherType.VoucherTypeId),
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetVoucherTypeById_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        discount.Name = dataReader.GetStringValue("Name");
+                        discount.MinInvoiceAmount = dataReader.GetDecimalValue("MinInvoiceAmount");
+                        discount.MaxUsage = dataReader.GetIntegerValue("MaxUsage");
+                        discount.Description = dataReader.GetStringValue("Description");
+                        
+                        discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");
+                        discount.ExpiryDurationType = dataReader.GetIntegerValue("ExpiryDurationType");
+                        discount.VoucherTypeId = dataReader.GetIntegerValue("VoucherTypeId");
+                        discount.PrimaryCategories = dataReader.GetStringValue("PrimaryCategories");
+                        discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
+                        discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
+                        discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
+                        discount.LabelTypeIds = dataReader.GetStringValue("LabelTypeIds");
+                        discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
+                        discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
+                        discount.IsEcommerce = dataReader.GetBooleanValue("IsEcommerce");
+                        discount.IsInStore = dataReader.GetBooleanValue("IsInStore");
+                        discount.IsActive = dataReader.GetBooleanValue("IsActive");
+                        discount.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
+                        discount.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
+                        discount.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
+                        discount.CreatedBy = dataReader.GetIntegerValue("CreatedBy");
+                    }
+                }
+            }
+
+            return discount;
+        }
+
+        public async Task<List<VoucherType>> GetAllVoucherType(VoucherType voucherType)
+        {
+            var result  = new List<VoucherType>();
+            var parameters = new List<DbParameter>
+            {
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAllVoucherType_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        var discount = new VoucherType();
+                        discount.Name = dataReader.GetStringValue("Name");
+                        discount.MinInvoiceAmount = dataReader.GetDecimalValue("MinInvoiceAmount");
+                        discount.MaxUsage = dataReader.GetIntegerValue("MaxUsage");
+                        discount.Description = dataReader.GetStringValue("Description");
+
+                        discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");
+                        discount.ExpiryDurationType = dataReader.GetIntegerValue("ExpiryDurationType");
+                        discount.VoucherTypeId = dataReader.GetIntegerValue("VoucherTypeId");
+                        discount.PrimaryCategories = dataReader.GetStringValue("PrimaryCategories");
+                        discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
+                        discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
+                        discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
+                        discount.LabelTypeIds = dataReader.GetStringValue("LabelTypeIds");
+                        discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
+                        discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
+                        discount.IsEcommerce = dataReader.GetBooleanValue("IsEcommerce");
+                        discount.IsInStore = dataReader.GetBooleanValue("IsInStore");
+                        discount.IsActive = dataReader.GetBooleanValue("IsActive");
+                        discount.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
+                        discount.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
+                        discount.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
+                        discount.CreatedBy = dataReader.GetIntegerValue("CreatedBy");
+                        result.Add(discount);
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

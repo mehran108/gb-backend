@@ -42,5 +42,32 @@ namespace GoldBank.Controllers
         {
             return await this.DiscountApplication.GetAllDiscounts(Discount);
         }
+        
+        [HttpPost("AddVoucherType")]
+        public async Task<int> AddVoucherType(VoucherType voucherType)
+        {
+            return await this.DiscountApplication.AddVoucherType(voucherType);
+        }
+
+        [HttpPost("UpdateVoucherType")]
+        public async Task<bool> UpdateVoucherType(VoucherType voucherType)
+        {
+            return await this.DiscountApplication.UpdateVoucherType(voucherType);
+        }
+
+        [HttpGet("GetVoucherTypeById")]
+        public async Task<VoucherType> GetVoucherTypeById([FromQuery] int voucherTypeId)
+        {
+            var voucherType = new VoucherType { VoucherTypeId = voucherTypeId };
+            return await this.DiscountApplication.GetVoucherType(voucherType);
+        }
+
+        [HttpPost("GetAllVoucherType")]
+        public async Task<List<VoucherType>> GetAllVoucherType()
+        {
+            var voucherType = new VoucherType();
+            return await this.DiscountApplication.GetAllVoucherType(voucherType);
+        }
+        
     }
 }

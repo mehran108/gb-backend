@@ -48,5 +48,21 @@ namespace GoldBank.Application.Application
         {
             return await this.DiscountInfrastructure.Update(entity);
         }
+        public async Task<int> AddVoucherType(VoucherType voucherType)
+        {
+            return await this.DiscountInfrastructure.AddVoucherType(voucherType);
+        }
+        public async Task<bool> UpdateVoucherType(VoucherType voucherType)
+        {
+            return await this.DiscountInfrastructure.UpdateVoucherType(voucherType);
+        }
+        public async Task<VoucherType> GetVoucherType(VoucherType voucherType)
+        {
+            return await this.DiscountInfrastructure.GetVoucherType(voucherType);
+        }
+        public async Task<List<VoucherType>> GetAllVoucherType(VoucherType voucherType)
+        {
+            return await this.DiscountInfrastructure.GetAllVoucherType(voucherType);
+        }
     }
 }
