@@ -94,5 +94,10 @@ namespace GoldBank.Controllers
             var LoyaltyCardType = new LoyaltyCardType();
             return await this.DiscountApplication.GetAllLoyaltyCardType(LoyaltyCardType);
         }
+        [HttpPost("UpdateDiscountStatus")]
+        public async Task<bool> UpdateDiscountStatus([FromBody]Discount discount)
+        {
+            return await this.DiscountApplication.UpdateDiscountStatus(discount);
+        }
     }
 }

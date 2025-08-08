@@ -14,5 +14,6 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<bool> UpdateLoyaltyCardType(LoyaltyCardType LoyaltyCardType);
         Task<LoyaltyCardType> GetLoyaltyCardType(LoyaltyCardType LoyaltyCardType);
         Task<List<LoyaltyCardType>> GetAllLoyaltyCardType(LoyaltyCardType LoyaltyCardType);
+        Task<bool> UpdateDiscountStatus(Discount discount);
     }
 }
