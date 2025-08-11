@@ -179,6 +179,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
                         discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
                         discount.LabelTypeIds = dataReader.GetStringValue("LabelTypeIds");
+                        discount.CustomerFirstName = dataReader.GetStringValue("firstName");
+                        discount.CustomerLastName = dataReader.GetStringValue("lastName");
                         discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
                         discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
                         discount.StartDate = dataReader.GetDateTimeValue("StartDate");

@@ -12,6 +12,8 @@ namespace GoldBank.Models
         public decimal MinInvoiceAmount { get; set; }
         public int? MaxUsage { get; set; }
         public string PersonName { get; set; }
+        public string? CustomerFirstName { get; set; }
+        public string? CustomerLastName { get; set; }
         public string Description { get; set; }
         public decimal? SalesComissionPct { get; set; }
         public int? MaxUser { get; set; }
