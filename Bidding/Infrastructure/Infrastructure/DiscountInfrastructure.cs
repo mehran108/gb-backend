@@ -142,6 +142,9 @@ namespace GoldBank.Infrastructure.Infrastructure
         {
             var result = new AllResponse<Discount>();
             var data = new List<Discount>();
+            var voucherType = new VoucherType ();
+            var loyaltyCardType = new LoyaltyCardType();
+
             var parameters = new List<DbParameter>
             {
                 base.GetParameter("p_PageNumber", entity.Offset),
@@ -188,6 +191,16 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
                         discount.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
                         discount.CreatedBy = dataReader.GetIntegerValue("CreatedBy");
+                        if (discount.DiscountTypeId == 4)
+                        {
+                            voucherType.VoucherTypeId = discount.VoucherTypeId ?? 0;
+                            discount.VoucherType = await this.GetVoucherType(voucherType);
+                        }
+                        if (discount.DiscountTypeId == 3)
+                        {
+                            loyaltyCardType.LoyaltyCardTypeId = discount.LoyaltyCardTypeId ?? 0;
+                            discount.LoyaltyCardType = await this.GetLoyaltyCardType(loyaltyCardType);
+                        }
                         data.Add(discount);
                     }
                     if (dataReader.NextResult())

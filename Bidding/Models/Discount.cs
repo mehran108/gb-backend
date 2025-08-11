@@ -20,7 +20,9 @@ namespace GoldBank.Models
         public int? ExpiryDuration { get; set; }
         public int? ExpiryDurationType { get; set; }
         public int? LoyaltyCardTypeId { get; set; }
+        public LoyaltyCardType? LoyaltyCardType { get; set; }
         public int? VoucherTypeId { get; set; }
+        public VoucherType? VoucherType { get; set; }
 
         public string PrimaryCategories { get; set; }
         public string CategoryIds { get; set; }
