@@ -613,7 +613,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             var parameters = new List<DbParameter>
             {
             };
-            using (var dataReader = await base.ExecuteReader(parameters, "GetLoyalCardSummary_gb", CommandType.StoredProcedure))
+            using (var dataReader = await base.ExecuteReader(parameters, "GetLoyaltyCardSummary_gb", CommandType.StoredProcedure))
             {
                 if (dataReader != null)
                 {
