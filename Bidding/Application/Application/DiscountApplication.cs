@@ -84,5 +84,25 @@ namespace GoldBank.Application.Application
         {
             return await this.DiscountInfrastructure.UpdateDiscountStatus(discount);
         }
+        public async Task<SaleSummary> GetSaleSummaryById(int discountId)
+        {
+            return await this.DiscountInfrastructure.GetSaleSummaryById(discountId);
+        }
+        public async Task<VoucherSummary> GetVoucherSummaryByTypeId(int voucherTypeId)
+        {
+            return await this.DiscountInfrastructure.GetVoucherSummaryByTypeId(voucherTypeId);
+        }
+        public async Task<LoyaltyCardSummary> GetLoyalCardSummaryByTypeId(int loyaltyCardTypeId)
+        {
+            return await this.DiscountInfrastructure.GetLoyalCardSummaryByTypeId(loyaltyCardTypeId);
+        }
+        public async Task<SaleSummary> GetBulkDiscountSummaryById(int discountId)
+        {
+            return await this.DiscountInfrastructure.GetBulkDiscountSummaryById(discountId);
+        }
+        public async Task<SaleSummary> GetPromoSummaryById(int discountId)
+        {
+            return await this.DiscountInfrastructure.GetPromoSummaryById(discountId);
+        }
     }
 }

@@ -99,5 +99,30 @@ namespace GoldBank.Controllers
         {
             return await this.DiscountApplication.UpdateDiscountStatus(discount);
         }
+        [HttpGet("GetSaleSummaryById")]
+        public async Task<SaleSummary> GetSaleSummaryById([FromQuery] int discountId)
+        {
+            return await this.DiscountApplication.GetSaleSummaryById(discountId);
+        }
+        [HttpGet("GetVoucherSummaryByTypeId")]
+        public async Task<VoucherSummary> GetVoucherSummaryByTypeId([FromQuery] int voucherTypeId)
+        {
+            return await this.DiscountApplication.GetVoucherSummaryByTypeId(voucherTypeId);
+        }
+        [HttpGet("GetLoyalCardSummaryByTypeId")]
+        public async Task<LoyaltyCardSummary> GetLoyalCardSummaryByTypeId([FromQuery]int loyaltyCardTypeId)
+        {
+            return await this.DiscountApplication.GetLoyalCardSummaryByTypeId(loyaltyCardTypeId);
+        }
+        [HttpGet("GetBulkDiscountSummaryById")]
+        public async Task<SaleSummary> GetBulkDiscountSummaryById([FromQuery]int discountId)
+        {
+            return await this.DiscountApplication.GetBulkDiscountSummaryById(discountId);
+        }
+        [HttpGet("GetPromoSummaryById")]
+        public async Task<SaleSummary> GetPromoSummaryById([FromQuery]int discountId)
+        {
+            return await this.DiscountApplication.GetPromoSummaryById(discountId);
+        }
     }
 }

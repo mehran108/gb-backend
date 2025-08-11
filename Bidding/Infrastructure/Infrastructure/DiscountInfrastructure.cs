@@ -544,5 +544,131 @@ namespace GoldBank.Infrastructure.Infrastructure
             return result;
         }
         #endregion
+        #region Summary
+        public async Task<SaleSummary> GetSaleSummaryById(int discountId)
+        {
+            var result = new SaleSummary();
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_DiscountId", discountId)
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetSaleSummaryById_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        result.DiscountId = dataReader.GetIntegerValue("discountId");
+                        result.StockLevel = dataReader.GetIntegerValue("stockLevel");
+                        result.UnitsSold = dataReader.GetIntegerValue("unitsSold");
+                        result.Revenue = dataReader.GetDecimalValue("revenue");
+                        result.WeightSold = dataReader.GetDecimalValue("weightSold");
+                        result.PrimaryCategories = dataReader.GetStringValue("PrimaryCategories");
+                        result.CategoryIds = dataReader.GetStringValue("CategoryIds");
+                        result.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
+                        result.StartDate = dataReader.GetDateTimeValue("StartDate");
+                        result.EndDate = dataReader.GetDateTimeValue("EndDate");
+                        result.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
+                        result.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
+                    }
+                }
+            }
+            return result;
+        }
+        public async Task<VoucherSummary> GetVoucherSummaryByTypeId(int voucherTypeId)
+        {
+            var result = new VoucherSummary();
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_VoucherTypeId", voucherTypeId)
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetVoucherSummaryByTypeId_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        result.VoucherTypeId = dataReader.GetIntegerValue("VoucherTypeId");
+                        result.Name = dataReader.GetStringValue("name");
+                        result.RedeemedCount = dataReader.GetIntegerValue("Redeemed");
+                        result.ActiveCount = dataReader.GetIntegerValue("active");
+                        result.ExpiredCount = dataReader.GetIntegerValue("expired");
+                        result.DeactivedCount = dataReader.GetIntegerValue("deactived");
+                    }
+                }
+            }
+            return result;
+        }
+        public async Task<LoyaltyCardSummary> GetLoyalCardSummaryByTypeId(int loyaltyCardTypeId)
+        {
+            var result = new LoyaltyCardSummary();
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_LoyaltyCardTypeId", loyaltyCardTypeId)
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetLoyalCardSummaryByTypeId_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        result.LoyaltyCardTypeId = dataReader.GetIntegerValue("loyaltyCardTypeId");
+                        result.Revenue = dataReader.GetDecimalValue("revenue");
+                        result.WeightSold = dataReader.GetDecimalValue("weightSold");
+                        result.ActiveCount = dataReader.GetIntegerValue("activeCount");
+                        result.ExpiredCount = dataReader.GetIntegerValue("ExpiredCount");
+                        result.UsedByCount = dataReader.GetIntegerValue("UsedByCount");
+                    }
+                }
+            }
+            return result;
+
+        }
+        public async Task<SaleSummary> GetBulkDiscountSummaryById(int discountId)
+        {
+            var result = new SaleSummary();
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_DiscountId", discountId)
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetBulkDiscountSummaryById_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        result.DiscountId = dataReader.GetIntegerValue("discountId");
+                        result.TotalUsage = dataReader.GetIntegerValue("totalUsage");
+                        result.Revenue = dataReader.GetDecimalValue("revenue");
+                        result.DiscountGiven = dataReader.GetDecimalValue("discountGiven");
+                    }
+                }
+            }
+            return result;
+        }
+        public async Task<SaleSummary> GetPromoSummaryById(int discountId)
+        {
+            var result = new SaleSummary();
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_DiscountId", discountId)
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetPromoSummaryById_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        result.DiscountId = dataReader.GetIntegerValue("discountId");
+                        result.WeightSold = dataReader.GetDecimalValue("weightSold");
+                        result.Revenue = dataReader.GetDecimalValue("revenue");
+                        result.RedeemedCount = dataReader.GetIntegerValue("RedeemedCount");
+                        result.ComissionEarned = dataReader.GetDecimalValue("comissionEarned");
+                    }
+                }
+            }
+            return result;
+        }
+        #endregion
     }
 }
