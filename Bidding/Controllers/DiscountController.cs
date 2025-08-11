@@ -99,30 +99,20 @@ namespace GoldBank.Controllers
         {
             return await this.DiscountApplication.UpdateDiscountStatus(discount);
         }
-        [HttpGet("GetSaleSummaryById")]
-        public async Task<SaleSummary> GetSaleSummaryById([FromQuery] int discountId)
+        [HttpGet("GetActiveSalesSummary")]
+        public async Task<List<SaleSummary>> GetActiveSalesSummary([FromQuery] int discountTypeId)
         {
-            return await this.DiscountApplication.GetSaleSummaryById(discountId);
+            return await this.DiscountApplication.GetActiveSalesSummary(discountTypeId);
         }
-        [HttpGet("GetVoucherSummaryByTypeId")]
-        public async Task<VoucherSummary> GetVoucherSummaryByTypeId([FromQuery] int voucherTypeId)
+        [HttpGet("GetVoucherSummary")]
+        public async Task<List<VoucherSummary>> GetVoucherSummary()
         {
-            return await this.DiscountApplication.GetVoucherSummaryByTypeId(voucherTypeId);
+            return await this.DiscountApplication.GetVoucherSummary();
         }
-        [HttpGet("GetLoyalCardSummaryByTypeId")]
-        public async Task<LoyaltyCardSummary> GetLoyalCardSummaryByTypeId([FromQuery]int loyaltyCardTypeId)
+        [HttpGet("GetLoyaltyCardSummary")]
+        public async Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary()
         {
-            return await this.DiscountApplication.GetLoyalCardSummaryByTypeId(loyaltyCardTypeId);
-        }
-        [HttpGet("GetBulkDiscountSummaryById")]
-        public async Task<SaleSummary> GetBulkDiscountSummaryById([FromQuery]int discountId)
-        {
-            return await this.DiscountApplication.GetBulkDiscountSummaryById(discountId);
-        }
-        [HttpGet("GetPromoSummaryById")]
-        public async Task<SaleSummary> GetPromoSummaryById([FromQuery]int discountId)
-        {
-            return await this.DiscountApplication.GetPromoSummaryById(discountId);
+            return await this.DiscountApplication.GetLoyaltyCardSummary();
         }
     }
 }

@@ -545,12 +545,12 @@ namespace GoldBank.Infrastructure.Infrastructure
         }
         #endregion
         #region Summary
-        public async Task<SaleSummary> GetSaleSummaryById(int discountId)
+        public async Task<List<SaleSummary>> GetActiveSalesSummary(int discountTypeId)
         {
-            var result = new SaleSummary();
+            var res = new List<SaleSummary>();
             var parameters = new List<DbParameter>
             {
-                base.GetParameter("p_DiscountId", discountId)
+                base.GetParameter("p_DiscountTypeId", discountTypeId)
             };
             using (var dataReader = await base.ExecuteReader(parameters, "GetSaleSummaryById_gb", CommandType.StoredProcedure))
             {
@@ -558,6 +558,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 {
                     while (dataReader.Read())
                     {
+                        var result = new SaleSummary();
                         result.DiscountId = dataReader.GetIntegerValue("discountId");
                         result.StockLevel = dataReader.GetIntegerValue("stockLevel");
                         result.UnitsSold = dataReader.GetIntegerValue("unitsSold");
@@ -570,104 +571,67 @@ namespace GoldBank.Infrastructure.Infrastructure
                         result.EndDate = dataReader.GetDateTimeValue("EndDate");
                         result.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
                         result.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
+
+                        result.TotalUsage = dataReader.GetIntegerValue("totalUsage");
+                        result.DiscountGiven = dataReader.GetDecimalValue("discountGiven");
+                        result.RedeemedCount = dataReader.GetIntegerValue("RedeemedCount");
+                        result.ComissionEarned = dataReader.GetDecimalValue("comissionEarned");
+                        res.Add(result);
                     }
                 }
             }
-            return result;
+            return res;
         }
-        public async Task<VoucherSummary> GetVoucherSummaryByTypeId(int voucherTypeId)
+        public async Task<List<VoucherSummary>> GetVoucherSummary()
         {
-            var result = new VoucherSummary();
+            var res = new List<VoucherSummary>();
             var parameters = new List<DbParameter>
             {
-                base.GetParameter("p_VoucherTypeId", voucherTypeId)
             };
-            using (var dataReader = await base.ExecuteReader(parameters, "GetVoucherSummaryByTypeId_gb", CommandType.StoredProcedure))
+            using (var dataReader = await base.ExecuteReader(parameters, "GetVoucherSummary_gb", CommandType.StoredProcedure))
             {
                 if (dataReader != null)
                 {
                     while (dataReader.Read())
                     {
+                        var result = new VoucherSummary();
                         result.VoucherTypeId = dataReader.GetIntegerValue("VoucherTypeId");
                         result.Name = dataReader.GetStringValue("name");
                         result.RedeemedCount = dataReader.GetIntegerValue("Redeemed");
                         result.ActiveCount = dataReader.GetIntegerValue("active");
                         result.ExpiredCount = dataReader.GetIntegerValue("expired");
                         result.DeactivedCount = dataReader.GetIntegerValue("deactived");
+                        res.Add(result);
                     }
                 }
             }
-            return result;
+            return res;
         }
-        public async Task<LoyaltyCardSummary> GetLoyalCardSummaryByTypeId(int loyaltyCardTypeId)
+        public async Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary()
         {
-            var result = new LoyaltyCardSummary();
+            var res = new List<LoyaltyCardSummary>();
             var parameters = new List<DbParameter>
             {
-                base.GetParameter("p_LoyaltyCardTypeId", loyaltyCardTypeId)
             };
-            using (var dataReader = await base.ExecuteReader(parameters, "GetLoyalCardSummaryByTypeId_gb", CommandType.StoredProcedure))
+            using (var dataReader = await base.ExecuteReader(parameters, "GetLoyalCardSummary_gb", CommandType.StoredProcedure))
             {
                 if (dataReader != null)
                 {
                     while (dataReader.Read())
                     {
+                        var result = new LoyaltyCardSummary();
                         result.LoyaltyCardTypeId = dataReader.GetIntegerValue("loyaltyCardTypeId");
                         result.Revenue = dataReader.GetDecimalValue("revenue");
                         result.WeightSold = dataReader.GetDecimalValue("weightSold");
                         result.ActiveCount = dataReader.GetIntegerValue("activeCount");
                         result.ExpiredCount = dataReader.GetIntegerValue("ExpiredCount");
                         result.UsedByCount = dataReader.GetIntegerValue("UsedByCount");
+                        res.Add(result);
                     }
                 }
             }
-            return result;
+            return res;
 
-        }
-        public async Task<SaleSummary> GetBulkDiscountSummaryById(int discountId)
-        {
-            var result = new SaleSummary();
-            var parameters = new List<DbParameter>
-            {
-                base.GetParameter("p_DiscountId", discountId)
-            };
-            using (var dataReader = await base.ExecuteReader(parameters, "GetBulkDiscountSummaryById_gb", CommandType.StoredProcedure))
-            {
-                if (dataReader != null)
-                {
-                    while (dataReader.Read())
-                    {
-                        result.DiscountId = dataReader.GetIntegerValue("discountId");
-                        result.TotalUsage = dataReader.GetIntegerValue("totalUsage");
-                        result.Revenue = dataReader.GetDecimalValue("revenue");
-                        result.DiscountGiven = dataReader.GetDecimalValue("discountGiven");
-                    }
-                }
-            }
-            return result;
-        }
-        public async Task<SaleSummary> GetPromoSummaryById(int discountId)
-        {
-            var result = new SaleSummary();
-            var parameters = new List<DbParameter>
-            {
-                base.GetParameter("p_DiscountId", discountId)
-            };
-            using (var dataReader = await base.ExecuteReader(parameters, "GetPromoSummaryById_gb", CommandType.StoredProcedure))
-            {
-                if (dataReader != null)
-                {
-                    while (dataReader.Read())
-                    {
-                        result.DiscountId = dataReader.GetIntegerValue("discountId");
-                        result.WeightSold = dataReader.GetDecimalValue("weightSold");
-                        result.Revenue = dataReader.GetDecimalValue("revenue");
-                        result.RedeemedCount = dataReader.GetIntegerValue("RedeemedCount");
-                        result.ComissionEarned = dataReader.GetDecimalValue("comissionEarned");
-                    }
-                }
-            }
-            return result;
         }
         #endregion
     }

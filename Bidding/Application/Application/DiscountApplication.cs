@@ -84,25 +84,17 @@ namespace GoldBank.Application.Application
         {
             return await this.DiscountInfrastructure.UpdateDiscountStatus(discount);
         }
-        public async Task<SaleSummary> GetSaleSummaryById(int discountId)
+        public async Task<List<SaleSummary>> GetActiveSalesSummary(int discountTypeId)
         {
-            return await this.DiscountInfrastructure.GetSaleSummaryById(discountId);
+            return await this.DiscountInfrastructure.GetActiveSalesSummary(discountTypeId);
         }
-        public async Task<VoucherSummary> GetVoucherSummaryByTypeId(int voucherTypeId)
+        public async Task<List<VoucherSummary>> GetVoucherSummary()
         {
-            return await this.DiscountInfrastructure.GetVoucherSummaryByTypeId(voucherTypeId);
+            return await this.DiscountInfrastructure.GetVoucherSummary();
         }
-        public async Task<LoyaltyCardSummary> GetLoyalCardSummaryByTypeId(int loyaltyCardTypeId)
+        public async Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary()
         {
-            return await this.DiscountInfrastructure.GetLoyalCardSummaryByTypeId(loyaltyCardTypeId);
-        }
-        public async Task<SaleSummary> GetBulkDiscountSummaryById(int discountId)
-        {
-            return await this.DiscountInfrastructure.GetBulkDiscountSummaryById(discountId);
-        }
-        public async Task<SaleSummary> GetPromoSummaryById(int discountId)
-        {
-            return await this.DiscountInfrastructure.GetPromoSummaryById(discountId);
+            return await this.DiscountInfrastructure.GetLoyaltyCardSummary();
         }
     }
 }
