@@ -100,9 +100,9 @@ namespace GoldBank.Controllers
             return await this.DiscountApplication.UpdateDiscountStatus(discount);
         }
         [HttpGet("GetActiveSalesSummary")]
-        public async Task<List<SaleSummary>> GetActiveSalesSummary([FromQuery] int discountTypeId)
+        public async Task<List<SaleSummary>> GetActiveSalesSummary([FromQuery] int discountTypeId, int? discountId)
         {
-            return await this.DiscountApplication.GetActiveSalesSummary(discountTypeId);
+            return await this.DiscountApplication.GetActiveSalesSummary(discountTypeId, discountId);
         }
         [HttpGet("GetVoucherSummary")]
         public async Task<List<VoucherSummary>> GetVoucherSummary()

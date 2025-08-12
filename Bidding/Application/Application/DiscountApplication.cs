@@ -84,9 +84,9 @@ namespace GoldBank.Application.Application
         {
             return await this.DiscountInfrastructure.UpdateDiscountStatus(discount);
         }
-        public async Task<List<SaleSummary>> GetActiveSalesSummary(int discountTypeId)
+        public async Task<List<SaleSummary>> GetActiveSalesSummary(int discountTypeId, int? discountId)
         {
-            return await this.DiscountInfrastructure.GetActiveSalesSummary(discountTypeId);
+            return await this.DiscountInfrastructure.GetActiveSalesSummary(discountTypeId, discountId);
         }
         public async Task<List<VoucherSummary>> GetVoucherSummary()
         {

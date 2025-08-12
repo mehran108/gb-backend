@@ -545,12 +545,13 @@ namespace GoldBank.Infrastructure.Infrastructure
         }
         #endregion
         #region Summary
-        public async Task<List<SaleSummary>> GetActiveSalesSummary(int discountTypeId)
+        public async Task<List<SaleSummary>> GetActiveSalesSummary(int discountTypeId, int? discountId)
         {
             var res = new List<SaleSummary>();
             var parameters = new List<DbParameter>
             {
-                base.GetParameter("p_DiscountTypeId", discountTypeId)
+                base.GetParameter("p_DiscountTypeId", discountTypeId),
+                base.GetParameter("p_DiscountId", discountId)
             };
             using (var dataReader = await base.ExecuteReader(parameters, "GetSaleSummaryById_gb", CommandType.StoredProcedure))
             {
@@ -560,6 +561,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                     {
                         var result = new SaleSummary();
                         result.DiscountId = dataReader.GetIntegerValue("discountId");
+                        result.Name = dataReader.GetStringValue("name");
                         result.StockLevel = dataReader.GetIntegerValue("stockLevel");
                         result.UnitsSold = dataReader.GetIntegerValue("unitsSold");
                         result.Revenue = dataReader.GetDecimalValue("revenue");

@@ -3,6 +3,7 @@
     public class SaleSummary
     {
         public int DiscountId { get; set; }
+        public string? Name { get; set; }
         public string PrimaryCategories { get; set; }
         public string CategoryIds { get; set; }
         public string SubCategoryIds { get; set; }
