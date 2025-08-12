@@ -32,6 +32,7 @@
     public class LoyaltyCardSummary
     {
         public int LoyaltyCardTypeId { get; set; }
+        public string Name { get; set; }
         public int ActiveCount { get; set; }
         public int ExpiredCount { get; set; }
         public int UsedByCount { get; set; }

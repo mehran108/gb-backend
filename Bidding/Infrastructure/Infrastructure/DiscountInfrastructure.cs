@@ -629,6 +629,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         result.ActiveCount = dataReader.GetIntegerValue("activeCount");
                         result.ExpiredCount = dataReader.GetIntegerValue("ExpiredCount");
                         result.UsedByCount = dataReader.GetIntegerValue("UsedByCount");
+                        result.Name = dataReader.GetStringValue("name");
                         res.Add(result);
                     }
                 }
