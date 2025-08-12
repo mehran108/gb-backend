@@ -4,6 +4,7 @@
     {
         public int CustomChargesId { get; set; }
         public int OrderId { get; set; }
+        public int? ProductId { get; set; }
         public string Label { get; set; }
         public decimal Value { get; set; }
     }

@@ -19,5 +19,6 @@ namespace GoldBank.Models.Product
         public bool IsSold { get; set; }
         public bool IsReserved { get; set; } = false;
         public int? ReferenceOrderId { get; set; }
+        public List<CustomCharge>? CustomCharge { get; set; }
     }
 }

@@ -44,5 +44,6 @@
         public int ProductId { get; set; }
         public decimal MinWeight { get; set; } = 0;
         public decimal MaxWeight { get; set; } = 0;
+        public string? SerialNumber { get; set; }
     }
 }

@@ -363,6 +363,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_IsSold", product.IsSold);
                 parameters.Add("p_IsReserved", product.IsReserved);
                 parameters.Add("p_ReferenceOrderId", product.ReferenceOrderId);
+                parameters.Add("p_SerialNumber", product.Jewellery.SerialNumber);
 
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
                 parameters.Add("o_JewelleryId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -435,6 +436,29 @@ namespace GoldBank.Infrastructure.Infrastructure
                     }
                 }
 
+                if (product.ProductSourceId == 3)
+                {
+                    if (product.CustomCharge?.Count > 0)
+                    {
+                        foreach (var customCharge in product.CustomCharge)
+                        {
+                            await connection.ExecuteAsync(
+                                "InsertCustomChargeGb",
+                                new
+                                {
+                                    p_OrderId = 0,
+                                    p_ProductId = productId,
+                                    p_Label = customCharge.Label,
+                                    p_Value = customCharge.Value,
+                                    p_CreatedBy = customCharge.CreatedBy
+                                },
+                                transaction: transaction,
+                                commandType: CommandType.StoredProcedure
+                            );
+                        }
+                    }
+                }
+
                 if (isOwnConnection)
                     await transaction.CommitAsync();
 
@@ -503,6 +527,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_MaxWeight", product.Jewellery.MaxWeight);
                 parameters.Add("p_IsSold", product.IsSold);
                 parameters.Add("p_IsReserved", product.IsReserved);
+                parameters.Add("p_SerialNumber", product.Jewellery.SerialNumber);
 
                 // OUT parameters
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -598,6 +623,29 @@ namespace GoldBank.Infrastructure.Infrastructure
                         }
                     }
                 }
+                if (product.ProductSourceId == 3)
+                {
+                    if (product.CustomCharge?.Count > 0)
+                    {
+                        foreach (var customCharge in product.CustomCharge)
+                        {
+                            await connection.ExecuteAsync(
+                                "InsertUpdateCustomChargeGb",
+                                new
+                                {
+                                    p_customChargesId = customCharge.CustomChargesId,
+                                    p_OrderId = 0,
+                                    p_ProductId = product.ProductId,
+                                    p_Label = customCharge.Label,
+                                    p_Value = customCharge.Value,
+                                    p_CreatedBy = customCharge.CreatedBy
+                                },
+                                transaction: transaction,
+                                commandType: CommandType.StoredProcedure
+                            );
+                        }
+                    }
+                }
                 if (isOwnConnection)
                     await transaction.CommitAsync();
                 return true;
@@ -670,7 +718,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         var item = new Product();
                         item.ProductSource = new ProductSource();
                         item.Vendor = new Vendor();
-
+                        item.CustomCharge = new List<CustomCharge>();
 
                         item.ProductTypeId = dataReader.GetIntegerValue(ProductInfrastructure.ProductIdColumnName);
                         item.ProductId = dataReader.GetIntegerValue("productId");
@@ -690,7 +738,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.ReferenceSKU = dataReader.GetStringValue("referenceSKU");
                         item.IsSold = dataReader.GetBooleanValue("isSold");
                         item.IsReserved = dataReader.GetBooleanValue("isReserved");
-                        item.ReferenceOrderId = dataReader.GetIntegerValueNullable("referenceOrderId");
+                        item.ReferenceOrderId = dataReader.GetIntegerValueNullable("referenceOrderId");                        
 
                         ProductList.Add(item);
                     }
@@ -733,6 +781,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.CreatedBy = dataReader.GetIntegerValue("createdBy");
                             item.MinWeight = dataReader.GetDecimalValue("minWeight");
                             item.MaxWeight = dataReader.GetDecimalValue("maxWeight");
+                            item.SerialNumber = dataReader.GetStringValue("serialNumber");
 
                             var productItem = ProductList.FirstOrDefault(x => x.ProductId == item.ProductId);
                             if (productItem != null)
@@ -802,6 +851,22 @@ namespace GoldBank.Infrastructure.Infrastructure
                             if (productItem != null)
                             {
                                 productItem.ProductDocuments.Add(item);
+                            }
+                        }
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new CustomCharge();
+                            item.CustomChargesId = dataReader.GetIntegerValue("customChargesId");
+                            item.ProductId = dataReader.GetIntegerValue("productId");
+                            item.Label = dataReader.GetStringValue("label");
+                            item.Value = dataReader.GetDecimalValue("value");
+                            var productItem = ProductList.FirstOrDefault(o => o.ProductId == item.ProductId);
+                            if (productItem != null)
+                            {
+                                productItem?.CustomCharge?.Add(item);
                             }
                         }
                     }
@@ -977,6 +1042,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             var Product = new Product();
             var JewelleryList = new List<Jewellery>();
             var StoneProductList = new List<StoneProduct>();
+            Product.CustomCharge = new List<CustomCharge>();
             var parameters = new List<DbParameter>
             {
                 base.GetParameter("@p_ProductId", ToDbValue(productId))
@@ -1003,7 +1069,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.IsSold = dataReader.GetBooleanValue("isSold");
                         item.IsReserved = dataReader.GetBooleanValue("isReserved");
                         item.ReferenceOrderId = dataReader.GetIntegerValueNullable("referenceOrderId");
-
+                        item.CustomCharge = new List<CustomCharge>();
                         Product = item;
                     }
                     if (dataReader.NextResult())
@@ -1116,6 +1182,27 @@ namespace GoldBank.Infrastructure.Infrastructure
                             if (Product.ProductId == item.ProductId)
                             {
                                 Product.ProductDocuments.Add(item);
+                            }
+                        }
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var res = new CustomCharge();
+                            res.ProductId = dataReader.GetIntegerValue("productId");
+                            res.CustomChargesId = dataReader.GetIntegerValue("customChargesId");
+                            res.Label = dataReader.GetStringValue("label");
+                            res.Value = dataReader.GetDecimalValue("Value");
+                            res.IsActive = dataReader.GetBooleanValue("isActive");
+                            res.IsDeleted = dataReader.GetBooleanValue("IsDeleted");
+                            res.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                            res.UpdatedBy = dataReader.GetIntegerValue("updatedBy");
+                            res.UpdatedAt = dataReader.GetDateTimeValue("updatedAt");
+                            res.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                            if (Product.ProductId == res.ProductId)
+                            {
+                                Product.CustomCharge?.Add(res);
                             }
                         }
                     }
@@ -1237,6 +1324,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             new
                             {
                                 p_OrderId = order.OrderId,
+                                p_ProductId = 0,
                                 p_Label = customCharge.Label,
                                 p_Value = customCharge.Value,
                                 p_CreatedBy = customCharge.CreatedBy
@@ -1492,6 +1580,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             {
                                 p_customChargesId = customCharge.CustomChargesId,
                                 p_OrderId = order.OrderId,
+                                p_ProductId = 0,
                                 p_Label = customCharge.Label,
                                 p_Value = customCharge.Value,
                                 p_CreatedBy = customCharge.CreatedBy
