@@ -95,7 +95,7 @@ namespace GoldBank.Controllers
             return await this.DiscountApplication.GetAllLoyaltyCardType(LoyaltyCardType);
         }
         [HttpPost("UpdateDiscountStatus")]
-        public async Task<bool> UpdateDiscountStatus([FromBody]Discount discount)
+        public async Task<bool> UpdateDiscountStatus([FromBody] DiscountURM discount)
         {
             return await this.DiscountApplication.UpdateDiscountStatus(discount);
         }

@@ -264,7 +264,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             var discountId = parameters.Get<int>("o_IsUpdated");
             return discountId > 0;
         }
-        public async Task<bool> UpdateDiscountStatus(Discount discount)
+        public async Task<bool> UpdateDiscountStatus(DiscountURM discount)
         {
             using var connection = base.GetConnection();
 
@@ -272,6 +272,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             parameters.Add("p_DiscountId", discount.DiscountId);
             parameters.Add("p_IsActive", discount.IsActive);
             parameters.Add("p_IsDeleted", discount.IsDeleted);
+            parameters.Add("p_UpdatedBy", discount.UpdatedBy);
             parameters.Add("o_IsUpdated", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             await connection.ExecuteAsync("UpdateDiscountStatusGb", parameters, commandType: CommandType.StoredProcedure);

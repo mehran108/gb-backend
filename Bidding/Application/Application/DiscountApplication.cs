@@ -80,7 +80,7 @@ namespace GoldBank.Application.Application
         {
             return await this.DiscountInfrastructure.GetAllLoyaltyCardType(LoyaltyCardType);
         }
-        public async Task<bool> UpdateDiscountStatus(Discount discount)
+        public async Task<bool> UpdateDiscountStatus(DiscountURM discount)
         {
             return await this.DiscountInfrastructure.UpdateDiscountStatus(discount);
         }
