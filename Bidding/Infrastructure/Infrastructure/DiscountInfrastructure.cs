@@ -569,10 +569,11 @@ namespace GoldBank.Infrastructure.Infrastructure
         }
         public async Task<DiscountCodeVerification> GetDiscountValidityByCode(OrderDiscount entity)
         {
+
             var res = new DiscountCodeVerification();
             var parameters = new List<DbParameter>
             {
-                 base.GetParameter("p_DiscountCount", entity.Code),
+                 base.GetParameter("p_DiscountCode", entity.Code),
                  base.GetParameter("p_DiscountTypeId", entity.DiscountTypeId)
             };
 
@@ -590,8 +591,14 @@ namespace GoldBank.Infrastructure.Infrastructure
                         result.Description = dataReader.GetStringValue("description");
                         result.DiscountId = dataReader.GetIntegerValue("discountId");
                         Discount.DiscountId = result.DiscountId;
-
-                        result.DiscountDetails = await this.Get(Discount);
+                        if(result.DiscountId > 0)
+                        {
+                            result.DiscountDetails = await this.Get(Discount);
+                        }
+                        else
+                        {
+                            result.DiscountDetails = null;
+                        }
                         res = result;
                     }
                 }
