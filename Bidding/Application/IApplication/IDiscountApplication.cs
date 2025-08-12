@@ -20,5 +20,6 @@ namespace GoldBank.Application.IApplication
         Task<List<SaleSummary>> GetActiveSalesSummary(int discountTypeId, int? discountId);
         Task<List<VoucherSummary>> GetVoucherSummary();
         Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary();
+        Task<DiscountCodeVerification> GetDiscountValidityByCode(OrderDiscount entity);
     }
 }

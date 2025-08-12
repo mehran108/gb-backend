@@ -100,5 +100,9 @@ namespace GoldBank.Application.Application
         {
             return await this.DiscountInfrastructure.GetLoyaltyCardSummary();
         }
+        public async Task<DiscountCodeVerification> GetDiscountValidityByCode(OrderDiscount entity)
+        {
+            return await this.DiscountInfrastructure.GetDiscountValidityByCode(entity);
+        }
     }
 }

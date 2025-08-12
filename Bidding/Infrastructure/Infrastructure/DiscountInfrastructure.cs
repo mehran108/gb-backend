@@ -13,10 +13,12 @@ namespace GoldBank.Infrastructure.Infrastructure
 {
     public class DiscountInfrastructure : BaseInfrastructure, IDiscountInfrastructure
     {
-        public DiscountInfrastructure(IConfiguration configuration) : base(configuration)
+        public DiscountInfrastructure(IConfiguration configuration,IDiscountInfrastructure discountInfrastructure) : base(configuration)
         {
-
+            this._DiscountInfrastructure = discountInfrastructure;
         }
+        public IDiscountInfrastructure _DiscountInfrastructure { get; }
+
 
         public Task<bool> Activate(Discount entity)
         {
@@ -554,7 +556,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             var parameters = new DynamicParameters();
             parameters.Add("p_OrderId", entity.OrderId, DbType.Int32);
             parameters.Add("p_DiscountTypeId", entity.DiscountTypeId, DbType.Int32);
-            parameters.Add("p_DiscountCode", entity.DiscountCode, DbType.String);
+            parameters.Add("p_DiscountCode", entity.Code, DbType.String);
             parameters.Add("p_DiscountAmount", entity.DiscountAmount, DbType.Decimal);
             parameters.Add("p_DiscountPct", entity.DiscountAmount, DbType.Decimal);
             parameters.Add("p_DiscountId", entity.DiscountId, DbType.Int32);
@@ -566,7 +568,36 @@ namespace GoldBank.Infrastructure.Infrastructure
             var OrderDiscountId = parameters.Get<int>("o_OrderDiscountId");
             return OrderDiscountId;
         }
+        public async Task<DiscountCodeVerification> GetDiscountValidityByCode(OrderDiscount entity)
+        {
+            var res = new DiscountCodeVerification();
+            var parameters = new List<DbParameter>
+            {
+                 base.GetParameter("p_DiscountCount", entity.Code),
+                 base.GetParameter("p_DiscountTypeId", entity.DiscountTypeId)
+            };
+
+            using (var dataReader = await base.ExecuteReader(parameters, "GetDiscountDetailsByCode_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        var result = new DiscountCodeVerification();
+                        result.Code = dataReader.GetStringValue("code");
+                        result.IsValid = dataReader.GetBooleanValue("isValid");
+                        result.status = dataReader.GetStringValue("status");
+                        result.Description = dataReader.GetStringValue("description");
+                        result.DiscountId = dataReader.GetIntegerValue("discountId");
+
+                        result.DiscountDetails = await this._DiscountInfrastructure.Get(entity);
+                    }
+                }
+            }
+            return res;
+        }
         #endregion
+
         #region Summary
         public async Task<List<SaleSummary>> GetActiveSalesSummary(int discountTypeId, int? discountId)
         {
