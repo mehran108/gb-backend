@@ -99,6 +99,11 @@ namespace GoldBank.Controllers
         {
             return await this.DiscountApplication.UpdateDiscountStatus(discount);
         }
+        [HttpPost("AddOrderDiscount")]
+        public async Task<int> AddOrderDiscount([FromBody] OrderDiscount discount)
+        {
+            return await this.DiscountApplication.AddOrderDiscount(discount);
+        }
         [HttpGet("GetActiveSalesSummary")]
         public async Task<List<SaleSummary>> GetActiveSalesSummary([FromQuery] int discountTypeId, int? discountId)
         {
@@ -113,6 +118,11 @@ namespace GoldBank.Controllers
         public async Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary()
         {
             return await this.DiscountApplication.GetLoyaltyCardSummary();
+        }
+        [HttpGet("GetDiscountValidityByCode")]
+        public async Task<DiscountCodeVerification> GetDiscountValidityByCode(OrderDiscount entity)
+        {
+            return await this.DiscountApplication.GetDiscountValidityByCode(entity);
         }
     }
 }

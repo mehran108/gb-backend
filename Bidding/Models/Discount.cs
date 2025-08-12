@@ -38,6 +38,8 @@ namespace GoldBank.Models
         public bool IsEcommerce { get; set; }
         public bool IsInStore { get; set; }
         public string? StoreIds { get; set; }
+        public string CodeStatus {  get; set; }
+        public bool IsValid {  get; set; }
 
     }
 }
