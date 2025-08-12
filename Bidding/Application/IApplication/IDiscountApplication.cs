@@ -15,6 +15,7 @@ namespace GoldBank.Application.IApplication
         Task<bool> UpdateLoyaltyCardType(LoyaltyCardType LoyaltyCardType);
         Task<LoyaltyCardType> GetLoyaltyCardType(LoyaltyCardType LoyaltyCardType);
         Task<List<LoyaltyCardType>> GetAllLoyaltyCardType(LoyaltyCardType LoyaltyCardType);
+        Task<int> AddOrderDiscount(OrderDiscount discount);
         Task<bool> UpdateDiscountStatus(DiscountURM discount);
         Task<List<SaleSummary>> GetActiveSalesSummary(int discountTypeId, int? discountId);
         Task<List<VoucherSummary>> GetVoucherSummary();

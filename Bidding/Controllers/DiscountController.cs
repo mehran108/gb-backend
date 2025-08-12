@@ -99,6 +99,11 @@ namespace GoldBank.Controllers
         {
             return await this.DiscountApplication.UpdateDiscountStatus(discount);
         }
+        [HttpPost("AddOrderDiscount")]
+        public async Task<int> AddOrderDiscount([FromBody] OrderDiscount discount)
+        {
+            return await this.DiscountApplication.AddOrderDiscount(discount);
+        }
         [HttpGet("GetActiveSalesSummary")]
         public async Task<List<SaleSummary>> GetActiveSalesSummary([FromQuery] int discountTypeId, int? discountId)
         {
