@@ -13,11 +13,10 @@ namespace GoldBank.Infrastructure.Infrastructure
 {
     public class DiscountInfrastructure : BaseInfrastructure, IDiscountInfrastructure
     {
-        public DiscountInfrastructure(IConfiguration configuration,IDiscountInfrastructure discountInfrastructure) : base(configuration)
+        public DiscountInfrastructure(IConfiguration configuration) : base(configuration)
         {
-            this._DiscountInfrastructure = discountInfrastructure;
+
         }
-        public IDiscountInfrastructure _DiscountInfrastructure { get; }
 
 
         public Task<bool> Activate(Discount entity)
@@ -579,6 +578,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             using (var dataReader = await base.ExecuteReader(parameters, "GetDiscountDetailsByCode_gb", CommandType.StoredProcedure))
             {
+                var Discount = new Discount();
                 if (dataReader != null)
                 {
                     while (dataReader.Read())
@@ -589,8 +589,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                         result.status = dataReader.GetStringValue("status");
                         result.Description = dataReader.GetStringValue("description");
                         result.DiscountId = dataReader.GetIntegerValue("discountId");
+                        Discount.DiscountId = result.DiscountId;
 
-                        result.DiscountDetails = await this._DiscountInfrastructure.Get(entity);
+                        result.DiscountDetails = await this.Get(Discount);
+                        res = result;
                     }
                 }
             }
