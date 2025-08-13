@@ -8,7 +8,7 @@
         public int DiscountTypeId { get; set; }
         public decimal? DiscountAmount { get; set; }
         public decimal? DiscountPercentage { get; set; }
-        public string Code {  get; set; }
+        public string? Code {  get; set; }
     }
     public class DiscountCodeVerification 
     {
