@@ -11,10 +11,10 @@ namespace GoldBank.Models
         public string Code { get; set; }
         public decimal MinInvoiceAmount { get; set; }
         public int? MaxUsage { get; set; }
-        public string PersonName { get; set; }
+        public string? PersonName { get; set; }
         public string? CustomerFirstName { get; set; }
         public string? CustomerLastName { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public decimal? SalesComissionPct { get; set; }
         public int? MaxUser { get; set; }
         public int? CustomerId { get; set; }
@@ -26,11 +26,11 @@ namespace GoldBank.Models
         public int? VoucherTypeId { get; set; }
         public VoucherType? VoucherType { get; set; }
 
-        public string PrimaryCategories { get; set; }
-        public string CategoryIds { get; set; }
-        public string SubCategoryIds { get; set; }
-        public string CollectionTypeIds { get; set; }
-        public string LabelTypeIds { get; set; }
+        public string? PrimaryCategories { get; set; }
+        public string? CategoryIds { get; set; }
+        public string? SubCategoryIds { get; set; }
+        public string? CollectionTypeIds { get; set; }
+        public string? LabelTypeIds { get; set; }
         public decimal? DiscountAmount { get; set; }
         public decimal? DiscountPct { get; set; }
         public DateTime? StartDate { get; set; }
@@ -38,7 +38,7 @@ namespace GoldBank.Models
         public bool IsEcommerce { get; set; }
         public bool IsInStore { get; set; }
         public string? StoreIds { get; set; }
-        public string CodeStatus {  get; set; }
+        public string? CodeStatus {  get; set; }
         public bool IsValid {  get; set; }
 
     }
