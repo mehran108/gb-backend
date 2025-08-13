@@ -554,10 +554,6 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             var parameters = new DynamicParameters();
             parameters.Add("p_OrderId", entity.OrderId, DbType.Int32);
-            parameters.Add("p_DiscountTypeId", entity.DiscountTypeId, DbType.Int32);
-            parameters.Add("p_DiscountCode", entity.Code, DbType.String);
-            parameters.Add("p_DiscountAmount", entity.DiscountAmount, DbType.Decimal);
-            parameters.Add("p_DiscountPct", entity.DiscountAmount, DbType.Decimal);
             parameters.Add("p_DiscountId", entity.DiscountId, DbType.Int32);
             parameters.Add("p_CreatedBy", entity.CreatedBy, DbType.Int32);
             parameters.Add("o_OrderDiscountId", dbType: DbType.Int32, direction: ParameterDirection.Output);
