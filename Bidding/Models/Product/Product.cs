@@ -22,5 +22,6 @@ namespace GoldBank.Models.Product
         public List<CustomCharge>? CustomCharge { get; set; }
         public int? KaatCategoryId { get; set; }
         public decimal VendorAmount { get; set; }
+        public Discount? DiscountDetails { get; set; }
     }
 }

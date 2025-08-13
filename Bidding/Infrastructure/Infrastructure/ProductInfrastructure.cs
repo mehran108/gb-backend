@@ -878,6 +878,81 @@ namespace GoldBank.Infrastructure.Infrastructure
                     }
                     if (dataReader.NextResult())
                     {
+                        while (dataReader.Read())
+                        {
+                            var discount = new Discount();
+                            discount.DiscountId = dataReader.GetIntegerValue("DiscountId");
+                            discount.DiscountTypeId = dataReader.GetIntegerValue("DiscountTypeId");
+                            discount.Name = dataReader.GetStringValue("Name");
+                            discount.CardDisplayName = dataReader.GetStringValue("CardDisplayName");
+                            discount.Code = dataReader.GetStringValue("Code");
+                            discount.MinInvoiceAmount = dataReader.GetDecimalValue("MinInvoiceAmount");
+                            discount.MaxUsage = dataReader.GetIntegerValue("MaxUsage");
+                            discount.PersonName = dataReader.GetStringValue("PersonName");
+                            discount.Description = dataReader.GetStringValue("Description");
+                            discount.SalesComissionPct = dataReader.GetDecimalValue("SalesComissionPct");
+                            discount.MaxUser = dataReader.GetIntegerValue("MaxUser");
+                            discount.CustomerId = dataReader.GetIntegerValue("CustomerId");
+                            discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");
+                            discount.ExpiryDurationType = dataReader.GetIntegerValue("ExpiryDurationType");
+                            discount.LoyaltyCardTypeId = dataReader.GetIntegerValue("LoyaltyCardTypeId");
+                            discount.VoucherTypeId = dataReader.GetIntegerValue("VoucherTypeId");
+                            discount.PrimaryCategories = dataReader.GetStringValue("PrimaryCategories");
+                            discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
+                            discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
+                            discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
+                            discount.LabelTypeIds = dataReader.GetStringValue("LabelTypeIds");
+                            discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
+                            discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
+                            discount.StartDate = dataReader.GetDateTimeValue("StartDate");
+                            discount.EndDate = dataReader.GetDateTimeValue("EndDate");
+                            discount.IsEcommerce = dataReader.GetBooleanValue("IsEcommerce");
+                            discount.IsInStore = dataReader.GetBooleanValue("IsInStore");
+                            discount.StoreIds = dataReader.GetStringValue("StoreIds");
+
+                            if (ProductList.Count > 0)
+                            {
+                                var discountPrimaryCategories = new HashSet<string>((discount.PrimaryCategories ?? "")
+                                    .Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()) );
+                                var discountSubCategories = new HashSet<string>(
+                                    (discount.SubCategoryIds ?? "")
+                                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                        .Select(x => x.Trim())
+                                );
+                                var discountCategories = new HashSet<string>(
+                                  (discount.CategoryIds ?? "")
+                                      .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                      .Select(x => x.Trim())
+                              );
+                                var discountCollections = new HashSet<string>(
+                                    (discount.CollectionTypeIds ?? "")
+                                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                        .Select(x => x.Trim())
+                                );
+                                var filteredProducts = ProductList
+                                    .Where(p =>
+                                        discountCategories.Contains(p.Jewellery.CategoryId.ToString()) ||
+                                        discountSubCategories.Contains(p.Jewellery.SubCategoryId.ToString()) ||
+                                        (p.Jewellery.CollectionIds ?? "")
+                                            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                            .Select(x => x.Trim())
+                                            .Any(id => discountCollections.Contains(id)) ||
+                                        (p.Jewellery.PrimaryCategoryIds ?? "")
+                                            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                            .Select(x => x.Trim())
+                                            .Any(id => discountPrimaryCategories.Contains(id))
+                                    )
+                                    .ToList().Distinct();
+
+                                foreach(var item in filteredProducts)
+                                {
+                                    item.DiscountDetails = discount;
+                                }
+                            }
+                        }
+                    }
+                    if (dataReader.NextResult())
+                    {
                         if (dataReader.Read())
                         {
                             Response.TotalRecord = dataReader.GetIntegerValue("TotalRecords");
