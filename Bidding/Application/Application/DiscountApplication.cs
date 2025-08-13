@@ -84,6 +84,10 @@ namespace GoldBank.Application.Application
         {
             return await this.DiscountInfrastructure.UpdateDiscountStatus(discount);
         }
+        public async Task<int> AddOrderDiscount(OrderDiscount discount)
+        {
+            return await this.DiscountInfrastructure.AddOrderDiscount(discount);
+        }
         public async Task<List<SaleSummary>> GetActiveSalesSummary(int discountTypeId, int? discountId)
         {
             return await this.DiscountInfrastructure.GetActiveSalesSummary(discountTypeId, discountId);
@@ -95,6 +99,10 @@ namespace GoldBank.Application.Application
         public async Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary()
         {
             return await this.DiscountInfrastructure.GetLoyaltyCardSummary();
+        }
+        public async Task<DiscountCodeVerification> GetDiscountValidityByCode(OrderDiscount entity)
+        {
+            return await this.DiscountInfrastructure.GetDiscountValidityByCode(entity);
         }
     }
 }
