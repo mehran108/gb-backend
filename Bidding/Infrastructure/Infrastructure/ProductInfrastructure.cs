@@ -364,6 +364,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_IsReserved", product.IsReserved);
                 parameters.Add("p_ReferenceOrderId", product.ReferenceOrderId);
                 parameters.Add("p_SerialNumber", product.Jewellery.SerialNumber);
+                parameters.Add("P_KaatCategoryId", product.KaatCategoryId);
+                parameters.Add("P_VendorAmount", product.VendorAmount);
 
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
                 parameters.Add("o_JewelleryId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -528,6 +530,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_IsSold", product.IsSold);
                 parameters.Add("p_IsReserved", product.IsReserved);
                 parameters.Add("p_SerialNumber", product.Jewellery.SerialNumber);
+                parameters.Add("P_KaatCategoryId", product.KaatCategoryId);
+                parameters.Add("P_VendorAmount", product.VendorAmount);
 
                 // OUT parameters
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -739,6 +743,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.IsSold = dataReader.GetBooleanValue("isSold");
                         item.IsReserved = dataReader.GetBooleanValue("isReserved");
                         item.ReferenceOrderId = dataReader.GetIntegerValueNullable("referenceOrderId");                        
+                        item.VendorAmount = dataReader.GetDecimalValue("vendorAmount");                        
+                        item.KaatCategoryId = dataReader.GetIntegerValue("kaatCategoryId");                        
 
                         ProductList.Add(item);
                     }
@@ -920,6 +926,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.IsSold = dataReader.GetBooleanValue("isSold");
                         item.IsReserved = dataReader.GetBooleanValue("isReserved");
 
+                        item.VendorAmount = dataReader.GetDecimalValue("vendorAmount");
+                        item.KaatCategoryId = dataReader.GetIntegerValue("kaatCategoryId");
                         ProductList.Add(item);
                     }
                     if (dataReader.NextResult())
@@ -1069,6 +1077,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.IsSold = dataReader.GetBooleanValue("isSold");
                         item.IsReserved = dataReader.GetBooleanValue("isReserved");
                         item.ReferenceOrderId = dataReader.GetIntegerValueNullable("referenceOrderId");
+
+                        item.VendorAmount = dataReader.GetDecimalValue("vendorAmount");
+                        item.KaatCategoryId = dataReader.GetIntegerValue("kaatCategoryId");
                         item.CustomCharge = new List<CustomCharge>();
                         Product = item;
                     }
@@ -3037,6 +3048,200 @@ namespace GoldBank.Infrastructure.Infrastructure
             return giftCard;
         }
 
+        #endregion
+
+        #region Vendor
+        public async Task<int> AddVendor(Vendor vendor)
+        {
+            var response = 0;
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_Description", vendor.Description);
+                parameters.Add("p_SerialNumber", vendor.SerialNumber);
+                parameters.Add("p_Contact", vendor.Contact);
+                parameters.Add("p_CreatedBy", vendor.CreatedBy);
+                parameters.Add("o_VendorId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                response = await connection.ExecuteAsync("AddVendor_gb", parameters, transaction, commandType: CommandType.StoredProcedure);
+                var vendorId = parameters.Get<int>("o_VendorId");
+
+                if (vendorId > 0)
+                {
+                    if (vendor.KaatCategory?.Count > 0)
+                    {
+                        foreach (var kaat in vendor.KaatCategory)
+                        {
+                            await connection.ExecuteAsync(
+                                "InsertorUpdateKaatCategory_Gb",
+                                new
+                                {
+                                    P_KaatCategoryId = kaat.KaatCategoryId,
+                                    p_VendorId = vendorId,
+                                    p_Label = kaat.Label,
+                                    p_Value = kaat.Value,
+                                    p_UpdatedBy = vendor.CreatedBy
+                                },
+                                transaction: transaction,
+                                commandType: CommandType.StoredProcedure
+                            );
+                        }
+                    }
+                }
+                await transaction.CommitAsync();
+                response = vendorId;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+            }
+            finally
+            {
+                await connection.DisposeAsync();
+
+            }
+            return response;
+        }
+        public async Task<bool> UpdateVendor(Vendor vendor)
+        {
+            var response = 0;
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_VendorId", vendor.VendorId); 
+                parameters.Add("p_Description", vendor.Description);
+                parameters.Add("p_SerialNumber", vendor.SerialNumber);
+                parameters.Add("p_Contact", vendor.Contact);
+                parameters.Add("p_UpdatedBy", vendor.UpdatedBy); 
+                parameters.Add("o_Response", dbType: DbType.Int32, direction: ParameterDirection.Output); 
+
+                // Execute the update stored procedure
+                response = await connection.ExecuteAsync("UpdateVendor_gb", parameters, transaction, commandType: CommandType.StoredProcedure);
+                var updatedVendorId = parameters.Get<int>("o_Response");
+
+                if (updatedVendorId > 0)
+                {
+
+                    foreach (var kaat in vendor.KaatCategory)
+                    {
+                        await connection.ExecuteAsync(
+                            "InsertorUpdateKaatCategory_Gb",
+                            new
+                            {
+                                P_KaatCategoryId = kaat.KaatCategoryId,
+                                p_VendorId = updatedVendorId,
+                                p_Label = kaat.Label,
+                                p_Value = kaat.Value,
+                                p_UpdatedBy = vendor.UpdatedBy // Assuming UpdatedBy field exists
+                            },
+                            transaction: transaction,
+                            commandType: CommandType.StoredProcedure
+                        );
+
+                    }
+                }
+
+                await transaction.CommitAsync();
+                response = updatedVendorId;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+            }
+            finally
+            {
+                await connection.DisposeAsync();
+            }
+
+            return response > 0;
+        }
+        public async Task<Vendor> GetVendorById(int vendorId)
+        {
+            var result = new Vendor();
+            result.KaatCategory = new List<KaatCategory>();
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_VendorId",vendorId)
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetVendorById_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        result.VendorId = dataReader.GetIntegerValue("vendorId");
+                        result.Description = dataReader.GetStringValue("description");
+                        result.SerialNumber = dataReader.GetStringValue("serialNumber");
+                        result.Contact = dataReader.GetStringValue("contact");
+                        result.IsActive = dataReader.GetBooleanValue("isActive");
+                        result.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        result.CreatedAt = dataReader.GetDateTime("createdAt");
+                        result.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                    }
+                }
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new KaatCategory();
+                        item.KaatCategoryId = dataReader.GetIntegerValue("kaatCategoryId");
+                        item.VendorId = dataReader.GetIntegerValue("vendorId");
+                        item.Label = dataReader.GetStringValue("label");
+                        item.Value = dataReader.GetDecimalValue("value");
+                        result.KaatCategory.Add(item);
+                    }
+                }
+            }
+            return result;
+        }
+        public async Task<List<Vendor>> GetAllVendors()
+        {
+            var Response = new List<Vendor>();
+            var parameters = new List<DbParameter>
+            {
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAllVendors_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        var result = new Vendor();
+                        result.VendorId = dataReader.GetIntegerValue("vendorId");
+                        result.Description = dataReader.GetStringValue("description");
+                        result.SerialNumber = dataReader.GetStringValue("serialNumber");
+                        result.Contact = dataReader.GetStringValue("contact");
+                        result.IsActive = dataReader.GetBooleanValue("isActive");
+                        result.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        result.CreatedAt = dataReader.GetDateTime("createdAt");
+                        result.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        result.KaatCategory = new List<KaatCategory>();
+                        Response.Add(result);
+                    }
+                }
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new KaatCategory();
+                        item.KaatCategoryId = dataReader.GetIntegerValue("kaatCategoryId");
+                        item.VendorId = dataReader.GetIntegerValue("vendorId");
+                        item.Label = dataReader.GetStringValue("label");
+                        item.Value = dataReader.GetDecimalValue("value");
+                        var kaatItem = Response.FirstOrDefault(o => o.VendorId == item.VendorId);
+                        if (kaatItem != null)
+                        {
+                            kaatItem?.KaatCategory?.Add(item);
+                        }
+                    }
+                }
+            }
+            return Response;
+        }
         #endregion
     }
 }

@@ -2,6 +2,7 @@
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using GoldBank.Models.Product;
+using GoldBank.Models.RequestModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GoldBank.Application.Application
@@ -88,6 +89,22 @@ namespace GoldBank.Application.Application
         public async Task<bool> DeleteOrder(Order orderId)
         {
             return await this.ProductInfrastructure.DeleteOrder(orderId);
+        }
+        public async Task<int> AddVendor(Vendor Vendor)
+        {
+            return await ProductInfrastructure.AddVendor(Vendor);
+        }
+        public async Task<List<Vendor>> GetAllVendors()
+        {
+            return await ProductInfrastructure.GetAllVendors();
+        }
+        public async Task<bool> UpdateVendor(Vendor Vendor)
+        {
+            return await ProductInfrastructure.UpdateVendor(Vendor);
+        }
+        public async Task<Vendor> GetVendorById(int VendorId)
+        {
+            return await ProductInfrastructure.GetVendorById(VendorId);
         }
     }
 }

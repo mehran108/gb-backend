@@ -3,6 +3,7 @@ using GoldBank.Application.Application;
 using GoldBank.Application.IApplication;
 using GoldBank.Models;
 using GoldBank.Models.Product;
+using GoldBank.Models.RequestModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
@@ -95,6 +96,26 @@ namespace GoldBank.Controllers
         public async Task<bool> BulkImport(Document document)
         {
             return await ProductApplication.BulkImport(document);
+        }
+        [HttpPost("AddVendor")]
+        public async Task<int> AddVendor(Vendor Vendor)
+        {
+            return await ProductApplication.AddVendor(Vendor);
+        }
+        [HttpPost("GetAllVendors")]
+        public async Task<List<Vendor>> GetAllVendors()
+        {
+            return await ProductApplication.GetAllVendors();
+        }
+        [HttpPost("UpdateVendor")]
+        public async Task<bool> UpdateVendor([FromBody] Vendor Vendor)
+        {
+            return await ProductApplication.UpdateVendor(Vendor);
+        }
+        [HttpGet("GetVendorById")]
+        public async Task<Vendor> GetVendorById([FromQuery] int VendorId)
+        {
+            return await ProductApplication.GetVendorById(VendorId);
         }
         private async Task<string> ToCSV(DataTable dtDataTable)
         {

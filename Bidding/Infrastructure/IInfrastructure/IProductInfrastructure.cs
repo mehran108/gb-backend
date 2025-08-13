@@ -1,5 +1,6 @@
 ﻿using GoldBank.Models;
 using GoldBank.Models.Product;
+using GoldBank.Models.RequestModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GoldBank.Infrastructure.IInfrastructure
@@ -17,5 +18,9 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<bool> DeleteOrder(Order orderId);
         Task<int> AddAlterationDetails (AlterationDetails alterationDetails);
         Task<bool> UpdateAlterationDetails(AlterationDetails alterationDetails);
+        Task<int> AddVendor(Vendor Vendor);
+        Task<List<Vendor>> GetAllVendors();
+        Task<bool> UpdateVendor(Vendor Vendor);
+        Task<Vendor> GetVendorById(int VendorId);
     }
 }

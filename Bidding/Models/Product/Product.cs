@@ -20,5 +20,7 @@ namespace GoldBank.Models.Product
         public bool IsReserved { get; set; } = false;
         public int? ReferenceOrderId { get; set; }
         public List<CustomCharge>? CustomCharge { get; set; }
+        public int? KaatCategoryId { get; set; }
+        public decimal VendorAmount { get; set; }
     }
 }
