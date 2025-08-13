@@ -912,23 +912,11 @@ namespace GoldBank.Infrastructure.Infrastructure
 
                             if (ProductList.Count > 0)
                             {
-                                var discountPrimaryCategories = new HashSet<string>((discount.PrimaryCategories ?? "")
-                                    .Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()) );
-                                var discountSubCategories = new HashSet<string>(
-                                    (discount.SubCategoryIds ?? "")
-                                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                        .Select(x => x.Trim())
-                                );
-                                var discountCategories = new HashSet<string>(
-                                  (discount.CategoryIds ?? "")
-                                      .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                      .Select(x => x.Trim())
-                              );
-                                var discountCollections = new HashSet<string>(
-                                    (discount.CollectionTypeIds ?? "")
-                                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                        .Select(x => x.Trim())
-                                );
+                                var discountPrimaryCategories = new HashSet<string>((discount.PrimaryCategories ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()) );
+                                var discountSubCategories = new HashSet<string>((discount.SubCategoryIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
+                                var discountCategories = new HashSet<string>((discount.CategoryIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
+                                var discountCollections = new HashSet<string>((discount.CollectionTypeIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
+
                                 var filteredProducts = ProductList
                                     .Where(p =>
                                         discountCategories.Contains(p.Jewellery.CategoryId.ToString()) ||
@@ -944,10 +932,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                                     )
                                     .ToList().Distinct();
 
-                                foreach(var item in filteredProducts)
-                                {
-                                    item.DiscountDetails = discount;
-                                }
+                                filteredProducts.ToList().ForEach(p => p.DiscountDetails = discount);
                             }
                         }
                     }
