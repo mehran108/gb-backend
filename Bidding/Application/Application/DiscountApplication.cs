@@ -88,17 +88,17 @@ namespace GoldBank.Application.Application
         {
             return await this.DiscountInfrastructure.AddOrderDiscount(discount);
         }
-        public async Task<List<SaleSummary>> GetActiveSalesSummary(int discountTypeId, int? discountId)
+        public async Task<List<SaleSummary>> GetActiveSalesSummary(DiscountSummary summary)
         {
-            return await this.DiscountInfrastructure.GetActiveSalesSummary(discountTypeId, discountId);
+            return await this.DiscountInfrastructure.GetActiveSalesSummary(summary);
         }
-        public async Task<List<VoucherSummary>> GetVoucherSummary()
+        public async Task<List<VoucherSummary>> GetVoucherSummary(DiscountSummary summary)
         {
-            return await this.DiscountInfrastructure.GetVoucherSummary();
+            return await this.DiscountInfrastructure.GetVoucherSummary(summary);
         }
-        public async Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary()
+        public async Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary(DiscountSummary summary)
         {
-            return await this.DiscountInfrastructure.GetLoyaltyCardSummary();
+            return await this.DiscountInfrastructure.GetLoyaltyCardSummary(summary);
         }
         public async Task<DiscountCodeVerification> GetDiscountValidityByCode(OrderDiscount entity)
         {

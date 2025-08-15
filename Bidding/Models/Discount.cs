@@ -6,9 +6,9 @@ namespace GoldBank.Models
     {
         public int DiscountId { get; set; }
         public int DiscountTypeId { get; set; }
-        public string Name { get; set; }
-        public string CardDisplayName { get; set; }
-        public string Code { get; set; }
+        public string? Name { get; set; }
+        public string? CardDisplayName { get; set; }
+        public string? Code { get; set; }
         public decimal MinInvoiceAmount { get; set; }
         public int? MaxUsage { get; set; }
         public string? PersonName { get; set; }

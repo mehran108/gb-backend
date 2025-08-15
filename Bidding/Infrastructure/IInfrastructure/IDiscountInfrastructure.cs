@@ -17,9 +17,9 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<List<LoyaltyCardType>> GetAllLoyaltyCardType(LoyaltyCardType LoyaltyCardType);
         Task<int> AddOrderDiscount(OrderDiscount discount);
         Task<bool> UpdateDiscountStatus(DiscountURM discount);
-        Task<List<SaleSummary>> GetActiveSalesSummary(int discountTypeId, int? discountId);
-        Task<List<VoucherSummary>> GetVoucherSummary();
-        Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary();
+        Task<List<SaleSummary>> GetActiveSalesSummary(DiscountSummary summary);
+        Task<List<VoucherSummary>> GetVoucherSummary(DiscountSummary summary);
+        Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary(DiscountSummary summary);
         Task<DiscountCodeVerification> GetDiscountValidityByCode(OrderDiscount entity);
     }
 }

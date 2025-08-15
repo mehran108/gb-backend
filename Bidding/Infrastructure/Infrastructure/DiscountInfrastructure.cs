@@ -604,13 +604,14 @@ namespace GoldBank.Infrastructure.Infrastructure
         #endregion
 
         #region Summary
-        public async Task<List<SaleSummary>> GetActiveSalesSummary(int discountTypeId, int? discountId)
+        public async Task<List<SaleSummary>> GetActiveSalesSummary(DiscountSummary summary)
         {
             var res = new List<SaleSummary>();
             var parameters = new List<DbParameter>
             {
-                base.GetParameter("p_DiscountTypeId", discountTypeId),
-                base.GetParameter("p_DiscountId", discountId)
+                base.GetParameter("p_DiscountTypeId", summary.DiscountTypeId),
+                base.GetParameter("p_DiscountId", summary.DiscountId),
+                base.GetParameter("p_Store", summary.Store)
             };
             using (var dataReader = await base.ExecuteReader(parameters, "GetSaleSummaryById_gb", CommandType.StoredProcedure))
             {
@@ -643,7 +644,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return res;
         }
-        public async Task<List<VoucherSummary>> GetVoucherSummary()
+        public async Task<List<VoucherSummary>> GetVoucherSummary(DiscountSummary summary)
         {
             var res = new List<VoucherSummary>();
             var parameters = new List<DbParameter>
@@ -668,7 +669,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return res;
         }
-        public async Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary()
+        public async Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary(DiscountSummary summary)
         {
             var res = new List<LoyaltyCardSummary>();
             var parameters = new List<DbParameter>

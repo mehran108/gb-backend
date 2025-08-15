@@ -104,20 +104,20 @@ namespace GoldBank.Controllers
         {
             return await this.DiscountApplication.AddOrderDiscount(discount);
         }
-        [HttpGet("GetActiveSalesSummary")]
-        public async Task<List<SaleSummary>> GetActiveSalesSummary([FromQuery] int discountTypeId, int? discountId)
+        [HttpPost("GetActiveSalesSummary")]
+        public async Task<List<SaleSummary>> GetActiveSalesSummary([FromBody] DiscountSummary summary)
         {
-            return await this.DiscountApplication.GetActiveSalesSummary(discountTypeId, discountId);
+            return await this.DiscountApplication.GetActiveSalesSummary(summary);
         }
         [HttpGet("GetVoucherSummary")]
-        public async Task<List<VoucherSummary>> GetVoucherSummary()
+        public async Task<List<VoucherSummary>> GetVoucherSummary(DiscountSummary summary)
         {
-            return await this.DiscountApplication.GetVoucherSummary();
+            return await this.DiscountApplication.GetVoucherSummary(summary);
         }
         [HttpGet("GetLoyaltyCardSummary")]
-        public async Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary()
+        public async Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary(DiscountSummary summary)
         {
-            return await this.DiscountApplication.GetLoyaltyCardSummary();
+            return await this.DiscountApplication.GetLoyaltyCardSummary(summary);
         }
         [HttpPost("GetDiscountValidityByCode")]
         public async Task<DiscountCodeVerification> GetDiscountValidityByCode([FromBody] OrderDiscount entity)
