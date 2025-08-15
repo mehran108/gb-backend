@@ -611,7 +611,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                 base.GetParameter("p_DiscountTypeId", summary.DiscountTypeId),
                 base.GetParameter("p_DiscountId", summary.DiscountId),
-                base.GetParameter("p_Store", summary.Store)
+                base.GetParameter("p_StoreIds", summary.StoreIds)
             };
             using (var dataReader = await base.ExecuteReader(parameters, "GetSaleSummaryById_gb", CommandType.StoredProcedure))
             {
