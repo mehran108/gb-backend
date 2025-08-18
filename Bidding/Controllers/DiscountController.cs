@@ -109,12 +109,12 @@ namespace GoldBank.Controllers
         {
             return await this.DiscountApplication.GetActiveSalesSummary(summary);
         }
-        [HttpGet("GetVoucherSummary")]
+        [HttpPost("GetVoucherSummary")]
         public async Task<List<VoucherSummary>> GetVoucherSummary(DiscountSummary summary)
         {
             return await this.DiscountApplication.GetVoucherSummary(summary);
         }
-        [HttpGet("GetLoyaltyCardSummary")]
+        [HttpPost("GetLoyaltyCardSummary")]
         public async Task<List<LoyaltyCardSummary>> GetLoyaltyCardSummary(DiscountSummary summary)
         {
             return await this.DiscountApplication.GetLoyaltyCardSummary(summary);

@@ -651,6 +651,9 @@ namespace GoldBank.Infrastructure.Infrastructure
             var res = new List<VoucherSummary>();
             var parameters = new List<DbParameter>
             {
+                base.GetParameter("p_StoreIds", summary.StoreIds),
+                base.GetParameter("p_StartDate", summary.StartDate),
+                base.GetParameter("p_EndDate", summary.EndDate)
             };
             using (var dataReader = await base.ExecuteReader(parameters, "GetVoucherSummary_gb", CommandType.StoredProcedure))
             {
@@ -664,7 +667,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         result.RedeemedCount = dataReader.GetIntegerValue("Redeemed");
                         result.ActiveCount = dataReader.GetIntegerValue("active");
                         result.ExpiredCount = dataReader.GetIntegerValue("expired");
-                        result.DeactivedCount = dataReader.GetIntegerValue("deactived");
+                        result.DeactivedCount = dataReader.GetIntegerValue("deactivated");
                         res.Add(result);
                     }
                 }
@@ -676,6 +679,9 @@ namespace GoldBank.Infrastructure.Infrastructure
             var res = new List<LoyaltyCardSummary>();
             var parameters = new List<DbParameter>
             {
+                base.GetParameter("p_StoreIds", summary.StoreIds),
+                base.GetParameter("p_StartDate", summary.StartDate),
+                base.GetParameter("p_EndDate", summary.EndDate)
             };
             using (var dataReader = await base.ExecuteReader(parameters, "GetLoyaltyCardSummary_gb", CommandType.StoredProcedure))
             {
