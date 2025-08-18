@@ -570,7 +570,8 @@ namespace GoldBank.Infrastructure.Infrastructure
             var parameters = new List<DbParameter>
             {
                  base.GetParameter("p_DiscountCode", entity.Code),
-                 base.GetParameter("p_DiscountTypeId", entity.DiscountTypeId)
+                 base.GetParameter("p_DiscountTypeId", entity.DiscountTypeId),
+                 base.GetParameter("p_DiscountId", entity.DiscountId)
             };
 
             using (var dataReader = await base.ExecuteReader(parameters, "GetDiscountDetailsByCode_gb", CommandType.StoredProcedure))
