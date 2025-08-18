@@ -117,6 +117,11 @@ namespace GoldBank.Controllers
         {
             return await ProductApplication.GetVendorById(VendorId);
         }
+        [HttpPost("AddUpdateMetalPurity")]
+        public async Task<bool> AddUpdateMetalPurity([FromBody] List<MetalPurity> metalPurities)
+        {
+            return await ProductApplication.AddUpdateMetalPurity(metalPurities);
+        }
         private async Task<string> ToCSV(DataTable dtDataTable)
         {
             var builder = new StringBuilder();

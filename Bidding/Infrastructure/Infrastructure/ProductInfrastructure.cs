@@ -3303,5 +3303,46 @@ namespace GoldBank.Infrastructure.Infrastructure
             return Response;
         }
         #endregion
+        #region Live Gold Rate
+        public async Task<bool> AddUpdateMetalPurity(List<MetalPurity> metalPurities)
+        {
+            var response = 0;
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+            try
+            {
+                foreach (var metalPurity in metalPurities)
+                {
+                    var affectedRows = await connection.ExecuteAsync(
+                                 "AddUpdateMetalPurity_Gb",
+                                 new
+                                 {
+                                     P_MetalPurityId = metalPurity.MetalPurityId,
+                                     p_Description = metalPurity.Description,
+                                     p_UnitPrice = metalPurity.UnitPrice,
+                                     p_MetalTypeId = metalPurity.MetalTypeId,
+                                     p_CreatedBy = metalPurity.CreatedBy
+                                 },
+                                 transaction: transaction,
+                                 commandType: CommandType.StoredProcedure
+                             );
+
+                    response += affectedRows;
+                }
+                await transaction.CommitAsync();
+
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+            }
+            finally
+            {
+                await connection.DisposeAsync();
+
+            }
+            return response > 0;
+        }
+        #endregion
     }
 }

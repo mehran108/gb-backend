@@ -22,5 +22,6 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<List<Vendor>> GetAllVendors();
         Task<bool> UpdateVendor(Vendor Vendor);
         Task<Vendor> GetVendorById(int VendorId);
+        Task<bool> AddUpdateMetalPurity(List<MetalPurity> metalPurities);
     }
 }
