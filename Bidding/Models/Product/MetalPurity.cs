@@ -7,5 +7,6 @@
         public decimal? UnitPrice { get; set; }
         public int MetalTypeId { get; set; }
         public decimal PurityPercentage { get; set; }
+        public int? StoreId { get; set; }
     }
 }

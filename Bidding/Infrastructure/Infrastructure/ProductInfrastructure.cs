@@ -3321,6 +3321,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                                      p_Description = metalPurity.Description,
                                      p_UnitPrice = metalPurity.UnitPrice,
                                      p_MetalTypeId = metalPurity.MetalTypeId,
+                                     p_StoreId = metalPurity.StoreId,
                                      p_CreatedBy = metalPurity.CreatedBy
                                  },
                                  transaction: transaction,
