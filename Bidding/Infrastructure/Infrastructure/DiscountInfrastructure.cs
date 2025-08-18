@@ -667,7 +667,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         result.RedeemedCount = dataReader.GetIntegerValue("Redeemed");
                         result.ActiveCount = dataReader.GetIntegerValue("active");
                         result.ExpiredCount = dataReader.GetIntegerValue("expired");
-                        result.DeactivedCount = dataReader.GetIntegerValue("deactivated");
+                        result.DeactivatedCount = dataReader.GetIntegerValue("deactivated");
                         res.Add(result);
                     }
                 }

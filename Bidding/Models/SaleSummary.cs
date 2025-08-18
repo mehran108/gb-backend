@@ -27,7 +27,7 @@
         public int ActiveCount { get; set; }
         public int RedeemedCount { get; set; }
         public int ExpiredCount { get; set; }
-        public int DeactivedCount { get; set; }
+        public int DeactivatedCount { get; set; }
     }
     public class LoyaltyCardSummary
     {
