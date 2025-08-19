@@ -6,6 +6,8 @@
         public string? Description { get; set; }
         public string? SerialNumber { get; set; }
         public string?  Contact { get; set; }
+        public decimal? TotalAddedStock { get; set; }
+        public decimal? TotalAvailableStock { get; set; }
         public List<KaatCategory>? KaatCategory { get; set; }
     }
 }

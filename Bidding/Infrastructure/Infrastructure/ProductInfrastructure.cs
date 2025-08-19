@@ -3237,6 +3237,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         result.Description = dataReader.GetStringValue("description");
                         result.SerialNumber = dataReader.GetStringValue("serialNumber");
                         result.Contact = dataReader.GetStringValue("contact");
+                        result.TotalAddedStock = dataReader.GetDecimalValue("totalAddedStock");
+                        result.TotalAvailableStock = dataReader.GetDecimalValue("totalAvailableStock");
                         result.IsActive = dataReader.GetBooleanValue("isActive");
                         result.IsDeleted = dataReader.GetBooleanValue("isDeleted");
                         result.CreatedAt = dataReader.GetDateTime("createdAt");
@@ -3252,6 +3254,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.VendorId = dataReader.GetIntegerValue("vendorId");
                         item.Label = dataReader.GetStringValue("label");
                         item.Value = dataReader.GetDecimalValue("value");
+                        item.KaatStock = dataReader.GetDecimalValue("KaatStock");
                         result.KaatCategory.Add(item);
                     }
                 }
@@ -3303,6 +3306,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             return Response;
         }
         #endregion
+
         #region Live Gold Rate
         public async Task<bool> AddUpdateMetalPurity(List<MetalPurity> metalPurities)
         {
