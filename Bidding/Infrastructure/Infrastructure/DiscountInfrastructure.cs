@@ -571,7 +571,8 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                  base.GetParameter("p_DiscountCode", entity.Code),
                  base.GetParameter("p_DiscountTypeId", entity.DiscountTypeId),
-                 base.GetParameter("p_DiscountId", entity.DiscountId)
+                 base.GetParameter("p_DiscountId", entity.DiscountId),
+                 base.GetParameter("p_ProductId", entity.ProductId)
             };
 
             using (var dataReader = await base.ExecuteReader(parameters, "GetDiscountDetailsByCode_gb", CommandType.StoredProcedure))
