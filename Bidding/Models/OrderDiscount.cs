@@ -10,6 +10,8 @@
         public decimal? DiscountPercentage { get; set; }
         public string? Code {  get; set; }
         public int? ProductId {  get; set; }
+        public bool? IsEcommerce {  get; set; }
+        public bool? IsInStore {  get; set; }
     }
     public class DiscountCodeVerification 
     {
