@@ -110,5 +110,9 @@ namespace GoldBank.Application.Application
         {
             return await this.ProductInfrastructure.AddUpdateMetalPurity(metalPurities);
         }
+        public async Task<IEnumerable<MetalPurity>> GetMetalPurityHistory(MetalPurityVm entity)
+        {
+            return await this.ProductInfrastructure.GetMetalPurityHistory(entity);
+        }
     }
 }

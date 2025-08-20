@@ -22,5 +22,6 @@ namespace GoldBank.Application.IApplication
         Task<bool> UpdateVendor(Vendor Vendor);
         Task<Vendor> GetVendorById(int VendorId);
         Task<bool> AddUpdateMetalPurity(List<MetalPurity> metalPurities);
+        Task<IEnumerable<MetalPurity>> GetMetalPurityHistory(MetalPurityVm entity);
     }
 }

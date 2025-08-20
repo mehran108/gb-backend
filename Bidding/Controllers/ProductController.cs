@@ -122,6 +122,12 @@ namespace GoldBank.Controllers
         {
             return await ProductApplication.AddUpdateMetalPurity(metalPurities);
         }
+        [HttpPost("GetMetalPurityHistory")]
+
+        public async Task<IEnumerable<MetalPurity>> GetMetalPurityHistory(MetalPurityVm entity)
+        {
+            return await ProductApplication.GetMetalPurityHistory(entity);
+        }
         private async Task<string> ToCSV(DataTable dtDataTable)
         {
             var builder = new StringBuilder();

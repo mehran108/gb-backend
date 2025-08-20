@@ -6,6 +6,7 @@ using GoldBank.Models;
 using GoldBank.Models.Product;
 using GoldBank.Models.RequestModels;
 using MySql.Data.MySqlClient;
+using Mysqlx.Crud;
 using MySqlX.XDevAPI;
 using MySqlX.XDevAPI.Common;
 using Org.BouncyCastle.Asn1.Ocsp;
@@ -3328,7 +3329,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                                      p_UnitPrice = metalPurity.UnitPrice,
                                      p_MetalTypeId = metalPurity.MetalTypeId,
                                      p_StoreId = metalPurity.StoreId,
-                                     p_CreatedBy = metalPurity.CreatedBy
+                                     p_CreatedBy = metalPurity.CreatedBy,
+                                     p_PurityPercentage = metalPurity.PurityPercentage
                                  },
                                  transaction: transaction,
                                  commandType: CommandType.StoredProcedure
@@ -3350,6 +3352,42 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return response > 0;
         }
+        public async Task<IEnumerable<MetalPurity>> GetMetalPurityHistory(MetalPurityVm entity)
+        {
+            var list = new List<MetalPurity>();
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_MetalTypeId", entity.MetalTypeId),
+                base.GetParameter("p_MetalPurityIds", entity.MetalPurityIds),
+                base.GetParameter("p_StoreIds", entity.StoreIds),
+                base.GetParameter("p_StartDate", entity.StartDate),
+                base.GetParameter("p_EndDate", entity.EndDate),
+                base.GetParameter("p_AggregationType", entity.AggregationType)
+        
+            };
+            using (var dataReader = await ExecuteReader(parameters, "GetMetalPurityHistory_Gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new MetalPurity
+                        {
+                            MetalPurityId = dataReader.GetIntegerValue("MetalPurityId"),
+                            Description = dataReader.GetStringValue("description"),
+                            UnitPrice = dataReader.GetDecimalValue("unitPrice"),
+                            MetalTypeId = dataReader.GetIntegerValue("metalTypeId"),
+                            PurityPercentage = dataReader.GetDecimalValue("purityPercentage"),
+                            StoreId = dataReader.GetIntegerValue("storeId"),
+                            CreatedAt = dataReader.GetDateTimeValue("createdAt"),
+                            UpdatedAt = dataReader.GetDateTimeValue("updatedAt")
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
         #endregion
     }
 }
