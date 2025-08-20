@@ -8,6 +8,8 @@
         public string?  Contact { get; set; }
         public decimal? TotalAddedStock { get; set; }
         public decimal? TotalAvailableStock { get; set; }
+        public decimal? CashDue { get; set; }
+        public decimal? GoldDue { get; set; }
         public List<KaatCategory>? KaatCategory { get; set; }
     }
 }

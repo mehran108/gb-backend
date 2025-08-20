@@ -3239,6 +3239,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         result.Contact = dataReader.GetStringValue("contact");
                         result.TotalAddedStock = dataReader.GetDecimalValue("totalAddedStock");
                         result.TotalAvailableStock = dataReader.GetDecimalValue("totalAvailableStock");
+                        result.CashDue = dataReader.GetDecimalValue("cashDue");
+                        result.GoldDue = dataReader.GetDecimalValue("goldDue");
                         result.IsActive = dataReader.GetBooleanValue("isActive");
                         result.IsDeleted = dataReader.GetBooleanValue("isDeleted");
                         result.CreatedAt = dataReader.GetDateTime("createdAt");
