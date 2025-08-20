@@ -3376,7 +3376,6 @@ namespace GoldBank.Infrastructure.Infrastructure
                             MetalTypeId = dataReader.GetIntegerValue("metalTypeId"),
                             PurityPercentage = dataReader.GetDecimalValue("purityPercentage"),
                             StoreId = dataReader.GetIntegerValue("storeId"),
-                            CreatedAt = dataReader.GetDateTimeValue("createdAt"),
                             UpdatedAt = dataReader.GetDateTimeValue("updatedAt")
                         });
                     }
