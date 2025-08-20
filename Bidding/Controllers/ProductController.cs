@@ -124,7 +124,7 @@ namespace GoldBank.Controllers
         }
         [HttpPost("GetMetalPurityHistory")]
 
-        public async Task<IEnumerable<MetalPurity>> GetMetalPurityHistory(MetalPurityVm entity)
+        public async Task<IEnumerable<MetalPurity>> GetMetalPurityHistory([FromBody] MetalPurityVm entity)
         {
             return await ProductApplication.GetMetalPurityHistory(entity);
         }
