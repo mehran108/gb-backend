@@ -722,7 +722,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.Vendor = new Vendor();
                         item.CustomCharge = new List<CustomCharge>();
 
-                        item.ProductTypeId = dataReader.GetIntegerValue(ProductInfrastructure.ProductIdColumnName);
+                        item.ProductTypeId = dataReader.GetIntegerValue("productTypeId");
                         item.ProductId = dataReader.GetIntegerValue("productId");
                         item.SKU = dataReader.GetStringValue("sKU");
                         item.ProductSourceId = dataReader.GetIntegerValue("productSourceId");
@@ -967,7 +967,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.Vendor = new Vendor();
 
 
-                        item.ProductTypeId = dataReader.GetIntegerValue(ProductInfrastructure.ProductIdColumnName);
+                        item.ProductTypeId = dataReader.GetIntegerValue("productTypeId");
                         item.ProductId = dataReader.GetIntegerValue("productId");
                         item.SKU = dataReader.GetStringValue("sKU");
                         item.ProductSourceId = dataReader.GetIntegerValue("productSourceId");
@@ -1120,7 +1120,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                     if (dataReader.Read())
                     {
                         var item = new Product();
-                        item.ProductTypeId = dataReader.GetIntegerValue(ProductInfrastructure.ProductIdColumnName);
+                        item.ProductTypeId = dataReader.GetIntegerValue("productTypeId");
                         item.ProductId = dataReader.GetIntegerValue("productId");
                         item.SKU = dataReader.GetStringValue("sKU");
                         item.ProductSourceId = dataReader.GetIntegerValue("productSourceId");
