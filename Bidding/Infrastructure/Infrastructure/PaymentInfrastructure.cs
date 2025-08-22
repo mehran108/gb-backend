@@ -621,7 +621,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                 base.GetParameter("p_VendorId", vendorId)
             };
-            using (var dataReader = await base.ExecuteReader(parameters, "GetPaymentById_gb", CommandType.StoredProcedure))
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAllVendorPayments_Gb", CommandType.StoredProcedure))
             {
                 if (dataReader != null)
                 {
@@ -637,6 +637,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         res.IsConfirmed = dataReader.GetBooleanValue("isConfirmed");
                         res.CreatedBy = dataReader.GetIntegerValue("createdBy");
                         res.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        result.Add(res);
                     }
                 }
             }
