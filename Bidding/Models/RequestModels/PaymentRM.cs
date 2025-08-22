@@ -90,7 +90,8 @@
     public class ConfirmVendorPaymentRequest
     {
         public int VendorPaymentId { get; set; }
-        public decimal CashAmount { get; set; }
+        public decimal? CashAmount { get; set; }
+        public string Notes { get; set; }
         public int CreatedBy { get; set; }
     }
 }

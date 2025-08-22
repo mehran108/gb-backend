@@ -594,6 +594,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_VendorPaymentId", confirmPaymentRequest.VendorPaymentId);
                 parameters.Add("P_CashAmount", confirmPaymentRequest.CashAmount);
                 parameters.Add("p_createdBy", confirmPaymentRequest.CreatedBy);
+                parameters.Add("p_Notes", confirmPaymentRequest.Notes);
                 parameters.Add("o_Success", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 await connection.ExecuteAsync("ConfirmVendorPayment_Gb", parameters, transaction, commandType: CommandType.StoredProcedure);
