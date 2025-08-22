@@ -150,6 +150,25 @@ namespace GoldBank.Controllers
         {
             return await this.PaymentApplication.GetECommercePaymentById(basketId);
         }
-
+        [HttpPost("AddVendorPayment")]
+        public async Task<int> AddVendorPayment(AddVendorPaymentRequest paymentRM)
+        {
+            return await this.PaymentApplication.AddVendorPayment(paymentRM);
+        }
+        [HttpPost("AddVendorOnlinePayment")]
+        public async Task<int> AddVendorOnlinePayment(AddVendorOnlinePaymentRequest paymentRM)
+        {
+            return await this.PaymentApplication.AddVendorOnlinePayment(paymentRM);
+        }
+        [HttpPost("ConfirmVendorPayment")]
+        public async Task<bool> ConfirmVendorPayment(ConfirmVendorPaymentRequest confirmPaymentRequest)
+        {
+            return await this.PaymentApplication.ConfirmVendorPayment(confirmPaymentRequest);
+        }
+        [HttpGet("GetVendorPaymentsById")]
+        public async Task<List<VendorPayment>> GetVendorPaymentsById(int vendorId)
+        {
+            return await this.PaymentApplication.GetVendorPaymentsById(vendorId);
+        }
     }
 }

@@ -17,5 +17,9 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<int> VerifyECommercePayment(ECommercePayment eCommercePayment);
         Task<ECommercePayment> GetECommercePaymentById(string basketId);
         Task<bool> UpdateECommercePayment(ECommercePayment eCommercePayment);
+        Task<int> AddVendorPayment(AddVendorPaymentRequest paymentRM);
+        Task<int> AddVendorOnlinePayment(AddVendorOnlinePaymentRequest paymentRM);
+        Task<bool> ConfirmVendorPayment(ConfirmVendorPaymentRequest confirmPaymentRequest);
+        Task<List<VendorPayment>> GetVendorPaymentsById(int vendorId);
     }
 }

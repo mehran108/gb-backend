@@ -65,7 +65,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.OrderId = dataReader.GetIntegerValue("orderId");
                             item.TotalAmount = dataReader.GetDecimalValue("totalAmount");
                             item.PaymentId = dataReader.GetIntegerValue("paymentId");
-                          
+
                             res.PaymentOrder.Add(item);
                         }
                     }
@@ -134,7 +134,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             res.Customer.CreatedBy = dataReader.GetIntegerValue("CreatedBy");
                             res.Customer.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
                             res.Customer.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
-                            res.Customer.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");                            
+                            res.Customer.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
                             res.Customer.RingSize = dataReader.GetStringValue("ringSize");
                             res.Customer.BangleSize = dataReader.GetStringValue("bangleSize");
 
@@ -193,7 +193,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                     }
                 }
                 await transaction.CommitAsync();
-                response =  newPaymentId;
+                response = newPaymentId;
             }
             catch
             {
@@ -203,7 +203,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                 await connection.DisposeAsync();
 
-            }  
+            }
             return response;
         }
         public async Task<int> AddOnlinePayment(AddOnlinePaymentRequest paymentRM)
@@ -243,7 +243,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 
                     }
                 }
-            await transaction.CommitAsync();
+                await transaction.CommitAsync();
             }
             catch
             {
@@ -252,7 +252,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             finally
             {
                 await transaction.DisposeAsync();
-            }          
+            }
             return response;
         }
         public async Task<bool> VerifyOnlinePayment(VerifyOnlinePaymentRequest verifyOnlinePaymentRequest)
@@ -316,7 +316,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             finally
             {
                 await transaction.DisposeAsync();
-            }          
+            }
             return response;
         }
         public async Task<bool?> CheckOnlinePaymentStatus(int onlinePaymentId)
@@ -495,6 +495,146 @@ namespace GoldBank.Infrastructure.Infrastructure
                         result.IsActive = dataReader.GetBooleanValue("isActive");
                         result.TransactionDetail = dataReader.GetStringValue("TransactionDetail");
                         result.TransactionId = dataReader.GetStringValue("TransactionId");
+                    }
+                }
+            }
+            return result;
+        }
+        public async Task<int> AddVendorPayment(AddVendorPaymentRequest paymentRM)
+        {
+            var response = 0;
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_VendorId", paymentRM.VendorId);
+                parameters.Add("p_PaymentTypeId", paymentRM.PaymentTypeId);
+                parameters.Add("p_Amount", paymentRM.Amount);
+                parameters.Add("p_CreatedBy", paymentRM.CreatedBy);
+                parameters.Add("o_VendorPaymentId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                response = await connection.ExecuteAsync("InsertVendorPayment_Gb", parameters, transaction, commandType: CommandType.StoredProcedure);
+                var vendorPaymentId = parameters.Get<int>("o_VendorPaymentId");
+
+                await transaction.CommitAsync();
+                response = vendorPaymentId;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                await connection.DisposeAsync();
+
+            }
+            return response;
+        }
+        public async Task<int> AddVendorOnlinePayment(AddVendorOnlinePaymentRequest paymentRM)
+        {
+            var response = 0;
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_VendorPaymentId", paymentRM.VendorPaymentId);
+                parameters.Add("p_Amount", paymentRM.Amount);
+                parameters.Add("p_TransactionId", paymentRM.TransactionId);
+                parameters.Add("p_VendorAccountId", paymentRM.VendorAccountId);
+                parameters.Add("p_CompanyAccountId", paymentRM.CompanyAccountId);
+                parameters.Add("p_VendorAccountNumber", paymentRM.VendorAccountNumber);
+                parameters.Add("P_CreatedBy", paymentRM.CreatedBy);
+                parameters.Add("o_VendorOnlinePaymentId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync("InsertVendorOnlinePayment_Gb", parameters, transaction, commandType: CommandType.StoredProcedure);
+
+                var onlinePaymentId = parameters.Get<int>("o_VendorOnlinePaymentId");
+                response = onlinePaymentId;
+
+                if (onlinePaymentId > 0)
+                {
+                    foreach (var paymentOrder in paymentRM.OnlinePaymentDocumentRM)
+                    {
+                        parameters = new DynamicParameters();
+                        parameters.Add("p_VendorOnlinePaymentId", onlinePaymentId);
+                        parameters.Add("p_DocumentId", paymentOrder.DocumentId);
+                        parameters.Add("p_IsPrimary", paymentOrder.IsPrimary);
+                        parameters.Add("p_CreatedBy", paymentRM.CreatedBy);
+
+                        await connection.ExecuteAsync("InsertVendorOnlinePaymentDocument_Gb", parameters, transaction, commandType: CommandType.StoredProcedure);
+
+                    }
+                }
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                await transaction.DisposeAsync();
+            }
+            return response;
+        }
+        public async Task<bool> ConfirmVendorPayment(ConfirmVendorPaymentRequest confirmPaymentRequest)
+        {
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+            bool response = false;
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_VendorPaymentId", confirmPaymentRequest.VendorPaymentId);
+                parameters.Add("P_CashAmount", confirmPaymentRequest.CashAmount);
+                parameters.Add("p_createdBy", confirmPaymentRequest.CreatedBy);
+                parameters.Add("o_Success", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync("ConfirmVendorPayment_Gb", parameters, transaction, commandType: CommandType.StoredProcedure);
+                var succeed = parameters.Get<int>("o_Success");
+                response = succeed == 1;
+
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                await transaction.DisposeAsync();
+            }
+            return response;
+        }
+        public async Task<List<VendorPayment>> GetVendorPaymentsById(int vendorId)
+        {
+            var result = new List<VendorPayment>();
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_VendorId", vendorId)
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetPaymentById_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        var res = new VendorPayment();
+                        res.VendorPaymentId = dataReader.GetIntegerValue("vendorPaymentId");
+                        res.VendorId = dataReader.GetIntegerValue("vendorId");
+                        res.PaymentTypeId = dataReader.GetIntegerValue("paymentTypeId");
+                        res.VendorPaymentTypeId = dataReader.GetIntegerValue("vendorPaymentTypeId");
+                        res.Amount = dataReader.GetDecimalValue("amount");
+                        res.CashAmount = dataReader.GetDecimalValue("cashAmount");
+                        res.IsConfirmed = dataReader.GetBooleanValue("isConfirmed");
+                        res.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        res.CreatedAt = dataReader.GetDateTimeValue("createdAt");
                     }
                 }
             }

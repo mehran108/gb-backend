@@ -36,7 +36,8 @@
     }
     public class OnlinePaymentDocumentRM
     {
-        public int OnlinePaymentId { get; set; }
+        public int? OnlinePaymentId { get; set; }
+        public int? VendorOnlinePaymentId { get; set; }
         public int DocumentId { get; set; }
         public bool IsPrimary { get; set; }
         public int? OnlinePaymentDocumentId { get; set; }
@@ -61,5 +62,34 @@
         public string ReceiptNo { get; set; }
         public decimal Amount { get; set; }
         public int LastFourDigit { get; set; }
+    }
+    public class AddVendorPaymentRequest
+    {
+        public int VendorPaymentId { get; set; }
+        public int VendorId { get; set; }
+        public int PaymentTypeId { get; set; }
+        public decimal Amount { get; set; }
+        public decimal CashAmount { get; set; }
+        public int CreatedBy { get; set; }
+
+    }
+    public class AddVendorOnlinePaymentRequest
+    {
+        public int VendorOnlinePaymentId { get; set; }
+        public int VendorPaymentId { get; set; }
+        public decimal Amount { get; set; }
+        public string TransactionId { get; set; }
+        public int VendorAccountId { get; set; }
+        public int CompanyAccountId { get; set; }
+        public string VendorAccountNumber { get; set; }
+        public int CreatedBy { get; set; }
+        public List<OnlinePaymentDocumentRM> OnlinePaymentDocumentRM { get; set; }
+    }
+
+    public class ConfirmVendorPaymentRequest
+    {
+        public int VendorPaymentId { get; set; }
+        public decimal CashAmount { get; set; }
+        public int CreatedBy { get; set; }
     }
 }
