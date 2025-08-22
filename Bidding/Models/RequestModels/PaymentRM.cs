@@ -68,6 +68,7 @@
         public int VendorPaymentId { get; set; }
         public int VendorId { get; set; }
         public int PaymentTypeId { get; set; }
+        public int VendorPaymentTypeId { get; set; }
         public decimal Amount { get; set; }
         public decimal CashAmount { get; set; }
         public int CreatedBy { get; set; }

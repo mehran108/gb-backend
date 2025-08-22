@@ -512,6 +512,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_PaymentTypeId", paymentRM.PaymentTypeId);
                 parameters.Add("p_Amount", paymentRM.Amount);
                 parameters.Add("p_CreatedBy", paymentRM.CreatedBy);
+                parameters.Add("p_VendorPaymentTypeId", paymentRM.VendorPaymentTypeId);
                 parameters.Add("o_VendorPaymentId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 response = await connection.ExecuteAsync("InsertVendorPayment_Gb", parameters, transaction, commandType: CommandType.StoredProcedure);

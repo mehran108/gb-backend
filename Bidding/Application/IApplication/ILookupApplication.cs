@@ -40,6 +40,7 @@ namespace GoldBank.Application.IApplication
         Task<IEnumerable<RepairCleaning>> GetAllRepairCleaning();
         Task<IEnumerable<DiscountType>> GetAllDiscountType();
         Task<IEnumerable<ExpiryDurationType>> GetAllExpiryDuration();
+        Task<IEnumerable<VendorPaymentType>> GetAllVendorPaymentTypes();
 
     }
 }
