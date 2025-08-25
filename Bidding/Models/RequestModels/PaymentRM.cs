@@ -69,7 +69,9 @@
         public int VendorId { get; set; }
         public int PaymentTypeId { get; set; }
         public int VendorPaymentTypeId { get; set; }
-        public decimal Amount { get; set; }
+        public decimal? Amount { get; set; }
+        public decimal? GoldAmount { get; set; }
+        public int? VendorGoldPaymentTypeId { get; set; }
         public decimal CashAmount { get; set; }
         public int CreatedBy { get; set; }
 
@@ -78,7 +80,8 @@
     {
         public int VendorOnlinePaymentId { get; set; }
         public int VendorPaymentId { get; set; }
-        public decimal Amount { get; set; }
+        public decimal? Amount { get; set; }
+        public decimal? GoldAmount { get; set; }
         public string TransactionId { get; set; }
         public int VendorAccountId { get; set; }
         public int CompanyAccountId { get; set; }

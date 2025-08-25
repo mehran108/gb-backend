@@ -156,6 +156,10 @@ namespace GoldBank.Application.Application
         {
             return await this.LookupInfrastructure.GetAllVendorPaymentTypes();
         }
+        public async Task<IEnumerable<VendorGoldPaymentType>> GetAllVendorGoldPaymentTypes()
+        {
+            return await this.LookupInfrastructure.GetAllVendorGoldPaymentTypes();
+        }
         public Task<bool> Activate(LookupValue entity)
         {
             throw new NotImplementedException();

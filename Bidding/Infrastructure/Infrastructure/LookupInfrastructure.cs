@@ -730,6 +730,25 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return list;
         }
+        public async Task<IEnumerable<VendorGoldPaymentType>> GetAllVendorGoldPaymentTypes()
+        {
+            var list = new List<VendorGoldPaymentType>();
+            using (var dataReader = await ExecuteReader(null, "GetAllVendorGoldPaymentType_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(new VendorGoldPaymentType
+                        {
+                            VendorGoldPaymentTypeId = dataReader.GetIntegerValue("vendorGoldPaymentTypeId"),
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                        });
+                    }
+                }
+            }
+            return list;
+        }
 
         public Task<bool> Update(LookupValue lookupValue)
         {

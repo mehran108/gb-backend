@@ -42,5 +42,6 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<IEnumerable<DiscountType>> GetAllDiscountType();
         Task<IEnumerable<ExpiryDurationType>> GetAllExpiryDuration();
         Task<IEnumerable<VendorPaymentType>> GetAllVendorPaymentTypes();
+        Task<IEnumerable<VendorGoldPaymentType>> GetAllVendorGoldPaymentTypes();
     }
 }

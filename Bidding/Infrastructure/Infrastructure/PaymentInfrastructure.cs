@@ -513,6 +513,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_Amount", paymentRM.Amount);
                 parameters.Add("p_CreatedBy", paymentRM.CreatedBy);
                 parameters.Add("p_VendorPaymentTypeId", paymentRM.VendorPaymentTypeId);
+                parameters.Add("p_VendorGoldPaymentTypeId", paymentRM.VendorGoldPaymentTypeId);
+                parameters.Add("p_GoldAmount", paymentRM.GoldAmount);
                 parameters.Add("o_VendorPaymentId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 response = await connection.ExecuteAsync("InsertVendorPayment_Gb", parameters, transaction, commandType: CommandType.StoredProcedure);
@@ -637,7 +639,28 @@ namespace GoldBank.Infrastructure.Infrastructure
                         res.IsConfirmed = dataReader.GetBooleanValue("isConfirmed");
                         res.CreatedBy = dataReader.GetIntegerValue("createdBy");
                         res.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        res.VendorOnlinePayments = new List<AddVendorOnlinePaymentRequest>();
                         result.Add(res);
+                    }
+                }
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        var row = new AddVendorOnlinePaymentRequest();
+                        row.VendorPaymentId = dataReader.GetIntegerValue("vendorPaymentId");
+                        row.VendorOnlinePaymentId = dataReader.GetIntegerValue("vendorOnlinePaymentId");
+                        row.Amount = dataReader.GetDecimalValue("amount");
+                        row.TransactionId = dataReader.GetStringValue("transactionId");
+                        row.VendorAccountNumber = dataReader.GetStringValue("vendorAccountNumber");
+                        row.VendorAccountId = dataReader.GetIntegerValue("vendorAccountId");
+                        row.CompanyAccountId = dataReader.GetIntegerValue("companyAccountId");
+                        row.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        var onlinePaymentItem = result.FirstOrDefault(x => x.VendorPaymentId == row.VendorPaymentId);
+                        if (onlinePaymentItem != null)
+                        {
+                            onlinePaymentItem.VendorOnlinePayments.Add(row);
+                        }
                     }
                 }
             }
