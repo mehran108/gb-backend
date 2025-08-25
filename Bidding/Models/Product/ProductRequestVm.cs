@@ -38,5 +38,6 @@
         public string? ReferenceSKU { get; set; }
         public bool? IsSold { get; set; }
         public bool? IsReserved { get; set; }
+        public int? KaatCategoryId { get; set; }
     }
 }

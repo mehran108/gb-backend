@@ -709,7 +709,8 @@ namespace GoldBank.Infrastructure.Infrastructure
             base.GetParameter("@p_StoneWeightTypeId", ToDbValue(product.Data.StoneWeightTypeId)),
             base.GetParameter("@p_ReferenceSKU", ToDbValue(product.Data.ReferenceSKU)),
             base.GetParameter("@p_IsSold", ToDbValue(product.Data.IsSold)),
-            base.GetParameter("@p_IsReserved", ToDbValue(product.Data.IsReserved))
+            base.GetParameter("@p_IsReserved", ToDbValue(product.Data.IsReserved)),
+            base.GetParameter("@p_KaatCategoryId", ToDbValue(product.Data.KaatCategoryId))
                 };
             using (var dataReader = await base.ExecuteReader(parameters, "GetAllProductsGb", CommandType.StoredProcedure))
             {
