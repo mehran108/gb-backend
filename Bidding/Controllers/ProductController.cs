@@ -117,6 +117,27 @@ namespace GoldBank.Controllers
         {
             return await ProductApplication.GetVendorById(VendorId);
         }
+
+        [HttpPost("AddRawGold")]
+        public async Task<int> AddRawGold(RawGold RawGold)
+        {
+            return await ProductApplication.AddRawGold(RawGold);
+        }
+        [HttpPost("GetAllRawGolds")]
+        public async Task<List<RawGold>> GetAllRawGolds()
+        {
+            return await ProductApplication.GetAllRawGolds();
+        }
+        [HttpPost("RemoveRawGold")]
+        public async Task<bool> RemoveRawGold([FromBody] RawGold RawGold)
+        {
+            return await ProductApplication.RemoveRawGold(RawGold);
+        }
+        [HttpGet("GetRawGoldById")]
+        public async Task<RawGold> GetRawGoldById([FromQuery] int RawGoldId)
+        {
+            return await ProductApplication.GetRawGoldById(RawGoldId);
+        }
         [HttpPost("AddUpdateMetalPurity")]
         public async Task<bool> AddUpdateMetalPurity([FromBody] List<MetalPurity> metalPurities)
         {

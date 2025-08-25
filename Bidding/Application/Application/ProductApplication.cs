@@ -114,5 +114,21 @@ namespace GoldBank.Application.Application
         {
             return await this.ProductInfrastructure.GetMetalPurityHistory(entity);
         }
+        public async Task<int> AddRawGold(RawGold RawGold)
+        {
+            return await this.ProductInfrastructure.AddRawGold(RawGold);
+        }
+        public async Task<List<RawGold>> GetAllRawGolds()
+        {
+            return await this.ProductInfrastructure.GetAllRawGolds();
+        }
+        public async Task<bool> RemoveRawGold(RawGold RawGold)
+        {
+            return await this.ProductInfrastructure.RemoveRawGold(RawGold);
+        }
+        public async Task<RawGold> GetRawGoldById(int rawGoldId)
+        {
+            return await this.ProductInfrastructure.GetRawGoldById(rawGoldId);
+        }
     }
 }

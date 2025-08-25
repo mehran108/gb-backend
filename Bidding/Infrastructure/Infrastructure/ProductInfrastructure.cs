@@ -12,6 +12,7 @@ using Renci.SshNet.Compression;
 using System.Data;
 using System.Data.Common;
 using System.IO;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
@@ -3385,6 +3386,120 @@ namespace GoldBank.Infrastructure.Infrastructure
             return list;
         }
 
+        #endregion
+
+        #region Raw Gold
+        public async Task<int> AddRawGold(RawGold RawGold)
+        {
+            var response = 0;
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_Description", RawGold.Description);
+                parameters.Add("p_Value", RawGold.Value);
+                parameters.Add("p_CreatedBy", RawGold.CreatedBy);
+                parameters.Add("o_RawGoldId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                response = await connection.ExecuteAsync("AddRawGold_gb", parameters, transaction, commandType: CommandType.StoredProcedure);
+                var rawGoldId = parameters.Get<int>("o_RawGoldId");
+                await transaction.CommitAsync();
+
+                response = rawGoldId;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+            }
+            finally
+            {
+                await connection.DisposeAsync();
+            }
+
+            return response;
+        }
+        public async Task<List<RawGold>> GetAllRawGolds()
+        {
+            var result = new List<RawGold>();
+            var parameters = new List<DbParameter>
+            {
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAllRawGold_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    { 
+                        var rawGold = new RawGold();
+                        rawGold.Value = dataReader.GetDecimalValue("value");
+                        rawGold.RawGoldId = dataReader.GetIntegerValue("rawGoldId");
+                        rawGold.Description = dataReader.GetStringValue("description");
+                        rawGold.IsActive = dataReader.GetBooleanValue("isActive");
+                        rawGold.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        rawGold.CreatedAt = dataReader.GetDateTime("createdAt");
+                        rawGold.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        result.Add(rawGold);
+                    }
+                }
+            }
+            return result;
+        }
+        public async Task<bool> RemoveRawGold(RawGold RawGold)
+        {
+            var response = 0;
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_Description", RawGold.Description);
+                parameters.Add("p_Value", RawGold.Value);
+                parameters.Add("p_CreatedBy", RawGold.CreatedBy);
+                parameters.Add("o_RawGoldId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                response = await connection.ExecuteAsync("RemoveRawGold_gb", parameters, transaction, commandType: CommandType.StoredProcedure);
+                var rawGoldId = parameters.Get<int>("o_RawGoldId");
+                await transaction.CommitAsync();
+
+                response = rawGoldId;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+            }
+            finally
+            {
+                await connection.DisposeAsync();
+            }
+
+            return response > 0;
+        }
+        public async Task<RawGold> GetRawGoldById(int rawGoldId)
+        {
+            var rawGold = new RawGold();
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_RawGoldId", rawGoldId)
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetRawGoldById_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        rawGold.Value = dataReader.GetDecimalValue("value");
+                        rawGold.RawGoldId = dataReader.GetIntegerValue("rawGoldId");
+                        rawGold.Description = dataReader.GetStringValue("description");
+                        rawGold.IsActive = dataReader.GetBooleanValue("isActive");
+                        rawGold.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        rawGold.CreatedAt = dataReader.GetDateTime("createdAt");
+                        rawGold.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                    }
+                }
+            }
+            return rawGold;
+        }
         #endregion
     }
 }
