@@ -93,7 +93,9 @@
     public class ConfirmVendorPaymentRequest
     {
         public int VendorPaymentId { get; set; }
+        public int? VendorGoldPaymentTypeId { get; set; }
         public decimal? CashAmount { get; set; }
+        public decimal? GoldAmount { get; set; }
         public int? ProductId { get; set; }
         public string Notes { get; set; }
         public int CreatedBy { get; set; }

@@ -2,13 +2,9 @@
 using GoldBank.Infrastructure.Extension;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
-using GoldBank.Models.Product;
 using GoldBank.Models.RequestModels;
-using Microsoft.AspNetCore.Http.HttpResults;
-using System;
 using System.Data;
 using System.Data.Common;
-using System.Transactions;
 
 namespace GoldBank.Infrastructure.Infrastructure
 {
@@ -513,7 +509,6 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_Amount", paymentRM.Amount);
                 parameters.Add("p_CreatedBy", paymentRM.CreatedBy);
                 parameters.Add("p_VendorPaymentTypeId", paymentRM.VendorPaymentTypeId);
-                parameters.Add("p_VendorGoldPaymentTypeId", paymentRM.VendorGoldPaymentTypeId);
                 parameters.Add("p_GoldAmount", paymentRM.GoldAmount);
                 parameters.Add("o_VendorPaymentId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
@@ -597,7 +592,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("P_CashAmount", confirmPaymentRequest.CashAmount);
                 parameters.Add("p_createdBy", confirmPaymentRequest.CreatedBy);
                 parameters.Add("p_Notes", confirmPaymentRequest.Notes);
+                parameters.Add("p_VendorGoldPaymentTypeId", confirmPaymentRequest.VendorGoldPaymentTypeId);
                 parameters.Add("p_ProductId", confirmPaymentRequest.ProductId);
+                parameters.Add("p_GoldAmount", confirmPaymentRequest.GoldAmount);
                 parameters.Add("o_Success", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 await connection.ExecuteAsync("ConfirmVendorPayment_Gb", parameters, transaction, commandType: CommandType.StoredProcedure);
