@@ -12,6 +12,7 @@ namespace GoldBank.Application.IApplication
         Task<bool> ConfirmPayment(ConfirmPaymentRequest verifyOnlinePaymentRequest);
         Task<bool?> CheckOnlinePaymentStatus(int onlinePaymentId);
         void CancelPayment(int paymentId);
+        void CancelVendorPayment(int paymentId);
         void CancelOnlinePayment(int onlinePaymentId);
         Task<AllResponse<OnlinePaymentVerificationVM>> GetAllOnlinePayments(AllRequest<OnlinePaymentVerificationRM> Payment);
         Task<int> AddECommercePayment(ECommercePayment eCommercePayment);

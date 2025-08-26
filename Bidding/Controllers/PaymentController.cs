@@ -165,6 +165,11 @@ namespace GoldBank.Controllers
         {
             return await this.PaymentApplication.ConfirmVendorPayment(confirmPaymentRequest);
         }
+        [HttpPost("CancelVendorPayment")]
+        public async void CancelVendorPayment(int vendorPaymentId)
+        {
+            this.PaymentApplication.CancelVendorPayment(vendorPaymentId);
+        }
         [HttpGet("GetVendorPaymentsById")]
         public async Task<List<VendorPayment>> GetVendorPaymentsById(int vendorId)
         {

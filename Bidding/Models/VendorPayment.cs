@@ -12,5 +12,6 @@ namespace GoldBank.Models
         public int VendorPaymentTypeId { get; set; } 
         public int PaymentTypeId { get; set; }
         public List<AddVendorOnlinePaymentRequest> VendorOnlinePayments { get; set; }
+        public List<VendorPaymentDocument> PaymentDocument { get; set; }
     }
 }

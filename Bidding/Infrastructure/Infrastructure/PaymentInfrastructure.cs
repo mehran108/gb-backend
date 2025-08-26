@@ -337,6 +337,14 @@ namespace GoldBank.Infrastructure.Infrastructure
             parameters.Add("p_PaymentId", paymentId);
             await connection.ExecuteAsync("CancelPaymentGb", parameters, commandType: CommandType.StoredProcedure);
         }
+        public async void CancelVendorPayment(int vendorPaymentId)
+        {
+            using var connection = base.GetConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("p_VendorPaymentId", vendorPaymentId);
+            await connection.ExecuteAsync("CancelVendorPaymentGb", parameters, commandType: CommandType.StoredProcedure);
+        }
         public async void CancelOnlinePayment(int onlinePaymentId)
         {
             using var connection = base.GetConnection();
@@ -600,8 +608,23 @@ namespace GoldBank.Infrastructure.Infrastructure
                 await connection.ExecuteAsync("ConfirmVendorPayment_Gb", parameters, transaction, commandType: CommandType.StoredProcedure);
                 var succeed = parameters.Get<int>("o_Success");
                 response = succeed == 1;
+                if (response && confirmPaymentRequest.PaymentDocumentRM.Count > 0)
+                {
+                    foreach (var paymentOrder in confirmPaymentRequest.PaymentDocumentRM)
+                    {
+                        parameters = new DynamicParameters();
+                        parameters.Add("p_VendorOnlinePaymentId", paymentOrder.VendorOnlinePaymentId);
+                        parameters.Add("p_VendorPaymentId", paymentOrder.VendorPaymentId);
+                        parameters.Add("p_DocumentId", paymentOrder.DocumentId);
+                        parameters.Add("p_IsPrimary", paymentOrder.IsPrimary);
+                        parameters.Add("p_CreatedBy", confirmPaymentRequest.CreatedBy);
 
-                await transaction.CommitAsync();
+                        await connection.ExecuteAsync("InsertVendorOnlinePaymentDocument_Gb", parameters, transaction, commandType: CommandType.StoredProcedure);
+
+                    }
+
+                }
+                    await transaction.CommitAsync();
             }
             catch
             {
@@ -638,6 +661,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         res.CreatedBy = dataReader.GetIntegerValue("createdBy");
                         res.CreatedAt = dataReader.GetDateTimeValue("createdAt");
                         res.VendorOnlinePayments = new List<AddVendorOnlinePaymentRequest>();
+                        res.PaymentDocument = new List<VendorPaymentDocument>();
                         result.Add(res);
                     }
                 }
@@ -658,6 +682,24 @@ namespace GoldBank.Infrastructure.Infrastructure
                         if (onlinePaymentItem != null)
                         {
                             onlinePaymentItem.VendorOnlinePayments.Add(row);
+                        }
+                    }
+                }
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new VendorPaymentDocument();
+                        item.VendorPaymentId = dataReader.GetIntegerValue("vendorPaymentId");
+                        item.VendorPaymentDocumentId = dataReader.GetIntegerValue("vendorPaymentDocumentId");
+                        item.DocumentId = dataReader.GetIntegerValue("documentId");
+                        item.Url = dataReader.GetStringValue("url");
+                        item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        var onlinePaymentDocumentItem = result.FirstOrDefault(x => x.VendorPaymentId == item.VendorPaymentId);
+                        if (onlinePaymentDocumentItem != null)
+                        {
+                            onlinePaymentDocumentItem.PaymentDocument.Add(item);
                         }
                     }
                 }

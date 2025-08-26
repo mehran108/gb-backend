@@ -71,6 +71,10 @@ namespace GoldBank.Application.Application
         {
             this.PaymentInfrastructure.CancelPayment(paymentId);
         }
+        public async void CancelVendorPayment(int VendorPaymentId)
+        {
+            this.PaymentInfrastructure.CancelVendorPayment(VendorPaymentId);
+        }
         public async void CancelOnlinePayment(int onlinePaymentId)
         {
             this.PaymentInfrastructure.CancelOnlinePayment(onlinePaymentId);

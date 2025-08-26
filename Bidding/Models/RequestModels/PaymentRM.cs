@@ -38,6 +38,7 @@
     {
         public int? OnlinePaymentId { get; set; }
         public int? VendorOnlinePaymentId { get; set; }
+        public int? VendorPaymentId { get; set; }
         public int DocumentId { get; set; }
         public bool IsPrimary { get; set; }
         public int? OnlinePaymentDocumentId { get; set; }
@@ -99,5 +100,7 @@
         public int? ProductId { get; set; }
         public string Notes { get; set; }
         public int CreatedBy { get; set; }
+        public List<OnlinePaymentDocumentRM> PaymentDocumentRM { get; set; }
     }
+
 }
