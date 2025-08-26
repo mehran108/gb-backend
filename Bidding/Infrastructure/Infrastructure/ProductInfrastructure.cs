@@ -3500,6 +3500,26 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return rawGold;
         }
+        public async Task<AssetSummary> GetAssetSummary()
+        {
+            var assetSummary = new AssetSummary();
+            var parameters = new List<DbParameter>
+            {
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAssetsSummary_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        assetSummary.TotalGold = dataReader.GetDecimalValue("totalGold");
+                        assetSummary.TotalInventory = dataReader.GetDecimalValue("totalInventory");
+                        assetSummary.RawGold = dataReader.GetDecimalValue("RawGold");
+                    }
+                }
+            }
+            return assetSummary;
+        }
         #endregion
     }
 }

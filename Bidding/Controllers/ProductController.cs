@@ -138,6 +138,11 @@ namespace GoldBank.Controllers
         {
             return await ProductApplication.GetRawGoldById(RawGoldId);
         }
+        [HttpGet("GetAssetSummary")]
+        public async Task<AssetSummary> GetAssetSummary()
+        {
+            return await ProductApplication.GetAssetSummary();
+        }
         [HttpPost("AddUpdateMetalPurity")]
         public async Task<bool> AddUpdateMetalPurity([FromBody] List<MetalPurity> metalPurities)
         {

@@ -28,5 +28,6 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<List<RawGold>> GetAllRawGolds();
         Task<bool> RemoveRawGold(RawGold RawGold);
         Task<RawGold> GetRawGoldById(int rawGoldId);
+        Task<AssetSummary> GetAssetSummary();
     }
 }

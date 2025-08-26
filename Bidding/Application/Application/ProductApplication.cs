@@ -130,5 +130,9 @@ namespace GoldBank.Application.Application
         {
             return await this.ProductInfrastructure.GetRawGoldById(rawGoldId);
         }
+        public async Task<AssetSummary> GetAssetSummary()
+        {
+            return await this.ProductInfrastructure.GetAssetSummary();
+        }
     }
 }
