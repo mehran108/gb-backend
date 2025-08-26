@@ -63,6 +63,7 @@
         public string ReceiptNo { get; set; }
         public decimal Amount { get; set; }
         public int LastFourDigit { get; set; }
+        public int? CompanyAccountId { get; set; }
     }
     public class AddVendorPaymentRequest
     {

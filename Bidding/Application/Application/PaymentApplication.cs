@@ -1,6 +1,7 @@
 ﻿using GoldBank.Application.IApplication;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
+using GoldBank.Models.Product;
 using GoldBank.Models.RequestModels;
 
 namespace GoldBank.Application.Application
@@ -110,6 +111,18 @@ namespace GoldBank.Application.Application
         public async Task<List<VendorPayment>> GetVendorPaymentsById(int vendorId)
         {
             return await this.PaymentInfrastructure.GetVendorPaymentsById(vendorId);
+        }
+        public async Task<int> AddCashManagementDetail(CashManagementDetails entity)
+        {
+            return await this.PaymentInfrastructure.AddCashManagementDetail(entity);
+        }
+        public async Task<int> CancelCashWidrawAmount(int Id, int UserId)
+        {
+            return await this.PaymentInfrastructure.CancelCashWidrawAmount(Id,UserId);
+        }
+        public async Task<CashManagementSummary> GetCashManagementSummary()
+        {
+            return await this.PaymentInfrastructure.GetCashManagementSummary();
         }
     }
 }

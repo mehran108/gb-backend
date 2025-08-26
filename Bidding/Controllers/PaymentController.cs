@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text;
+using GoldBank.Models.Product;
 
 namespace GoldBank.Controllers
 {
@@ -174,6 +175,21 @@ namespace GoldBank.Controllers
         public async Task<List<VendorPayment>> GetVendorPaymentsById(int vendorId)
         {
             return await this.PaymentApplication.GetVendorPaymentsById(vendorId);
+        }
+        [HttpPost("AddCashManagementDetail")]
+        public async Task<int> AddCashManagementDetail([FromBody] CashManagementDetails entity)
+        {
+            return await this.PaymentApplication.AddCashManagementDetail(entity);
+        }
+        [HttpPut("CancelCashWidrawAmount")]
+        public async Task<int> CancelCashWidrawAmount([FromQuery] int Id,int UpdatedBy)
+        {
+            return await this.PaymentApplication.CancelCashWidrawAmount(Id,UpdatedBy);
+        }
+        [HttpGet("GetCashManagementSummary")]
+        public async Task<CashManagementSummary> GetCashManagementSummary()
+        {
+            return await this.PaymentApplication.GetCashManagementSummary();
         }
     }
 }

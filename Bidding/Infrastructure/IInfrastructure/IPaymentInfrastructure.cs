@@ -22,5 +22,8 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<int> AddVendorOnlinePayment(AddVendorOnlinePaymentRequest paymentRM);
         Task<bool> ConfirmVendorPayment(ConfirmVendorPaymentRequest confirmPaymentRequest);
         Task<List<VendorPayment>> GetVendorPaymentsById(int vendorId);
+        Task<int> AddCashManagementDetail(CashManagementDetails entity);
+        Task<int> CancelCashWidrawAmount(int Id, int UserId);
+        Task<CashManagementSummary> GetCashManagementSummary();
     }
 }
