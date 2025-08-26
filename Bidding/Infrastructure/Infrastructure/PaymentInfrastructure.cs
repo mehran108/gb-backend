@@ -2,7 +2,10 @@
 using GoldBank.Infrastructure.Extension;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
+using GoldBank.Models.Product;
 using GoldBank.Models.RequestModels;
+using Microsoft.AspNetCore.Http.HttpResults;
+using System;
 using System.Data;
 using System.Data.Common;
 
@@ -298,6 +301,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         parameters.Add("p_ReceiptNo", cardPay.ReceiptNo);
                         parameters.Add("p_Amount", cardPay.Amount);
                         parameters.Add("p_LastFourDigit", cardPay.LastFourDigit);
+                        parameters.Add("p_CompanyAccountId", cardPay.CompanyAccountId ?? 0);
                         parameters.Add("p_CreatedBy", confirmPaymentRequest.CreatedBy);
 
                         await connection.ExecuteAsync("AddCardPaymentGb", parameters, transaction, commandType: CommandType.StoredProcedure);
@@ -685,25 +689,168 @@ namespace GoldBank.Infrastructure.Infrastructure
                         }
                     }
                 }
+            if (dataReader.NextResult())
+            {
+                while (dataReader.Read())
+                {
+                    var item = new VendorPaymentDocument();
+                    item.VendorPaymentId = dataReader.GetIntegerValue("vendorPaymentId");
+                    item.VendorPaymentDocumentId = dataReader.GetIntegerValue("vendorPaymentDocumentId");
+                    item.DocumentId = dataReader.GetIntegerValue("documentId");
+                    item.Url = dataReader.GetStringValue("url");
+                    item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+                    item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                    var onlinePaymentDocumentItem = result.FirstOrDefault(x => x.VendorPaymentId == item.VendorPaymentId);
+                    if (onlinePaymentDocumentItem != null)
+                    {
+                        onlinePaymentDocumentItem.PaymentDocument.Add(item);
+                    }
+                }
+            }
+        }
+            return result;
+        }
+
+        private static string GenerateTransactionId()
+        {
+            string timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
+            string randomPart = Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
+            return $"{timestamp}{randomPart}";
+        }
+
+        public async Task<int> AddCashManagementDetail(CashManagementDetails entity)
+        {
+            var response = 0;
+            entity.TransactionId = GenerateTransactionId();
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+
+                parameters.Add("p_CompanyAccountId", entity.CompanyAccountId);
+                parameters.Add("p_StoreId", entity.StoreId);
+                parameters.Add("p_Amount", entity.Amount);
+                parameters.Add("p_IsWithdraw", entity.IsWithdraw);
+                parameters.Add("p_IsAddCash", entity.IsAddCash);
+                parameters.Add("p_Notes", entity.Notes);
+                parameters.Add("p_CreatedBy", entity.CreatedBy);
+                parameters.Add("p_TransactionId", entity.TransactionId);
+                parameters.Add("o_CashManagementDetailId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync("AddCashManagementDetailGb", parameters, transaction, commandType: CommandType.StoredProcedure);
+
+                var cashManagementDetailId = parameters.Get<int>("o_CashManagementDetailId");
+                response = cashManagementDetailId;
+
+                if (cashManagementDetailId > 0)
+                {
+                    foreach (var paymentOrder in entity.CashManagementDetailDocuments)
+                    {
+                        parameters = new DynamicParameters();
+                        parameters.Add("p_CashManagementDetailId", cashManagementDetailId);
+                        parameters.Add("p_DocumentId", paymentOrder.DocumentId);
+                        parameters.Add("p_IsPrimary", paymentOrder.IsPrimary);
+                        parameters.Add("p_CreatedBy", entity.CreatedBy);
+
+                        await connection.ExecuteAsync("AddOrUpdateCashManagementDocument", parameters, transaction, commandType: CommandType.StoredProcedure);
+                    }
+                }
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                await transaction.DisposeAsync();
+            }
+            return response;
+        }
+        public async Task<int> CancelCashWidrawAmount(int Id,int UserId)
+        {
+            var response = 0;
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+
+            try
+            {
+                var parameters = new DynamicParameters();
+
+                parameters.Add("p_CashManagementDetailId", Id);
+                parameters.Add("p_UpdatedBy", UserId);
+                parameters.Add("o_IsUpdated", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync("DeleteCashManagementDetailGb", parameters, transaction, commandType: CommandType.StoredProcedure);
+
+                var cashManagementDetailId = parameters.Get<int>("o_IsUpdated");
+                response = cashManagementDetailId;
+
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                await transaction.DisposeAsync();
+            }
+            return response;
+        }
+        public async Task<CashManagementSummary> GetCashManagementSummary()
+        {
+            var result = new CashManagementSummary();
+            var Stores = new List<Store>();
+            var Banks = new List<CompanyAccount>();
+            var parameters = new List<DbParameter>
+            {
+                //base.GetParameter("p_VendorId", vendorId)
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetCashManagementSummaryGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        var store = new Store();
+                        store.StoreId = dataReader.GetIntegerValue("storeId");
+                        store.Description = dataReader.GetStringValue("description");
+                        store.AvailableCash = dataReader.GetDecimalValue("AvailableCash");
+                        store.InFlows = dataReader.GetDecimalValue("InFlows");
+                        store.OutFlows = dataReader.GetDecimalValue("OutFlows");
+                        Stores.Add(store);
+                    }
+                }
                 if (dataReader.NextResult())
                 {
                     while (dataReader.Read())
                     {
-                        var item = new VendorPaymentDocument();
-                        item.VendorPaymentId = dataReader.GetIntegerValue("vendorPaymentId");
-                        item.VendorPaymentDocumentId = dataReader.GetIntegerValue("vendorPaymentDocumentId");
-                        item.DocumentId = dataReader.GetIntegerValue("documentId");
-                        item.Url = dataReader.GetStringValue("url");
-                        item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
-                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
-                        var onlinePaymentDocumentItem = result.FirstOrDefault(x => x.VendorPaymentId == item.VendorPaymentId);
-                        if (onlinePaymentDocumentItem != null)
-                        {
-                            onlinePaymentDocumentItem.PaymentDocument.Add(item);
-                        }
+                        var bank = new CompanyAccount();
+                        bank.CompanyAccountId = dataReader.GetIntegerValue("companyAccountId");
+                        bank.Description = dataReader.GetStringValue("description");
+                        bank.CurrentBalance = dataReader.GetDecimalValue("CurrentBalance");
+                        bank.InFlows = dataReader.GetDecimalValue("InFlows");
+                        bank.OutFlows = dataReader.GetDecimalValue("OutFlows");
+                        Banks.Add(bank);
                     }
                 }
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        result.TotalBankBalance = dataReader.GetDecimalValue("TotalBankBalance");
+                        result.TotalPhysicalCash = dataReader.GetDecimalValue("TotalPhysicalCash");
+                        result.TotalAvailableCash = dataReader.GetDecimalValue("TotalAvailableCash");
+                    }
+                }           
             }
+            result.BankDetails = Banks;
+            result.BranchDetails = Stores;
             return result;
         }
     }
