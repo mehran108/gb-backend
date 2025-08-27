@@ -770,6 +770,25 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return response;
         }
+        private object ToDbValue(object? value)
+        {
+            if (value == null) return DBNull.Value;
+
+            switch (value)
+            {
+                case int intVal when intVal <= 0:
+                    return DBNull.Value;
+
+                case decimal decVal when decVal <= 0:
+                    return DBNull.Value;
+
+                case string strVal when string.IsNullOrWhiteSpace(strVal):
+                    return DBNull.Value;
+
+                default:
+                    return value;
+            }
+        }
         public async Task<int> CancelCashWidrawAmount(int Id,int UserId)
         {
             var response = 0;
@@ -852,6 +871,54 @@ namespace GoldBank.Infrastructure.Infrastructure
             result.BankDetails = Banks;
             result.BranchDetails = Stores;
             return result;
+        }
+        public async Task<AllResponse<StoreCashManagementSummary>> GetCashManagementSummaryByStore(AllRequest<StoreCashManagementRequestVm> request)
+        {
+            var Response = new AllResponse<StoreCashManagementSummary>();
+            var Summary = new List<StoreCashManagementSummary>();
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("@p_PageNumber", request.Offset),
+                base.GetParameter("@p_PageSize", request.PageSize),
+                base.GetParameter("@p_StoreId", ToDbValue(request.Data.StoreId)),
+                base.GetParameter("@p_SourceId", ToDbValue(request.Data.SourceId)),
+                base.GetParameter("@p_CompanyAccountId", ToDbValue(request.Data.CompanyAccountId)),
+                base.GetParameter("@p_TransactionAmount", ToDbValue(request.Data.TransactionAmount)),
+                base.GetParameter("@p_FromDate", ToDbValue(request.Data.FromDate)),
+                base.GetParameter("@p_ToDate", ToDbValue(request.Data.ToDate))
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAllCashManagementSummaryByStoreGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new StoreCashManagementSummary();
+                        item.TransactionId = dataReader.GetStringValue("transactionId");
+                        item.Date = dataReader.GetDateTimeValue("date");
+                        item.Store = dataReader.GetStringValue("store");
+                        item.TransferType = dataReader.GetStringValue("transferType");
+                        item.Source = dataReader.GetStringValue("source");
+                        item.Destination = dataReader.GetStringValue("destination");
+                        item.Amount = dataReader.GetDecimalValue("amount");
+                        item.IsCredit = dataReader.GetBooleanValue("isCredit");
+                        item.IsDebit = dataReader.GetBooleanValue("isDebit");
+                        item.StoreId = dataReader.GetIntegerValue("storeId");
+
+                        Summary.Add(item);
+                    }         
+                }
+                if (dataReader.NextResult())
+                {
+                    if (dataReader.Read())
+                    {
+                        Response.TotalRecord = dataReader.GetIntegerValue("totalRecords");
+                    }
+                }
+            }
+
+            Response.Data = Summary;
+            return Response;
         }
     }
 }

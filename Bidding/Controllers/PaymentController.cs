@@ -191,5 +191,10 @@ namespace GoldBank.Controllers
         {
             return await this.PaymentApplication.GetCashManagementSummary();
         }
+        [HttpPost("GetAllCashManagementSummaryByStore")]
+        public async Task<AllResponse<StoreCashManagementSummary>> GetCashManagementSummaryByStore([FromBody] AllRequest<StoreCashManagementRequestVm> request)
+        {
+            return await this.PaymentApplication.GetCashManagementSummaryByStore(request);
+        }
     }
 }
