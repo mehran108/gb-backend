@@ -35,6 +35,9 @@ builder.Services.AddTransient<ILookupApplication, LookupApplication>();
 builder.Services.AddTransient<IOrderApplication, OrderApplication>();
 builder.Services.AddTransient<IOrderInfrastructure, OrderInfrastructure>();
 
+builder.Services.AddTransient<IBankApplication, BankApplication>();
+builder.Services.AddTransient<IBankInfrastructure, BankInfrastructure>();
+
 builder.Services.AddTransient<IPaymentApplication, PaymentApplication>();
 builder.Services.AddTransient<IPaymentInfrastructure, PaymentInfrastructure>();
 

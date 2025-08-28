@@ -570,6 +570,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         {
                             CompanyAccountId = dataReader.GetIntegerValue("CompanyAccountId"),
                             Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                            BankAccountId = dataReader.GetIntegerValue("bankAccountId")
                         });
                     }
                 }

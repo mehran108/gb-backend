@@ -7,5 +7,10 @@
         public decimal? CurrentBalance { get; set; }
         public decimal? InFlows { get; set; }
         public decimal? OutFlows { get; set; }
+        public string? AccountName { get; set; }
+        public string? BranchCode { get; set; }
+        public string? Iban { get; set; }
+        public string? Currency { get; set; }
+        public int? BankAccountId { get; set; }
     }
 }
