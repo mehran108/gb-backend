@@ -37,9 +37,10 @@ namespace GoldBank.Controllers
         }
 
         [HttpPost("GetAll")]
-        public async Task<AllResponse<CompanyAccount>> GetAll(AllRequest<CompanyAccount> companyAccount)
+        public async Task<List<CompanyAccount>> GetAll()
         {
-            return await this.BankApplication.GetAll(companyAccount);
+            var companyAccount = new CompanyAccount();
+            return await this.BankApplication.GetList(companyAccount);
         }
     }
 }
