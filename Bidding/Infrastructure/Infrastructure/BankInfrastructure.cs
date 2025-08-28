@@ -96,11 +96,13 @@ namespace GoldBank.Infrastructure.Infrastructure
                     while (dataReader.Read())
                     {
                         companyAccount.CompanyAccountId = dataReader.GetIntegerValue("companyAccountId");
+                        companyAccount.BankAccountId = dataReader.GetIntegerValue("BankAccountId");
                         companyAccount.Description = dataReader.GetStringValue("description");
                         companyAccount.AccountName = dataReader.GetStringValue("accountName");
                         companyAccount.BranchCode = dataReader.GetStringValue("branchCode");
                         companyAccount.Iban = dataReader.GetStringValue("iban");
                         companyAccount.Currency = dataReader.GetStringValue("currency");
+                        companyAccount.BankName = dataReader.GetStringValue("bankName");
                         companyAccount.IsActive = dataReader.GetBooleanValue("isActive");
                         companyAccount.IsDeleted = dataReader.GetBooleanValue("isDeleted");
                         companyAccount.CreatedAt = dataReader.GetDateTime("createdAt");
@@ -113,42 +115,7 @@ namespace GoldBank.Infrastructure.Infrastructure
 
         public async Task<AllResponse<CompanyAccount>> GetAll(AllRequest<CompanyAccount> entity)
         {
-            var result = new AllResponse<CompanyAccount>();
-            result.Data = new List<CompanyAccount>();
-            var parameters = new List<DbParameter>
-            {
-                base.GetParameter("@p_PageNumber", entity.Offset),
-                base.GetParameter("@p_PageSize", entity.PageSize)
-            };
-            using (var dataReader = await base.ExecuteReader(parameters, "GetAllCompanyAccountsGb", CommandType.StoredProcedure))
-            {
-                if (dataReader != null && dataReader.HasRows)
-                {
-                    while (dataReader.Read())
-                    {
-                        CompanyAccount companyAccount = new CompanyAccount();
-                        companyAccount.CompanyAccountId = dataReader.GetIntegerValue("companyAccountId");
-                        companyAccount.Description = dataReader.GetStringValue("description");
-                        companyAccount.AccountName = dataReader.GetStringValue("accountName");
-                        companyAccount.BranchCode = dataReader.GetStringValue("branchCode");
-                        companyAccount.Iban = dataReader.GetStringValue("iban");
-                        companyAccount.Currency = dataReader.GetStringValue("currency");
-                        companyAccount.IsActive = dataReader.GetBooleanValue("isActive");
-                        companyAccount.IsDeleted = dataReader.GetBooleanValue("isDeleted");
-                        companyAccount.CreatedAt = dataReader.GetDateTime("createdAt");
-                        companyAccount.CreatedBy = dataReader.GetIntegerValue("createdBy");
-                        result.Data.Add(companyAccount);
-                    }
-                }
-                if (dataReader != null && dataReader.NextResult())
-                {
-                    while (dataReader.Read())
-                    {
-                        result.TotalRecord = dataReader.GetIntegerValue("TotalRecords");
-                    }
-                }
-            }
-            return result;
+            throw new NotImplementedException();
         }
 
         public async Task<List<CompanyAccount>> GetList(CompanyAccount entity)
@@ -165,11 +132,13 @@ namespace GoldBank.Infrastructure.Infrastructure
                     {
                         CompanyAccount companyAccount = new CompanyAccount();
                         companyAccount.CompanyAccountId = dataReader.GetIntegerValue("companyAccountId");
+                        companyAccount.BankAccountId = dataReader.GetIntegerValue("BankAccountId");
                         companyAccount.Description = dataReader.GetStringValue("description");
                         companyAccount.AccountName = dataReader.GetStringValue("accountName");
                         companyAccount.BranchCode = dataReader.GetStringValue("branchCode");
                         companyAccount.Iban = dataReader.GetStringValue("iban");
                         companyAccount.Currency = dataReader.GetStringValue("currency");
+                        companyAccount.BankName = dataReader.GetStringValue("bankName");
                         companyAccount.IsActive = dataReader.GetBooleanValue("isActive");
                         companyAccount.IsDeleted = dataReader.GetBooleanValue("isDeleted");
                         companyAccount.CreatedAt = dataReader.GetDateTime("createdAt");
