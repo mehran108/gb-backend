@@ -151,9 +151,34 @@ namespace GoldBank.Infrastructure.Infrastructure
             return result;
         }
 
-        public Task<List<CompanyAccount>> GetList(CompanyAccount entity)
+        public async Task<List<CompanyAccount>> GetList(CompanyAccount entity)
         {
-            throw new NotImplementedException();
+            var result = new List<CompanyAccount>();
+            var parameters = new List<DbParameter>
+            {
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAllCompanyAccountsGb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        CompanyAccount companyAccount = new CompanyAccount();
+                        companyAccount.CompanyAccountId = dataReader.GetIntegerValue("companyAccountId");
+                        companyAccount.Description = dataReader.GetStringValue("description");
+                        companyAccount.AccountName = dataReader.GetStringValue("accountName");
+                        companyAccount.BranchCode = dataReader.GetStringValue("branchCode");
+                        companyAccount.Iban = dataReader.GetStringValue("iban");
+                        companyAccount.Currency = dataReader.GetStringValue("currency");
+                        companyAccount.IsActive = dataReader.GetBooleanValue("isActive");
+                        companyAccount.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        companyAccount.CreatedAt = dataReader.GetDateTime("createdAt");
+                        companyAccount.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        result.Add(companyAccount);
+                    }
+                }
+            }
+            return result;
         }
 
         public async Task<bool> Update(CompanyAccount entity)

@@ -33,11 +33,10 @@ namespace GoldBank.Application.Application
             return await this.BankInfrastructure.GetAll(entity);
         }
 
-        public Task<List<CompanyAccount>> GetList(CompanyAccount entity)
+        public async Task<List<CompanyAccount>> GetList(CompanyAccount entity)
         {
-            throw new NotImplementedException();
+            return await this.BankInfrastructure.GetList(entity);
         }
-
         public async Task<bool> Update(CompanyAccount entity)
         {
             return await this.BankInfrastructure.Update(entity);
