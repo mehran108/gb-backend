@@ -25,6 +25,6 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<int> AddCashManagementDetail(CashManagementDetails entity);
         Task<int> CancelCashWidrawAmount(int Id, int UserId);
         Task<CashManagementSummary> GetCashManagementSummary();
-        Task<AllResponse<StoreCashManagementSummary>> GetCashManagementSummaryByStore(AllRequest<StoreCashManagementRequestVm> request);
+        Task<List<StoreCashManagementSummary>> GetAllCashManagementSummary(StoreCashManagementRequestVm request);
     }
 }

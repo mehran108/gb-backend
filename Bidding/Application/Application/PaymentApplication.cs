@@ -124,9 +124,9 @@ namespace GoldBank.Application.Application
         {
             return await this.PaymentInfrastructure.GetCashManagementSummary();
         }
-        public async Task<AllResponse<StoreCashManagementSummary>> GetCashManagementSummaryByStore(AllRequest<StoreCashManagementRequestVm> request)
+        public async Task<List<StoreCashManagementSummary>> GetAllCashManagementSummary(StoreCashManagementRequestVm request)
         {
-            return await this.PaymentInfrastructure.GetCashManagementSummaryByStore(request);
+            return await this.PaymentInfrastructure.GetAllCashManagementSummary(request);
         }
     }
 }

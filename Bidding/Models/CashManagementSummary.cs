@@ -25,10 +25,6 @@ namespace GoldBank.Models
     }
     public class StoreCashManagementRequestVm
     {
-        public int? StoreId { get; set; }
-        public int? SourceId { get; set; }
-        public int? CompanyAccountId { get; set; }
-        public decimal? TransactionAmount { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
 

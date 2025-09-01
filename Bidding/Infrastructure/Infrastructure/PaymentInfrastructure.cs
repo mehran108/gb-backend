@@ -872,22 +872,15 @@ namespace GoldBank.Infrastructure.Infrastructure
             result.BranchDetails = Stores;
             return result;
         }
-        public async Task<AllResponse<StoreCashManagementSummary>> GetCashManagementSummaryByStore(AllRequest<StoreCashManagementRequestVm> request)
+        public async Task<List<StoreCashManagementSummary>> GetAllCashManagementSummary(StoreCashManagementRequestVm request)
         {
-            var Response = new AllResponse<StoreCashManagementSummary>();
             var Summary = new List<StoreCashManagementSummary>();
             var parameters = new List<DbParameter>
             {
-                base.GetParameter("@p_PageNumber", request.Offset),
-                base.GetParameter("@p_PageSize", request.PageSize),
-                base.GetParameter("@p_StoreId", ToDbValue(request.Data.StoreId)),
-                base.GetParameter("@p_SourceId", ToDbValue(request.Data.SourceId)),
-                base.GetParameter("@p_CompanyAccountId", ToDbValue(request.Data.CompanyAccountId)),
-                base.GetParameter("@p_TransactionAmount", ToDbValue(request.Data.TransactionAmount)),
-                base.GetParameter("@p_FromDate", ToDbValue(request.Data.FromDate)),
-                base.GetParameter("@p_ToDate", ToDbValue(request.Data.ToDate))
+                base.GetParameter("@p_FromDate", ToDbValue(request.FromDate)),
+                base.GetParameter("@p_ToDate", ToDbValue(request.ToDate))
             };
-            using (var dataReader = await base.ExecuteReader(parameters, "GetAllCashManagementSummaryByStoreGb", CommandType.StoredProcedure))
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAllCashManagementSummary", CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
@@ -908,17 +901,15 @@ namespace GoldBank.Infrastructure.Infrastructure
                         Summary.Add(item);
                     }         
                 }
-                if (dataReader.NextResult())
-                {
-                    if (dataReader.Read())
-                    {
-                        Response.TotalRecord = dataReader.GetIntegerValue("totalRecords");
-                    }
-                }
+                //if (dataReader.NextResult())
+                //{
+                //    if (dataReader.Read())
+                //    {
+                //        Response = dataReader.GetIntegerValue("totalRecords");
+                //    }
+                //}
             }
-
-            Response.Data = Summary;
-            return Response;
+            return Summary;
         }
     }
 }
