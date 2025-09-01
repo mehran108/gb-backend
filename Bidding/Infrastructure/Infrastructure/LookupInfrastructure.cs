@@ -452,7 +452,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         list.Add(new Store
                         {
                             StoreId = dataReader.GetIntegerValue("StoreId"),
-                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                            Location = dataReader.GetStringValue("location")
                         });
                     }
                 }

@@ -27,6 +27,8 @@
         public int? CustomerCategoryId { get; set; }
         public string? CustomerCategoryDescription { get; set; }
         public string? BangleSize { get; set; }
+        public decimal? TotalSpent { get; set; }
+        public DateTime? LastPurchase { get; set; }
     }
 
 }
