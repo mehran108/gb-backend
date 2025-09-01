@@ -671,6 +671,8 @@ namespace GoldBank.Infrastructure.Infrastructure
             var ProductList = new List<Product>();
             var JewelleryList = new List<Jewellery>();
             var StoneProductList = new List<StoneProduct>();
+            if (product.SearchText == null)
+                product.SearchText = "";
             var parameters = new List<DbParameter>
             {
             base.GetParameter("@p_PageNumber", product.Offset),
