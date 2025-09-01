@@ -60,6 +60,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                      base.GetParameter("PStateId",Customer.StateId),
                      base.GetParameter("PZipCode",Customer.ZipCode),
                      base.GetParameter("PRingSize",Customer.RingSize),
+                     base.GetParameter("PCustomerCategoryId",Customer.CustomerCategoryId),
                      base.GetParameter("PBangleSize",Customer.BangleSize)
 
             };
@@ -90,8 +91,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                 base.GetParameter("PStateId",Customer.StateId),
                 base.GetParameter("PZipCode",Customer.ZipCode),
                 base.GetParameter("PRingSize",Customer.RingSize),
-                base.GetParameter("PBangleSize",Customer.BangleSize)
-
+                base.GetParameter("PBangleSize",Customer.BangleSize),
+                base.GetParameter("PCustomerCategoryId",Customer.CustomerCategoryId)
             };
             var ReturnValue = await base.ExecuteNonQuery(parameters, "UpdateCustomer_gb", CommandType.StoredProcedure);
             return ReturnValue > 0;
@@ -133,7 +134,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         customerItem.BangleSize = dataReader.GetStringValue("bangleSize");
                         customerItem.StateId = dataReader.GetIntegerValue("stateId");
                         customerItem.ZipCode = dataReader.GetStringValue("zipCode");
-                        
+                        customerItem.CustomerCategoryId = dataReader.GetIntegerValue("customerCategoryId");
+                        customerItem.CustomerCategoryDescription = dataReader.GetStringValue("customerCategoryDescription");
                     }
                     if (!dataReader.IsClosed)
                     {

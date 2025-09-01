@@ -243,6 +243,12 @@ namespace GoldBank.Controllers
             var result = await this.LookupApplication.GetAllVendorPaymentTypes();
             return Ok(result);
         }
+        [HttpGet("GetAllCustomerCategories")]
+        public async Task<ActionResult<IEnumerable<CustomerCategory>>> GetAllCustomerCategories()
+        {
+            var result = await this.LookupApplication.GetAllCustomerCategories();
+            return Ok(result);
+        }
         [HttpGet("GetAllVendorGoldPaymentTypes")]
         public async Task<ActionResult<IEnumerable<VendorGoldPaymentType>>> GetAllVendorGoldPaymentTypes()
         {

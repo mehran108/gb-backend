@@ -23,6 +23,9 @@
         public string? RingSize { get; set; }
         public int? StateId { get; set; }
         public string? ZipCode { get; set; }
+        public string? Gender { get; set; }
+        public int? CustomerCategoryId { get; set; }
+        public string? CustomerCategoryDescription { get; set; }
         public string? BangleSize { get; set; }
     }
 
