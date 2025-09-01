@@ -57,6 +57,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                      base.GetParameter(CustomerInfrastructure.WeddingAnniversaryParameterName,Customer.WeddingAnniversary),
                      base.GetParameter(CustomerInfrastructure.IsNewsSubscribeParameterName,Customer.IsNewsSubscribe),
                      base.GetParameter(CustomerInfrastructure.PasswordHashParameterName,Customer.PasswordHash),
+                     base.GetParameter("PStateId",Customer.StateId),
+                     base.GetParameter("PZipCode",Customer.ZipCode),
                      base.GetParameter("PRingSize",Customer.RingSize),
                      base.GetParameter("PBangleSize",Customer.BangleSize)
 
@@ -85,6 +87,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                 base.GetParameter(CustomerInfrastructure.WeddingAnniversaryParameterName,Customer.WeddingAnniversary),
                 base.GetParameter(CustomerInfrastructure.IsNewsSubscribeParameterName,Customer.IsNewsSubscribe),
                 base.GetParameter(CustomerInfrastructure.ActiveParameterName,Customer.IsActive),
+                base.GetParameter("PStateId",Customer.StateId),
+                base.GetParameter("PZipCode",Customer.ZipCode),
                 base.GetParameter("PRingSize",Customer.RingSize),
                 base.GetParameter("PBangleSize",Customer.BangleSize)
 
@@ -127,6 +131,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         customerItem.PasswordHash = dataReader.GetStringValue("PasswordHash");
                         customerItem.RingSize = dataReader.GetStringValue("ringSize");
                         customerItem.BangleSize = dataReader.GetStringValue("bangleSize");
+                        customerItem.StateId = dataReader.GetIntegerValue("stateId");
+                        customerItem.ZipCode = dataReader.GetStringValue("zipCode");
                         
                     }
                     if (!dataReader.IsClosed)

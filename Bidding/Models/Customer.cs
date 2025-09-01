@@ -21,6 +21,8 @@
         public string? OldPwd {  get; set; }
         public string? NewPwd { get; set; }
         public string? RingSize { get; set; }
+        public int? StateId { get; set; }
+        public string? ZipCode { get; set; }
         public string? BangleSize { get; set; }
     }
 
