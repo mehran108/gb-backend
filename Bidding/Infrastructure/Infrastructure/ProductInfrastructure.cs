@@ -1182,6 +1182,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.CreatedBy = dataReader.GetIntegerValue("createdBy");
                             item.MinWeight = dataReader.GetDecimalValue("minWeight");
                             item.MaxWeight = dataReader.GetDecimalValue("maxWeight");
+                            item.SerialNumber = dataReader.GetStringValue("serialNumber");
+
 
                             if (Product.ProductId == item.ProductId)
                             {
