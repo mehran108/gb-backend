@@ -29,6 +29,7 @@
         public string? BangleSize { get; set; }
         public decimal? TotalSpent { get; set; }
         public DateTime? LastPurchase { get; set; }
+        public string? Tag { get; set; }
     }
 
 }

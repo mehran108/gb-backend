@@ -1,8 +1,9 @@
-﻿using GoldBank.Models;
-using System.Data.Common;
-using System.Data;
-using GoldBank.Infrastructure.IInfrastructure;
+﻿using Amazon.S3.Model;
 using GoldBank.Infrastructure.Extension;
+using GoldBank.Infrastructure.IInfrastructure;
+using GoldBank.Models;
+using System.Data;
+using System.Data.Common;
 
 namespace GoldBank.Infrastructure.Infrastructure
 {
@@ -92,7 +93,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                 base.GetParameter("PZipCode",Customer.ZipCode),
                 base.GetParameter("PRingSize",Customer.RingSize),
                 base.GetParameter("PBangleSize",Customer.BangleSize),
-                base.GetParameter("PCustomerCategoryId",Customer.CustomerCategoryId)
+                base.GetParameter("PCustomerCategoryId",Customer.CustomerCategoryId),
+                base.GetParameter("PTag",Customer.Tag)
             };
             var ReturnValue = await base.ExecuteNonQuery(parameters, "UpdateCustomer_gb", CommandType.StoredProcedure);
             return ReturnValue > 0;
@@ -136,6 +138,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         customerItem.ZipCode = dataReader.GetStringValue("zipCode");
                         customerItem.CustomerCategoryId = dataReader.GetIntegerValue("customerCategoryId");
                         customerItem.CustomerCategoryDescription = dataReader.GetStringValue("customerCategoryDescription");
+                        customerItem.Tag = dataReader.GetStringValue("tag");
                     }
                     if (!dataReader.IsClosed)
                     {
@@ -208,7 +211,6 @@ namespace GoldBank.Infrastructure.Infrastructure
             await base.ExecuteNonQuery(parameters, "DeleteCustomer_gb", CommandType.StoredProcedure);
             return true;
         }
-
         public async Task<AllResponse<Customer>> GetAll(AllRequest<Customer> entity)
         {
             if (entity.SearchText == null)
@@ -264,6 +266,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             customerItem.TotalSpent = dataReader.GetDecimalValue("totalSpent");
                             customerItem.RingSize = dataReader.GetStringValue("ringSize");
                             customerItem.BangleSize = dataReader.GetStringValue("bangleSize");
+                            customerItem.Tag = dataReader.GetStringValue("tag");
 
                             result.Data.Add(customerItem);
                         }
