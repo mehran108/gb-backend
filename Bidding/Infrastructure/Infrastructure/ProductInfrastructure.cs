@@ -675,6 +675,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
             base.GetParameter("@p_PageNumber", product.Offset),
             base.GetParameter("@p_PageSize", ToDbValue(product.PageSize)),
+            base.GetParameter("@P_SearchText", product.SearchText),
             base.GetParameter("@p_ProductTypeId", ToDbValue(product.Data.ProductTypeId)),
             base.GetParameter("@p_SKU", ToDbValue(product.Data.SKU)),
             base.GetParameter("@p_ProductSourceId", ToDbValue(product.Data.ProductSourceId)),

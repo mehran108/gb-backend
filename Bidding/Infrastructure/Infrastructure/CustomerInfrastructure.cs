@@ -139,6 +139,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         customerItem.CustomerCategoryId = dataReader.GetIntegerValue("customerCategoryId");
                         customerItem.CustomerCategoryDescription = dataReader.GetStringValue("customerCategoryDescription");
                         customerItem.Tag = dataReader.GetStringValue("tag");
+                        customerItem.TotalWeightPurchased = dataReader.GetDecimalValue("totalWeightPurchased");
+                        customerItem.LastPurchase = dataReader.GetDateTimeValue("lastPurchase");
+                        customerItem.TotalSpent = dataReader.GetDecimalValue("totalSpent");
                     }
                     if (!dataReader.IsClosed)
                     {
