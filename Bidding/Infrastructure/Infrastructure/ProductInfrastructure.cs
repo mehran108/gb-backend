@@ -1499,11 +1499,11 @@ namespace GoldBank.Infrastructure.Infrastructure
                         //}
                         //if (item.OrderTypeId == 5) // repair
                         //{
-                        //    item.RepairDetails = await this.GetRepairDetailsById((int)item.OrderId);
+                         //   item.RepairDetails = await this.GetRepairDetailsById((int)item.OrderId);
                         //}
                         //if (item.OrderTypeId == 6) // appraisal
                         //{
-                        //    item.AppraisalDetails = await this.GetAppraisalDetailsById((int)item.OrderId);
+                           // item.AppraisalDetails = await this.GetAppraisalDetailsById((int)item.OrderId);
                         //}
                         //if (item.OrderTypeId == 7) // exchange 
                         //{
@@ -1576,6 +1576,38 @@ namespace GoldBank.Infrastructure.Infrastructure
                         }
                     }
                 }
+                //Alteration Stone
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        var stone = new StoneAlteration();
+                        stone.StoneAlterationId = dataReader.GetIntegerValue("stoneAlterationId");
+                        stone.AlterationDetailsId = dataReader.GetIntegerValue("alterationDetailsId");
+                        stone.CurrentStoneTypeId = dataReader.GetIntegerValue("currentStoneTypeId");
+                        stone.DesiredStoneTypeId = dataReader.GetIntegerValue("desiredStoneTypeId");
+                        stone.AdditionalNote = dataReader.GetStringValue("additionalNote");
+                        stone.ReferenceSKU = dataReader.GetStringValue("referenceSKU");
+                        stone.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
+                        stone.Weight = dataReader.GetDecimalValue("weight");
+                        stone.Price = dataReader.GetDecimalValue("price");
+                        stone.ActualWeight = dataReader.GetDecimalValue("actualWeight");
+                        stone.ActualPrice = dataReader.GetDecimalValue("actualPrice");
+                        stone.IsActive = dataReader.GetBooleanValue("isActive");
+                        stone.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        stone.CreatedAt = dataReader.GetDateTime("createdAt");
+
+                        var OrderItem = OrderList.Find(o => o.AlterationDetailsId == stone.AlterationDetailsId);
+                        if (OrderItem != null && OrderItem.AlterationDetails != null)
+                        {
+                            if (OrderItem.AlterationDetails.Stones == null)
+                                OrderItem.AlterationDetails.Stones = new List<StoneAlteration> { stone };
+
+                            OrderItem.AlterationDetails.Stones.Add(stone);
+                        }
+                    }
+                }
+
                 //RepairDetails
                 if (dataReader.NextResult())
                 {
@@ -1622,6 +1654,38 @@ namespace GoldBank.Infrastructure.Infrastructure
                         }
                     }
                 }
+                //Repair Stones
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        var stone = new RepairStoneDetails();
+                        stone.RepairStoneDetailId = dataReader.GetIntegerValue("repairStoneDetailId");
+                        stone.RepairDetailId = dataReader.GetIntegerValue("repairDetailId");
+                        stone.CurrentStoneId = dataReader.GetIntegerValue("currentStoneId");
+                        stone.DesiredStoneId = dataReader.GetIntegerValue("desiredStoneId");
+                        stone.IsFixed = dataReader.GetBooleanValue("isFixed");
+                        stone.StoneTypeIds = dataReader.GetStringValue("stoneTypeIds");
+                        stone.IsReplacement = dataReader.GetBooleanValue("isReplacement");
+                        stone.Notes = dataReader.GetStringValue("notes");
+                        stone.Price = dataReader.GetDecimalValue("price");
+                        stone.ActualWeight = dataReader.GetDecimalValue("actualWeight");
+                        stone.ActualPrice = dataReader.GetDecimalValue("actualPrice");
+                        stone.IsActive = dataReader.GetBooleanValue("isActive");
+                        stone.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        stone.CreatedAt = dataReader.GetDateTime("createdAt");
+                        stone.CreatedBy = dataReader.GetIntegerValue("createdBy");
+
+                        var OrderItem = OrderList.Find(o => o.RepairDetailsId == stone.RepairDetailId);
+                        if (OrderItem != null && OrderItem.RepairDetails != null)
+                        {
+                            if (OrderItem.RepairDetails.RepairStoneDetails == null)
+                                OrderItem.RepairDetails.RepairStoneDetails = new List<RepairStoneDetails> { stone };
+
+                            OrderItem.RepairDetails.RepairStoneDetails.Add(stone);
+                        }
+                    }
+                }
                 //AppraisalDetail
                 if (dataReader.NextResult())
                 {
@@ -1646,6 +1710,31 @@ namespace GoldBank.Infrastructure.Infrastructure
                         if (OrderItem != null)
                         {
                             OrderItem.AppraisalDetails = item;
+                        }
+                    }
+                }
+                //Appraisal Stones
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        var stone = new AppraisalStoneDetail();
+
+                        stone.AppraisalStoneDetailId = dataReader.GetIntegerValue("appraisalStoneDetailId");
+                        stone.AppraisalDetailId = dataReader.GetIntegerValue("appraisalDetailId");
+                        stone.StoneTypeId = dataReader.GetIntegerValue("stoneTypeId");
+                        stone.StoneQuantity = dataReader.GetIntegerValue("stoneQuantity");
+                        stone.StoneWeight = dataReader.GetDecimalValue("stoneWeight");
+                        stone.StonePrice = dataReader.GetDecimalValue("stonePrice");
+                        stone.StoneWeightTypeId = dataReader.GetIntegerValue("stoneWeightTypeId");
+
+                        var OrderItem = OrderList.Find(o => o.AppraisalDetailsId == stone.AppraisalDetailId);
+                        if (OrderItem != null && OrderItem.AppraisalDetails != null)
+                        {
+                            if (OrderItem.AppraisalDetails.AppraisalStoneDetails == null)
+                                OrderItem.AppraisalDetails.AppraisalStoneDetails = new List<AppraisalStoneDetail> { stone };
+
+                            OrderItem.AppraisalDetails.AppraisalStoneDetails.Add(stone);
                         }
                     }
                 }
