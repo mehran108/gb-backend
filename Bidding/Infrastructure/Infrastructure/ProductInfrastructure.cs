@@ -1490,33 +1490,33 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.GiftCardDetailsId = dataReader.GetIntegerValue("giftCardDetailId");
 
                         Customer.CustomerId = item.CustomerId;
-                       // item.Customer = await this.CustomerInfrastructure.Get(Customer);
+                        // item.Customer = await this.CustomerInfrastructure.Get(Customer);
 
                         item.Product = await this.GetProductById(item.ProductId);
-                        if (item.OrderTypeId == 4) // alteration
-                        {
-                            item.AlterationDetails = await this.GetAlterationDetailsById((int)item.OrderId);
-                        }
-                        if (item.OrderTypeId == 5) // repair
-                        {
-                            item.RepairDetails = await this.GetRepairDetailsById((int)item.OrderId);
-                        }
-                        if (item.OrderTypeId == 6) // appraisal
-                        {
-                            item.AppraisalDetails = await this.GetAppraisalDetailsById((int)item.OrderId);
-                        }
-                        if (item.OrderTypeId == 7) // exchange 
-                        {
-                            item.ExchangeDetails = await this.GetExchangeDetailsById((int)item.OrderId);
-                        }
-                        if (item.OrderTypeId == 8) // gold booking
-                        {
-                            item.GoldBookingDetails = await this.GetGoldBookingDetailsById((int)item.OrderId);
-                        }
-                        if (item.OrderTypeId == 9) // gift card
-                        {
-                            item.GiftCardDetails = await this.GetGiftCardDetailsById((int)item.OrderId);
-                        }
+                        //if (item.OrderTypeId == 4) // alteration
+                        //{
+                        //    item.AlterationDetails = await this.GetAlterationDetailsById((int)item.OrderId);
+                        //}
+                        //if (item.OrderTypeId == 5) // repair
+                        //{
+                        //    item.RepairDetails = await this.GetRepairDetailsById((int)item.OrderId);
+                        //}
+                        //if (item.OrderTypeId == 6) // appraisal
+                        //{
+                        //    item.AppraisalDetails = await this.GetAppraisalDetailsById((int)item.OrderId);
+                        //}
+                        //if (item.OrderTypeId == 7) // exchange 
+                        //{
+                        //    item.ExchangeDetails = await this.GetExchangeDetailsById((int)item.OrderId);
+                        //}
+                        //if (item.OrderTypeId == 8) // gold booking
+                        //{
+                        //    item.GoldBookingDetails = await this.GetGoldBookingDetailsById((int)item.OrderId);
+                        //}
+                        //if (item.OrderTypeId == 9) // gift card
+                        //{
+                        //    item.GiftCardDetails = await this.GetGiftCardDetailsById((int)item.OrderId);
+                        //}
                         OrderList.Add(item);
                     }
                 }
@@ -1542,6 +1542,190 @@ namespace GoldBank.Infrastructure.Infrastructure
                     if (dataReader.Read())
                     {
                         Response.TotalRecord = Convert.ToInt32(dataReader.GetDoubleValue("totalRecords"));
+                    }
+                }
+                //AlterationDetails
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new AlterationDetails();
+                        item.AlterationDetailsId = dataReader.GetIntegerValue("alterationDetailsId");
+                        item.CurrentJewellerySize = dataReader.GetStringValue("currentJewellerySize");
+                        item.DesiredJewellerySize = dataReader.GetStringValue("desiredJewellerySize");
+                        item.SizeNote = dataReader.GetStringValue("sizeNote");
+                        item.ResizingPrice = dataReader.GetDecimalValue("resizingPrice");
+                        item.LacquerTypeId = dataReader.GetIntegerValue("lacquerTypeId");
+                        item.LacquerNote = dataReader.GetStringValue("lacquerNote");
+                        item.LacquerReferenceSKU = dataReader.GetStringValue("lacquerReferenceSKU");
+                        item.OtherDescription = dataReader.GetStringValue("otherDescription");
+                        item.LacquerPrice = dataReader.GetDecimalValue("lacquerPrice");
+                        item.WeightChangePrice = dataReader.GetDecimalValue("weightChangePrice");
+                        item.WeightChange = dataReader.GetDecimalValue("weightChange");
+                        item.ProductTotalPrice = dataReader.GetDecimalValue("productTotalPrice");
+                        item.OtherPrice = dataReader.GetDecimalValue("otherPrice");
+                        item.IsActive = dataReader.GetBooleanValue("isActive");
+                        item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        item.CreatedAt = dataReader.GetDateTime("createdAt");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+
+                        var OrderItem = OrderList.Find(o => o.AlterationDetailsId == item.AlterationDetailsId);
+                        if(OrderItem != null)
+                        {
+                            OrderItem.AlterationDetails = item;
+                        }
+                    }
+                }
+                //RepairDetails
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new RepairDetails();
+                        item.RepairDetailId = dataReader.GetIntegerValue("repairDetailId");
+                        item.ProductTypeId = dataReader.GetIntegerValue("productTypeId");
+                        item.MetalTypeId = dataReader.GetIntegerValue("metalTypeId");
+                        item.WeightBeforeRepair = dataReader.GetDecimalValue("weightBeforeRepair");
+                        item.RepairCleaningId = dataReader.GetIntegerValue("repairCleaningId");
+                        item.CleaningNotes = dataReader.GetStringValue("cleaningNotes");
+                        item.CleaningPrice = dataReader.GetDecimalValue("cleaningPrice");
+                        item.RepairPolishingId = dataReader.GetIntegerValue("repairPolishingId");
+                        item.PolishingNotes = dataReader.GetStringValue("polishingNotes");
+                        item.PolishingPrice = dataReader.GetDecimalValue("polishingPrice");
+                        item.CurrentJewellerySize = dataReader.GetStringValue("currentJewellerySize");
+                        item.DesiredJewellerySize = dataReader.GetStringValue("desiredJewellerySize");
+                        item.ResizingNotes = dataReader.GetStringValue("resizingNotes");
+                        item.ResizingPrice = dataReader.GetDecimalValue("resizingPrice");
+                        item.RepairDamageTypeIds = dataReader.GetStringValue("repairDamageTypeIds");
+                        item.RepairDamageAreaIds = dataReader.GetStringValue("repairDamageAreaIds");
+                        item.RepairingNotes = dataReader.GetStringValue("repairingNotes");
+                        item.RepairingPrice = dataReader.GetDecimalValue("repairingPrice");
+
+                        item.EstRepairingCost = dataReader.GetDecimalValue("estRepairCost");
+                        item.WeightChange = dataReader.GetDecimalValue("weightChange");
+                        item.WeightChangePrice = dataReader.GetDecimalValue("weightChangePrice");
+                        item.ActualWeight = dataReader.GetDecimalValue("actualWeight");
+                        item.TotalRepairCost = dataReader.GetDecimalValue("totalRepairCost");
+                        item.EstDeliveryDate = dataReader.GetDateTimeValue("estDeliveryDate");
+                        item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
+                        //item.WeightAfterRepair = dataReader.GetIntegerValue("weightAfterRepair");
+
+                        item.IsActive = dataReader.GetBooleanValue("isActive");
+                        item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+
+                        var OrderItem = OrderList.Find(o => o.RepairDetailsId == item.RepairDetailId);
+                        if (OrderItem != null)
+                        {
+                            OrderItem.RepairDetails = item;
+                        }
+                    }
+                }
+                //AppraisalDetail
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new AppraisalDetail();
+                        item.AppraisalDetailId = dataReader.GetIntegerValue("appraisalDetailId");
+                        item.TotalProductWeight = dataReader.GetDecimalValue("totalProductWeight");
+                        item.NetGoldWeight = dataReader.GetIntegerValue("netGoldWeight");
+                        item.PureGoldWeight = dataReader.GetDecimalValue("pureGoldWeight");
+                        item.DeductionPercentage = dataReader.GetDecimalValue("deductionPercentage");
+                        item.AppraisalPrice = dataReader.GetDecimalValue("appraisalPrice");
+                        item.Notes = dataReader.GetStringValue("notes");
+                        item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
+
+                        item.IsActive = dataReader.GetBooleanValue("isActive");
+                        item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+
+                        var OrderItem = OrderList.Find(o => o.AppraisalDetailsId == item.AppraisalDetailId);
+                        if (OrderItem != null)
+                        {
+                            OrderItem.AppraisalDetails = item;
+                        }
+                    }
+                }
+                //ExchangeDetail
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new ExchangeDetail();
+                        item.DeductionPercentage = dataReader.GetDecimalValue("deductionPercentage");
+                        item.DeductionValue = dataReader.GetDecimalValue("deductionValue");
+                        item.ExchangeDetailId = dataReader.GetIntegerValue("exchangeDetailId");
+                        item.OriginalPrice = dataReader.GetDecimalValue("originalPrice");
+                        item.ExchangePrice = dataReader.GetDecimalValue("exchangePrice");
+                        item.Notes = dataReader.GetStringValue("notes");
+
+                        item.IsActive = dataReader.GetBooleanValue("isActive");
+                        item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+
+                        var OrderItem = OrderList.Find(o => o.ExchangeDetailsId == item.ExchangeDetailId);
+                        if (OrderItem != null)
+                        {
+                            OrderItem.ExchangeDetails = item;
+                        }
+                    }
+                }
+                //GoldBookingDetail
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new GoldBookingDetail();
+                        item.GoldBookingDetailId = dataReader.GetIntegerValue("goldBookingDetailId");
+                        item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
+                        item.BookingWeight = dataReader.GetDecimalValue("bookingWeight");
+                        item.BookingPrice = dataReader.GetDecimalValue("bookingPrice");
+                        item.ReservationDate = dataReader.GetDateTimeValue("reservationDate");
+                        item.Notes = dataReader.GetStringValue("notes");
+                        item.IsActive = dataReader.GetBooleanValue("isActive");
+                        item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+
+                        var OrderItem = OrderList.Find(o => o.GoldBookingDetailsId == item.GoldBookingDetailId);
+                        if (OrderItem != null)
+                        {
+                            OrderItem.GoldBookingDetails = item;
+                        }
+                    }
+                }
+                //GoldBookingDetail
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        var Item = new GiftCardDetail();
+                        Item.GiftCardDetailId = dataReader.GetIntegerValue("giftCardDetailId");
+                        Item.RecipientName = dataReader.GetStringValue("recipientName");
+                        Item.RecipientMobileNumber = dataReader.GetStringValue("recipientMobileNumber");
+                        Item.RecipientCnic = dataReader.GetStringValue("recipientCnic");
+                        Item.Amount = dataReader.GetDecimalValue("amount");
+                        Item.DepositorName = dataReader.GetStringValue("depositorName");
+                        Item.DepositorMobileNumber = dataReader.GetStringValue("depositorMobileNumber");
+                        Item.Code = dataReader.GetStringValue("code");
+                        Item.Sku = dataReader.GetStringValue("sku");
+                        Item.RedeemDate = dataReader.GetDateTimeValue("redeemDate");
+                        Item.IsActive = dataReader.GetBooleanValue("isActive");
+                        Item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        Item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        Item.UpdatedAt = dataReader.GetDateTimeValue("updatedAt");
+                        Item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        Item.UpdatedBy = dataReader.GetIntegerValue("updatedBy");
+
+                        var OrderItem = OrderList.Find(o => o.GiftCardDetailsId == Item.GiftCardDetailId);
+                        if (OrderItem != null)
+                        {
+                            OrderItem.GiftCardDetails = Item;
+                        }
                     }
                 }
             }
