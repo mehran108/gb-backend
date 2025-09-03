@@ -1779,6 +1779,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
                         item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
                         item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        item.Sku = dataReader.GetStringValue("sku");
 
                         var OrderItem = OrderList.Find(o => o.GoldBookingDetailsId == item.GoldBookingDetailId);
                         if (OrderItem != null)
