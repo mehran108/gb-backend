@@ -269,7 +269,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             customerItem.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
                             customerItem.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
                             customerItem.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
-                            customerItem.LastPurchase = dataReader.GetDateTimeValue("LastPurchase");
+                            customerItem.LastPurchase = dataReader.GetDateTimeValueNullable("lastPurchase");
                             customerItem.TotalSpent = dataReader.GetDecimalValue("totalSpent");
                             customerItem.RingSize = dataReader.GetStringValue("ringSize");
                             customerItem.BangleSize = dataReader.GetStringValue("bangleSize");

@@ -290,6 +290,12 @@ namespace GoldBank.Infrastructure.Extension
 
             return objVal.GetDateTimeValue();
         }
+        public static DateTime? GetDateTimeValueNullable(this DbDataReader dataReader, string columnName)
+        {
+            var objVal = dataReader.GetValue(columnName);
+
+            return objVal.GetDateTimeValueNullable();
+        }
 
         /// <summary>
         /// GetDateTimeValueNullable get value from DataReader for provided ColumnName and converts it to Nullable<DateTime/>.
