@@ -31,6 +31,7 @@
         public DateTime? LastPurchase { get; set; }
         public string? Tag { get; set; }
         public decimal? TotalWeightPurchased { get; set; }
+        public int? TotalPurchase { get; set; }
     }
 
 }

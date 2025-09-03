@@ -142,6 +142,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         customerItem.TotalWeightPurchased = dataReader.GetDecimalValue("totalWeightPurchased");
                         customerItem.LastPurchase = dataReader.GetDateTimeValue("lastPurchase");
                         customerItem.TotalSpent = dataReader.GetDecimalValue("totalSpent");
+                        customerItem.TotalPurchase = dataReader.GetIntegerValue("totalPurchase");
                     }
                     if (!dataReader.IsClosed)
                     {
