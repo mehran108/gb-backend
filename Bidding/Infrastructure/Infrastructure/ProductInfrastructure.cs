@@ -1686,6 +1686,32 @@ namespace GoldBank.Infrastructure.Infrastructure
                         }
                     }
                 }
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+
+                        var item = new RepairDocument();
+                        item.RepairDocumentId = dataReader.GetIntegerValue("repairDocumentId");
+                        item.RepairDetailId = dataReader.GetIntegerValue("repairDetailId");
+                        item.DocumentId = dataReader.GetIntegerValue("documentId");
+                        item.Url = dataReader.GetStringValue("url");
+                        item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+                        item.IsPostRepair = dataReader.GetBooleanValue("isPostRepair");
+                        item.IsActive = dataReader.GetBooleanValue("isActive");
+                        item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
+                        item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        var OrderItem = OrderList.Find(o => o.RepairDetailsId == item.RepairDetailId);
+                        if (OrderItem != null && OrderItem.RepairDetails != null)
+                        {
+                            if (OrderItem.RepairDetails.RepairDocuments == null)
+                                OrderItem.RepairDetails.RepairDocuments = new List<RepairDocument> { item };
+
+                            OrderItem.RepairDetails.RepairDocuments.Add(item);
+                        }
+                    }
+                }
                 //AppraisalDetail
                 if (dataReader.NextResult())
                 {
