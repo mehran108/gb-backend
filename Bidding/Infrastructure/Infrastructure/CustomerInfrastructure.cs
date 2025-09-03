@@ -54,6 +54,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                      base.GetParameter(CustomerInfrastructure.CityIdParameterName,Customer.CityId),
                      base.GetParameter(CustomerInfrastructure.IsPOSParameterName,Customer.IsPOS),
                      base.GetParameter(CustomerInfrastructure.TitleParameterName,Customer.Title),
+                     base.GetParameter("PGender",Customer.Gender),
                      base.GetParameter(CustomerInfrastructure.BirthAnniversaryParameterName,Customer.BirthAnniversary),
                      base.GetParameter(CustomerInfrastructure.WeddingAnniversaryParameterName,Customer.WeddingAnniversary),
                      base.GetParameter(CustomerInfrastructure.IsNewsSubscribeParameterName,Customer.IsNewsSubscribe),
@@ -143,6 +144,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         customerItem.LastPurchase = dataReader.GetDateTimeValue("lastPurchase");
                         customerItem.TotalSpent = dataReader.GetDecimalValue("totalSpent");
                         customerItem.TotalPurchase = dataReader.GetIntegerValue("totalPurchase");
+                        customerItem.Gender = dataReader.GetStringValue("gender");
                     }
                     if (!dataReader.IsClosed)
                     {
@@ -188,6 +190,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             customerItem.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
                             customerItem.RingSize = dataReader.GetStringValue("ringSize");
                             customerItem.BangleSize = dataReader.GetStringValue("bangleSize");
+                            customerItem.Gender = dataReader.GetStringValue("gender");
 
                             CustomerList.Add(customerItem);
                         }
