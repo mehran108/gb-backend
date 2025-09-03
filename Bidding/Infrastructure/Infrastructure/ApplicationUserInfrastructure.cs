@@ -45,21 +45,20 @@ namespace GoldBank.Infrastructure.Infrastructure
         #endregion
         public async Task<int> Add(ApplicationUser ApplicationUser)
         {
-            var ApplicationUserIdParameter = base.GetParameterOut(ApplicationUserInfrastructure.ApplicationUserIdParameterName, SqlDbType.BigInt, ApplicationUser.ApplicationUserId);
+            var ApplicationUserIdParameter = base.GetParameterOut("P_ApplicationUserId", SqlDbType.BigInt, ApplicationUser.ApplicationUserId);
             var parameters = new List<DbParameter>
                 {
-                         ApplicationUserIdParameter,
-                        base.GetParameter(ApplicationUserInfrastructure.UsernameParameterName,ApplicationUser.UserName)
-                        ,base.GetParameter(ApplicationUserInfrastructure.EmailParameterName,ApplicationUser.Email)
-                        ,base.GetParameter(ApplicationUserInfrastructure.FirstnameParameterName,ApplicationUser.FirstName)
-                        ,base.GetParameter(ApplicationUserInfrastructure.LastnameParameterName,ApplicationUser.LastName)
-                        ,base.GetParameter(ApplicationUserInfrastructure.PasswordHashParameterName,ApplicationUser.PasswordHash)
-                        ,base.GetParameter(ApplicationUserInfrastructure.CreatedDateParameterName,ApplicationUser.CreatedDate)
-                        ,base.GetParameter(ApplicationUserInfrastructure.CreatedByIdParameterName,ApplicationUser.CurrentUserId)
-                        ,base.GetParameter(ApplicationUserInfrastructure.ActiveParameterName,ApplicationUser.IsActive)
+                ApplicationUserIdParameter,
+                base.GetParameter("P_Email",ApplicationUser.Email),
+                base.GetParameter("p_Phone",ApplicationUser.Phone),
+                base.GetParameter("P_FirstName",ApplicationUser.FirstName),
+                base.GetParameter("P_LastName",ApplicationUser.LastName),
+                base.GetParameter("P_PasswordHash",ApplicationUser.PasswordHash),
+                base.GetParameter("P_CreatedById",ApplicationUser.CurrentUserId),
+                base.GetParameter("P_UserRoleId",ApplicationUser.UserRoleId)
 
                 };
-            await base.ExecuteNonQuery(parameters, ApplicationUserInfrastructure.AddStoredProcedureName, CommandType.StoredProcedure);
+            await base.ExecuteNonQuery(parameters, "AddApplicationUserGB", CommandType.StoredProcedure);
             ApplicationUser.ApplicationUserId = Convert.ToInt32(ApplicationUserIdParameter.Value);
             return ApplicationUser.ApplicationUserId;
         }
@@ -75,7 +74,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 ,base.GetParameter(ApplicationUserInfrastructure.LastnameParameterName,ApplicationUser.LastName)
                 ,base.GetParameter(ApplicationUserInfrastructure.ModifiedDateParameterName,ApplicationUser.ModifiedDate)
                 ,base.GetParameter(ApplicationUserInfrastructure.CurrentUserIdParameterName,ApplicationUser.CurrentUserId)
-                ,base.GetParameter(ApplicationUserInfrastructure.ModifiedByIdParameterName,ApplicationUser.ModifiedById)
+                ,base.GetParameter(ApplicationUserInfrastructure.ModifiedByIdParameterName,ApplicationUser.UpdatedBy)
                 ,base.GetParameter(ApplicationUserInfrastructure.ActiveParameterName,ApplicationUser.IsActive)
 
             };
