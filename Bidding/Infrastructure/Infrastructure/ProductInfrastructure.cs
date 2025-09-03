@@ -781,6 +781,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.Size = dataReader.GetStringValue("size");
                             item.IsEcommerce = dataReader.GetBooleanValue("isEcommerce");
                             item.IsEngravingAvailable = dataReader.GetBooleanValue("isEngravingAvailable");
+                            item.IsSizeAlterationAvailable = dataReader.GetBooleanValue("isSizeAlterationAvailable");
                             item.LacquerPrice = dataReader.GetDecimalValue("lacquerPrice");
                             item.MakingPrice = dataReader.GetDecimalValue("makingPrice");
                             item.TotalPrice = dataReader.GetDecimalValue("totalPrice");
@@ -1176,6 +1177,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.Size = dataReader.GetStringValue("size");
                             item.IsEcommerce = dataReader.GetBooleanValue("isEcommerce");
                             item.IsEngravingAvailable = dataReader.GetBooleanValue("isEngravingAvailable");
+                            item.IsSizeAlterationAvailable = dataReader.GetBooleanValue("isSizeAlterationAvailable");
                             item.LacquerPrice = dataReader.GetDecimalValue("lacquerPrice");
                             item.MakingPrice = dataReader.GetDecimalValue("makingPrice");
                             item.TotalPrice = dataReader.GetDecimalValue("totalPrice");
