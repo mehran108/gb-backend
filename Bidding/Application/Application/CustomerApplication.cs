@@ -54,5 +54,9 @@ namespace GoldBank.Application.Application
         {
             return await CustomerInfrastructure.Delete(customer);
         }
+        public async Task<List<CustomerSummary>> GetCustomerSummary(int customerId)
+        {
+            return await CustomerInfrastructure.GetCustomerSummary(customerId);
+        }
     }
 }

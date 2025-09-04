@@ -44,6 +44,13 @@ namespace GoldBank.Controllers
             res.PasswordHash = "";
             return res;
         }
+        
+        [HttpGet("GetCustomerSummary")]
+        public async Task<List<CustomerSummary>> GetCustomerSummary([FromQuery] int customerId)
+        {
+            var res = await this.customerApplication.GetCustomerSummary(customerId);
+            return res;
+        }
 
 
         [HttpPost("GetAll")]

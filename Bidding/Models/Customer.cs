@@ -33,5 +33,14 @@
         public decimal? TotalWeightPurchased { get; set; }
         public int? TotalPurchase { get; set; }
     }
+    public class CustomerSummary
+    {
+        public int InvoiceNumber { get; set; }
+        public DateTime PurchaseDate {  get; set; }
+        public string Branch {  get; set; }
+        public decimal Amount { get; set; }
+        public string OrderType { get; set; }
+        public int OrderId { get; set; }
+    }
 
 }

@@ -218,6 +218,35 @@ namespace GoldBank.Infrastructure.Infrastructure
             await base.ExecuteNonQuery(parameters, "DeleteCustomer_gb", CommandType.StoredProcedure);
             return true;
         }
+        public async Task<List<CustomerSummary>> GetCustomerSummary(int customerId)
+        {
+            var res = new List<CustomerSummary>();
+            var parameters = new List<DbParameter>
+            {
+            base.GetParameter("p_CustomerId",customerId)
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetCustomerSummary_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    {
+                        while (dataReader.Read())
+                        {
+                            var item = new CustomerSummary();
+                            item.Amount = dataReader.GetDecimalValue("amount");
+                            item.InvoiceNumber = dataReader.GetIntegerValue("InvoiceNumber");
+                            item.PurchaseDate = dataReader.GetDateTimeValue("purchaseDate");
+                            item.Branch = dataReader.GetStringValue("branch");
+                            item.OrderId = dataReader.GetIntegerValue("orderId");
+                            item.OrderType = dataReader.GetStringValue("orderType");
+                            res.Add(item);
+                        }
+                    }
+                }
+            }
+            return res;
+
+        }
         public async Task<AllResponse<Customer>> GetAll(AllRequest<Customer> entity)
         {
             if (entity.SearchText == null)
