@@ -16,4 +16,9 @@
         public decimal? PaymentReceived { get; set; }
         public int? OrderStatusId { get; set; }
     }
+    public class OrderStatusCount
+    {
+        public int TotalOrders { get; set; }
+        public int OrderStatusId { get; set; }
+    }
 }

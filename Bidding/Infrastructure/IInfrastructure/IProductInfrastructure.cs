@@ -16,6 +16,7 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<Order> GetOrderById(int orderId);
         Task<bool> UpdateOrderById(OrderStatusReqVm order);
         Task<bool> DeleteOrder(Order orderId);
+        Task<List<OrderStatusCount>> GetOrderStatusByTypeId(int orderTypeId);
         Task<int> AddAlterationDetails (AlterationDetails alterationDetails);
         Task<bool> UpdateAlterationDetails(AlterationDetails alterationDetails);
         Task<int> AddVendor(Vendor Vendor);

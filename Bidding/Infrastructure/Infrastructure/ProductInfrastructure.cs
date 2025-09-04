@@ -2103,6 +2103,28 @@ namespace GoldBank.Infrastructure.Infrastructure
             var succeed = parameters.Get<int>("o_updated");
             return succeed == 1;
         }
+        public async Task<List<OrderStatusCount>> GetOrderStatusByTypeId(int orderTypeId)
+        {
+            var result = new List<OrderStatusCount>();
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_OrderTypeId", orderTypeId)
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetOrderStatusSummary_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new OrderStatusCount();
+                        item.OrderStatusId = dataReader.GetIntegerValue("orderStatusId");
+                        item.TotalOrders = dataReader.GetIntegerValue("totalOrders");
+                        result.Add(item);
+                    }
+                }
+            }
+                return result;
+        }
         #endregion
 
         #region Alteration Details

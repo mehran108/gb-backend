@@ -90,6 +90,10 @@ namespace GoldBank.Application.Application
         {
             return await this.ProductInfrastructure.DeleteOrder(orderId);
         }
+        public async Task<List<OrderStatusCount>> GetOrderStatusByTypeId(int orderTypeId)
+        {
+            return await this.ProductInfrastructure.GetOrderStatusByTypeId(orderTypeId);
+        }
         public async Task<int> AddVendor(Vendor Vendor)
         {
             return await ProductInfrastructure.AddVendor(Vendor);

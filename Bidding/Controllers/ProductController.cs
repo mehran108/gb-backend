@@ -91,6 +91,11 @@ namespace GoldBank.Controllers
         {
             return await this.ProductApplication.DeleteOrder(orderId);
         }
+        [HttpGet("GetOrderStatusByTypeId")]
+        public async Task<List<OrderStatusCount>> GetOrderStatusByTypeId([FromQuery]int orderTypeId)
+        {
+            return await this.ProductApplication.GetOrderStatusByTypeId(orderTypeId);
+        }
 
         [HttpPost("BulkImport")]
         public async Task<bool> BulkImport(Document document)
