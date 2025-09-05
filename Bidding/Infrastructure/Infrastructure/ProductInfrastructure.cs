@@ -2119,6 +2119,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         var item = new OrderStatusCount();
                         item.OrderStatusId = dataReader.GetIntegerValue("orderStatusId");
                         item.TotalOrders = dataReader.GetIntegerValue("totalOrders");
+                        item.Description = dataReader.GetStringValue("description");
                         result.Add(item);
                     }
                 }

@@ -20,5 +20,6 @@
     {
         public int TotalOrders { get; set; }
         public int OrderStatusId { get; set; }
+        public string Description { get; set; }
     }
 }
