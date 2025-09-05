@@ -1858,7 +1858,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             try
             {
                 int alterationDetailsId = order.AlterationDetails?.AlterationDetailsId == null ? 0 : order.AlterationDetails.AlterationDetailsId;
-                if (order.Product != null && order.OrderTypeId != 5 && order.OrderTypeId != 9)
+                if (order.Product != null && order.OrderTypeId != 5 && order.OrderTypeId != 9 && order.OrderTypeId != 8)
                 {
                     // Pass connection and transaction to reuse Add logic
                     bool isUpdate = await this.UpdateProduct(order.Product, connection, transaction);
