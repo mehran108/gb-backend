@@ -612,7 +612,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 await connection.ExecuteAsync("ConfirmVendorPayment_Gb", parameters, transaction, commandType: CommandType.StoredProcedure);
                 var succeed = parameters.Get<int>("o_Success");
                 response = succeed == 1;
-                if (response && confirmPaymentRequest.PaymentDocumentRM.Count > 0)
+                if (response && confirmPaymentRequest.PaymentDocumentRM?.Count > 0)
                 {
                     foreach (var paymentOrder in confirmPaymentRequest.PaymentDocumentRM)
                     {
