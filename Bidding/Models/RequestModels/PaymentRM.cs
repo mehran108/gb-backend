@@ -101,7 +101,7 @@
         public int? ProductId { get; set; }
         public string Notes { get; set; }
         public int CreatedBy { get; set; }
-        public List<OnlinePaymentDocumentRM> PaymentDocumentRM { get; set; }
+        public List<OnlinePaymentDocumentRM>? PaymentDocumentRM { get; set; }
     }
 
 }
