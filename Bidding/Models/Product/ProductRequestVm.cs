@@ -22,6 +22,8 @@
         public decimal? WastageWeight { get; set; }
         public decimal? WastagePct { get; set; }
         public decimal? TotalWeight { get; set; }
+        public decimal? MinWeight { get; set; }
+        public decimal? MaxWeight { get; set; }
         public string? Width { get; set; }
         public string? Bandwidth { get; set; }
         public string? Thickness { get; set; }
@@ -39,5 +41,7 @@
         public bool? IsSold { get; set; }
         public bool? IsReserved { get; set; }
         public int? KaatCategoryId { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
     }
 }
