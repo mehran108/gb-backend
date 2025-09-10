@@ -1449,7 +1449,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                 base.GetParameter("@p_AdvancePayment", ToDbValue(product.Data.AdvancePayment)),
                 base.GetParameter("@p_PendingPayment", ToDbValue(product.Data.PendingPayment)),
                 base.GetParameter("@p_PaymentReceived", ToDbValue(product.Data.PaymentReceived)),
-                base.GetParameter("@p_OrderStatusId", ToDbValue(product.Data.OrderStatusId))
+                base.GetParameter("@p_OrderStatusId", ToDbValue(product.Data.OrderStatusId)),
+                base.GetParameter("@p_IsFromInventory", ToDbValue(product.Data.IsFromInventory))
             };
 
             using (var dataReader = await base.ExecuteReader(parameters, "GetAllOrdersGb", CommandType.StoredProcedure))

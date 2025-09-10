@@ -15,6 +15,7 @@
         public decimal? PendingPayment { get; set; }
         public decimal? PaymentReceived { get; set; }
         public int? OrderStatusId { get; set; }
+        public bool? IsFromInventory { get; set; }
     }
     public class OrderStatusCount
     {
