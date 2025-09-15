@@ -303,7 +303,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             customerItem.RingSize = dataReader.GetStringValue("ringSize");
                             customerItem.BangleSize = dataReader.GetStringValue("bangleSize");
                             customerItem.Tag = dataReader.GetStringValue("tag");
-
+                            customerItem.CustomerCategoryDescription = dataReader.GetStringValue("customerCategoryDescription");
                             result.Data.Add(customerItem);
                         }
                         if (!dataReader.IsClosed)

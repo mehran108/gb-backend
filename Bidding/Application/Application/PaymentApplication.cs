@@ -64,6 +64,10 @@ namespace GoldBank.Application.Application
         {
             return await this.PaymentInfrastructure.ConfirmPayment(confirmPaymentRequest);
         }
+        public async Task<OnlinePaymentSummary> GetOnlinePaymentSummary()
+        {
+            return await this.PaymentInfrastructure.GetOnlinePaymentSummary();
+        }
         public async Task<bool?> CheckOnlinePaymentStatus(int onlinePaymentId)
         {
             return await this.PaymentInfrastructure.CheckOnlinePaymentStatus(onlinePaymentId);

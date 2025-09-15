@@ -71,6 +71,11 @@ namespace GoldBank.Controllers
         {
             return await this.PaymentApplication.ConfirmPayment(confirmPaymentRequest);
         }
+        [HttpPost("GetOnlinePaymentSummary")]
+        public async Task<OnlinePaymentSummary> GetOnlinePaymentSummary()
+        {
+            return await this.PaymentApplication.GetOnlinePaymentSummary();
+        }
         [HttpGet("CheckOnlinePaymentStatus")]
         public async Task<ActionResult<bool?>> CheckOnlinePaymentStatus([FromQuery] int onlinePaymentId)
         {

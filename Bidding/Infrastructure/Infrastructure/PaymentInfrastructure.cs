@@ -319,6 +319,27 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return response;
         }
+        public async Task<OnlinePaymentSummary> GetOnlinePaymentSummary()
+        {
+            var res = new OnlinePaymentSummary();
+            var parameters = new List<DbParameter>
+            {
+
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAllOnlinePaymentSummary_gb", CommandType.StoredProcedure))
+            {
+                if (dataReader != null)
+                {
+                    while (dataReader.Read())
+                    {
+                        res.Rejected = dataReader.GetIntegerValue("rejected");
+                        res.Passed = dataReader.GetIntegerValue("passed");
+                        res.Pending = dataReader.GetIntegerValue("pending");
+                    }
+                }
+            }
+            return res;
+        }
         public async Task<bool?> CheckOnlinePaymentStatus(int onlinePaymentId)
         {
             using var connection = base.GetConnection();
@@ -366,7 +387,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                  base.GetParameter("p_PageNumber", Payment.Offset),
                  base.GetParameter("p_PageSize", Payment.PageSize),
                  base.GetParameter("p_CustomerId", Payment.Data.CustomerId),
-                 base.GetParameter("p_IsVerificationRequested", Payment.Data.IsVerficationPassed),
+                 base.GetParameter("p_IsVerificationRequested", Payment.Data.IsVerficationRequested),
                  base.GetParameter("p_IsVerficationFailed", Payment.Data.IsVerficationFailed),
                  base.GetParameter("p_IsVerficationPassed",Payment.Data.IsVerficationPassed)
             };
