@@ -453,7 +453,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                         {
                             StoreId = dataReader.GetIntegerValue("StoreId"),
                             Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
-                            Location = dataReader.GetStringValue("location")
+                            Location = dataReader.GetStringValue("location"),
+                            AvailableCash = dataReader.GetDecimalValue("availableCash"),
+                            InFlows = dataReader.GetDecimalValue("inFlows"),
+                            OutFlows = dataReader.GetDecimalValue("outFlows")
                         });
                     }
                 }
@@ -571,7 +574,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                         {
                             CompanyAccountId = dataReader.GetIntegerValue("CompanyAccountId"),
                             Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
-                            BankAccountId = dataReader.GetIntegerValue("bankAccountId")
+                            BankAccountId = dataReader.GetIntegerValue("bankAccountId"),
+                            InFlows = dataReader.GetDecimalValue("inFlows"),
+                            OutFlows = dataReader.GetDecimalValue("outFlows"),
+                            CurrentBalance = dataReader.GetDecimalValue("currentBalance")
                         });
                     }
                 }
