@@ -26,4 +26,10 @@
         public string CustomerLastName { get; set; }
         
     }
+    public class OnlinePaymentSummary
+    {
+        public int Pending {  get; set; }
+        public int Passed { get; set; }
+        public int Rejected { get; set; }
+    }
 }
