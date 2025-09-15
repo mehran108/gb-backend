@@ -366,7 +366,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                  base.GetParameter("p_PageNumber", Payment.Offset),
                  base.GetParameter("p_PageSize", Payment.PageSize),
                  base.GetParameter("p_CustomerId", Payment.Data.CustomerId),
-                 base.GetParameter("p_IsVerificationRequested", Payment.Data.IsVerficationPassed),
+                 base.GetParameter("p_IsVerificationRequested", Payment.Data.IsVerficationRequested),
                  base.GetParameter("p_IsVerficationFailed", Payment.Data.IsVerficationFailed),
                  base.GetParameter("p_IsVerficationPassed",Payment.Data.IsVerficationPassed)
             };
