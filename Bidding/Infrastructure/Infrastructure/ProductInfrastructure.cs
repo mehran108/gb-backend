@@ -1293,7 +1293,19 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return Product;
         }
+        public async Task<bool> DeleteProduct(Product product)
+        {
+            using var connection = base.GetConnection();
+            var parameters = new DynamicParameters();
+            parameters.Add("p_ProductId", product.ProductId);
+            parameters.Add("P_UpdatedBy", product.UpdatedBy);
+            parameters.Add("o_updated", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
+            await connection.ExecuteAsync("DeleteProductById_gb", parameters, commandType: CommandType.StoredProcedure);
+            var succeed = parameters.Get<int>("o_updated");
+            return succeed == 1;
+
+        }
         #endregion
 
         #region Order Details

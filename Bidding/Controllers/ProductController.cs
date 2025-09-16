@@ -44,6 +44,11 @@ namespace GoldBank.Controllers
             var product = new Product { ProductId = productId };
             return await ProductApplication.Get(product);
         }
+        [HttpPost("DeleteProduct")]
+        public async Task<bool> DeleteProduct(Product product)
+        {
+            return await this.ProductApplication.DeleteProduct(product);
+        }
         [HttpPost("GetAll")]
         public async Task<AllResponse<Product>> GetList([FromBody] AllRequest<ProductRequestVm> product)
         {

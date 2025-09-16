@@ -10,6 +10,7 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<bool> BulkImport(Document document);
         Task<AllResponse<Product>> GetAllProducts(AllRequest<ProductRequestVm> product);
         Task<Product> GetProductById(int productId);
+        Task<bool> DeleteProduct(Product product);
         Task<int> AddOrder(Order order);
         Task<AllResponse<Order>> GetAllOrders(AllRequest<OrderRequestVm> order);
         Task<bool> UpdateOrder(Order order);

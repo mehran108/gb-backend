@@ -66,6 +66,10 @@ namespace GoldBank.Application.Application
         {
             return await ProductInfrastructure.GetProductById(productId);
         }
+        public async Task<bool> DeleteProduct(Product product)
+        {
+            return await this.ProductInfrastructure.DeleteProduct(product);
+        }
         public async Task<int> AddOrder(Order order)
         {
             return await ProductInfrastructure.AddOrder(order);
