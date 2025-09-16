@@ -1140,6 +1140,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.StoreId = dataReader.GetIntegerValue("storeId");
                         item.CreatedAt = dataReader.GetDateTime("createdAt");
                         item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        item.UpdatedAt = dataReader.GetDateTimeValue("updatedAt");
                         item.Title = dataReader.GetStringValue("title");
                         item.ReferenceSKU = dataReader.GetStringValue("referenceSKU");
                         item.IsSold = dataReader.GetBooleanValue("isSold");
