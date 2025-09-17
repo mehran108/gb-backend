@@ -40,6 +40,7 @@ namespace GoldBank.Models
         public string? StoreIds { get; set; }
         public string? CodeStatus {  get; set; }
         public bool IsValid {  get; set; }
+        public string? CustomerPhoneNumber { get; set; }
 
     }
 }

@@ -177,6 +177,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.LoyaltyCardTypeId = dataReader.GetIntegerValue("LoyaltyCardTypeId");
                         discount.VoucherTypeId = dataReader.GetIntegerValue("VoucherTypeId");
                         discount.PrimaryCategories = dataReader.GetStringValue("PrimaryCategories");
+                        discount.CustomerPhoneNumber = dataReader.GetStringValue("CustomerPhoneNumber");
                         discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
                         discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
                         discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
