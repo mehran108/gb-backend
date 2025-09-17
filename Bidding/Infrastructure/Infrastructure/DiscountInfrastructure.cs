@@ -150,6 +150,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                 base.GetParameter("p_PageNumber", entity.Offset),
                 base.GetParameter("p_PageSize", entity.PageSize),
+                base.GetParameter("p_SearchText",entity.SearchText),
                 base.GetParameter("p_DiscountTypeId", entity.Data.DiscountTypeId > 0 ? (object)entity.Data.DiscountTypeId : DBNull.Value)
             };
             using (var dataReader = await base.ExecuteReader(parameters, "GetAllDiscount_gb", CommandType.StoredProcedure))

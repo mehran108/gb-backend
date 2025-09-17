@@ -3,6 +3,7 @@
     public class DiscountRM
     {
         public int? DiscountTypeId { get; set; }
+        public string? SearchText { get; set; }
     }
     public class DiscountURM
     {
