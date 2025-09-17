@@ -23,5 +23,6 @@ namespace GoldBank.Models.Product
         public int? KaatCategoryId { get; set; }
         public decimal VendorAmount { get; set; }
         public Discount? DiscountDetails { get; set; }
+        public DateTime? InventoryUploadDate { get; set; }
     }
 }
