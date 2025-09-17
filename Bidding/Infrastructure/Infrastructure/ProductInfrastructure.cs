@@ -551,10 +551,11 @@ namespace GoldBank.Infrastructure.Infrastructure
                     await transaction.RollbackAsync();
                     return false;
                 }
-
+                product.IsDeletedDocumentIds = "";
                 // Product Documents
                 if (product.ProductDocuments?.Count > 0)
                 {
+                    product.IsDeletedDocumentIds = string.Join(",", product.ProductDocuments.Select(doc => doc.DocumentId));
                     foreach (var doc in product.ProductDocuments)
                     {
                         await connection.ExecuteAsync(
@@ -609,6 +610,11 @@ namespace GoldBank.Infrastructure.Infrastructure
 
                         if (stone.StoneDocuments?.Count > 0)
                         {
+                            if (!string.IsNullOrEmpty(product.IsDeletedDocumentIds))
+                            {
+                                product.IsDeletedDocumentIds += "," + string.Join(",", stone.StoneDocuments.Select(doc => doc.DocumentId));
+                            }
+
                             foreach (var doc in stone.StoneDocuments)
                             {
                                 await connection.ExecuteAsync(
@@ -647,6 +653,16 @@ namespace GoldBank.Infrastructure.Infrastructure
                                 commandType: CommandType.StoredProcedure
                             );
                         }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(product.IsDeletedDocumentIds))
+                {
+                    int deletedCount = await this.DeleteDocuments(product.IsDeletedDocumentIds, product.UpdatedBy ?? 0, connection, transaction);
+                    if (deletedCount <= 0)
+                    {
+                        await transaction.RollbackAsync();
+                        return false;
                     }
                 }
                 if (isOwnConnection)
@@ -1986,7 +2002,15 @@ namespace GoldBank.Infrastructure.Infrastructure
                         );
                     }
                 }
-
+                if (!string.IsNullOrEmpty(order.IsDeletedDocumentIds))
+                {
+                    int deletedCount = await this.DeleteDocuments(order.IsDeletedDocumentIds, order.UpdatedBy ?? 0, connection, transaction);
+                    if (deletedCount <= 0)
+                    {
+                        await transaction.RollbackAsync();
+                        throw new Exception("Failed to update Order.");
+                    }
+                }
                 // Commit transaction only if everything succeeded
                 await transaction.CommitAsync();
                 return order.OrderId > 0;
@@ -3867,6 +3891,44 @@ namespace GoldBank.Infrastructure.Infrastructure
                 }
             }
             return assetSummary;
+        }
+        #endregion
+        #region Common Method
+        private async Task<int> DeleteDocuments(string documentIds, int updatedBy, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        {
+            var isOwnConnection = externalConnection == null;
+            DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
+            DbTransaction transaction = externalTransaction != null ? (DbTransaction)externalTransaction : await connection.BeginTransactionAsync();
+
+            try
+            {
+                var deletedCount = 0;
+                var parameters = new DynamicParameters();
+                parameters.Add("p_DocumentId", documentIds);
+                parameters.Add("p_UpdatedBy", updatedBy);
+                parameters.Add("o_Updated", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+
+                await connection.ExecuteAsync(
+                   "DeleteDocuments_gb",
+                   parameters,
+                   transaction: transaction,
+                   commandType: CommandType.StoredProcedure
+               );
+
+                return deletedCount = parameters.Get<int>("o_Updated");
+            }
+            catch (Exception ex)
+            {
+                if (isOwnConnection)
+                    await transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (isOwnConnection)
+                    await connection.DisposeAsync();
+            }
         }
         #endregion
     }

@@ -35,6 +35,7 @@
         public ExchangeDetail? ExchangeDetails { get; set; }
         public GoldBookingDetail? GoldBookingDetails { get; set; }
         public GiftCardDetail? GiftCardDetails { get; set; }
+        public string? IsDeletedDocumentIds { get; set; }
     }
 
     public class OrderStatusReqVm : BaseDomain
