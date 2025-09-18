@@ -553,11 +553,13 @@ namespace GoldBank.Infrastructure.Infrastructure
                     await transaction.RollbackAsync();
                     return false;
                 }
-                product.IsDeletedDocumentIds = "";
+                var deleteDocuments = new DeleteDocumentRequest();
+                deleteDocuments.DocumentIds = "";
+                deleteDocuments.ProductId = productId;
                 // Product Documents
                 if (product.ProductDocuments?.Count > 0)
                 {
-                    product.IsDeletedDocumentIds = string.Join(",", product.ProductDocuments.Select(doc => doc.DocumentId));
+                    deleteDocuments.DocumentIds = string.Join(",", product.ProductDocuments.Select(doc => doc.DocumentId));
                     foreach (var doc in product.ProductDocuments)
                     {
                         await connection.ExecuteAsync(
@@ -612,9 +614,9 @@ namespace GoldBank.Infrastructure.Infrastructure
 
                         if (stone.StoneDocuments?.Count > 0)
                         {
-                            if (!string.IsNullOrEmpty(product.IsDeletedDocumentIds))
+                            if (!string.IsNullOrEmpty(deleteDocuments.DocumentIds))
                             {
-                                product.IsDeletedDocumentIds += "," + string.Join(",", stone.StoneDocuments.Select(doc => doc.DocumentId));
+                                deleteDocuments.DocumentIds += "," + string.Join(",", stone.StoneDocuments.Select(doc => doc.DocumentId));
                             }
 
                             foreach (var doc in stone.StoneDocuments)
@@ -632,6 +634,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                                     commandType: CommandType.StoredProcedure);
                             }
                         }
+                        deleteDocuments.StoneId = stoneId;
+                        await this.DeleteDocuments(deleteDocuments, connection, transaction);                        
                     }
                 }
                 if (product.ProductSourceId == 3)
@@ -657,16 +661,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         }
                     }
                 }
-
-                if (!string.IsNullOrEmpty(product.IsDeletedDocumentIds))
-                {
-                    int deletedCount = await this.DeleteDocuments(product.IsDeletedDocumentIds, product.UpdatedBy ?? 0, connection, transaction);
-                    if (deletedCount <= 0)
-                    {
-                        await transaction.RollbackAsync();
-                        return false;
-                    }
-                }
+                await this.DeleteDocuments(deleteDocuments, connection, transaction);                
                 if (isOwnConnection)
                     await transaction.CommitAsync();
                 return true;
@@ -2007,15 +2002,6 @@ namespace GoldBank.Infrastructure.Infrastructure
                         );
                     }
                 }
-                if (!string.IsNullOrEmpty(order.IsDeletedDocumentIds))
-                {
-                    int deletedCount = await this.DeleteDocuments(order.IsDeletedDocumentIds, order.UpdatedBy ?? 0, connection, transaction);
-                    if (deletedCount <= 0)
-                    {
-                        await transaction.RollbackAsync();
-                        throw new Exception("Failed to update Order.");
-                    }
-                }
                 // Commit transaction only if everything succeeded
                 await transaction.CommitAsync();
                 return order.OrderId > 0;
@@ -2224,10 +2210,14 @@ namespace GoldBank.Infrastructure.Infrastructure
                     await transaction.RollbackAsync();
                     return false;
                 }
-
+                var deleteDocuments = new DeleteDocumentRequest();
+                deleteDocuments.AlterationDetailId = alterationDetailsId;
+                deleteDocuments.DocumentIds = "";
                 // Product Documents
                 foreach (var doc in alterationDetails.Documents ?? Enumerable.Empty<AlterationDetailsDocument>())
                 {
+                    deleteDocuments.DocumentIds = string.Join(",", alterationDetails.Documents.Select(doc => doc.DocumentId));
+
                     await connection.ExecuteAsync("InsertUpdateAlterationDetailsDocumentGb", new
                     {
                         p_AlterationDetailsId = alterationDetailsId,
@@ -2239,7 +2229,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                     },
                     transaction: transaction,
                     commandType: CommandType.StoredProcedure);
+
                 }
+                await this.DeleteDocuments(deleteDocuments, connection, transaction);
 
                 // Stone Products and Documents
                 foreach (var stone in alterationDetails.Stones ?? Enumerable.Empty<StoneAlteration>())
@@ -2723,12 +2715,20 @@ namespace GoldBank.Infrastructure.Infrastructure
                 );
 
                 int RepairDetailId = parameters.Get<int>("o_RepairDetailId");
+                
 
                 if (RepairDetailId > 0) // updated successfully
                 {
+                    var deleteDocuments = new DeleteDocumentRequest();
+                    deleteDocuments.RepairDetailId = RepairDetailId;
+                    deleteDocuments.DocumentIds = "";
+                    deleteDocuments.DocumentIds = (repairDetails?.RepairDocuments != null && repairDetails.RepairDocuments.Any()) ?
+                        string.Join(",", repairDetails.RepairDocuments.Select(doc => doc.DocumentId)) : null;
                     // Repair Documents
                     foreach (var doc in repairDetails.RepairDocuments ?? Enumerable.Empty<RepairDocument>())
                     {
+                        deleteDocuments.DocumentIds = string.Join(",", repairDetails.RepairDocuments.Select(doc => doc.DocumentId));
+
                         await connection.ExecuteAsync("AddUpdateRepairDocumentGb", new
                         {
                             p_RepairDocumentId = doc.RepairDocumentId,
@@ -2742,6 +2742,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         transaction: transaction,
                         commandType: CommandType.StoredProcedure);
                     }
+                    await this.DeleteDocuments(deleteDocuments, connection, transaction);
 
                     foreach (var doc in repairDetails.RepairStoneDetails ?? Enumerable.Empty<RepairStoneDetails>())
                     {
@@ -2906,6 +2907,11 @@ namespace GoldBank.Infrastructure.Infrastructure
 
                 if (o_IsUpdated > 0)
                 {
+                    var deleteDocuments = new DeleteDocumentRequest();
+                    deleteDocuments.AppraisalDetailId = appraisalDetails.AppraisalDetailId;
+                    deleteDocuments.DocumentIds = "";
+                    deleteDocuments.DocumentIds = (appraisalDetails?.AppraisalDocuments != null && appraisalDetails.AppraisalDocuments.Any()) ?
+                        string.Join(",", appraisalDetails.AppraisalDocuments.Select(doc => doc.DocumentId)) : null;
                     // Repair Documents
                     foreach (var doc in appraisalDetails.AppraisalDocuments ?? Enumerable.Empty<AppraisalDocument>())
                     {
@@ -2920,6 +2926,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         transaction: transaction,
                         commandType: CommandType.StoredProcedure);
                     }
+                    await this.DeleteDocuments(deleteDocuments, connection, transaction);
 
                     foreach (var doc in appraisalDetails.AppraisalStoneDetails ?? Enumerable.Empty<AppraisalStoneDetail>())
                     {
@@ -3129,6 +3136,11 @@ namespace GoldBank.Infrastructure.Infrastructure
 
                 if (o_IsUpdated > 0)
                 {
+                    var deleteDocuments = new DeleteDocumentRequest();
+                    deleteDocuments.RepairDetailId = exchangeDetails.ExchangeDetailId;
+                    deleteDocuments.DocumentIds = "";
+                    deleteDocuments.DocumentIds = (exchangeDetails?.ExchangeDocuments != null && exchangeDetails.ExchangeDocuments.Any()) ?
+                        string.Join(",", exchangeDetails.ExchangeDocuments.Select(doc => doc.DocumentId)) : null;
                     // Repair Documents
                     foreach (var doc in exchangeDetails.ExchangeDocuments ?? Enumerable.Empty<ExchangeDocument>())
                     {
@@ -3143,6 +3155,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         transaction: transaction,
                         commandType: CommandType.StoredProcedure);
                     }
+                    await this.DeleteDocuments(deleteDocuments, connection, transaction);
+
                 }
                 else
                 {
@@ -3899,7 +3913,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         }
         #endregion
         #region Common Method
-        private async Task<int> DeleteDocuments(string documentIds, int updatedBy, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
+        private async Task<int> DeleteDocuments(DeleteDocumentRequest request, IDbConnection? externalConnection = null, IDbTransaction? externalTransaction = null)
         {
             var isOwnConnection = externalConnection == null;
             DbConnection connection = externalConnection != null ? (DbConnection)externalConnection : base.GetConnection();
@@ -3909,8 +3923,15 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                 var deletedCount = 0;
                 var parameters = new DynamicParameters();
-                parameters.Add("p_DocumentId", documentIds);
-                parameters.Add("p_UpdatedBy", updatedBy);
+                parameters.Add("p_DocumentId", request.DocumentIds);
+                parameters.Add("p_UpdatedBy", request.UpdatedBy);
+                parameters.Add("p_AlterationDetailId", request.AlterationDetailId);
+                parameters.Add("p_ProductId", request.ProductId);
+                parameters.Add("p_CashManagementDetailId", request.CashManagementDetailId);
+                parameters.Add("p_ExchangeDetailId", request.ExchangeDetailId);
+                parameters.Add("p_RepairDetailId", request.RepairDetailId);
+                parameters.Add("p_AppraisalDetailId", request.AppraisalDetailId);
+                parameters.Add("p_StoneId", request.StoneId);
                 parameters.Add("o_Updated", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
 
