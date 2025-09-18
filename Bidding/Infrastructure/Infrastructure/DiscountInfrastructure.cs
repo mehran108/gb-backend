@@ -150,6 +150,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                 base.GetParameter("p_PageNumber", entity.Offset),
                 base.GetParameter("p_PageSize", entity.PageSize),
+                base.GetParameter("p_SearchText",entity.SearchText),
                 base.GetParameter("p_DiscountTypeId", entity.Data.DiscountTypeId > 0 ? (object)entity.Data.DiscountTypeId : DBNull.Value)
             };
             using (var dataReader = await base.ExecuteReader(parameters, "GetAllDiscount_gb", CommandType.StoredProcedure))
@@ -176,6 +177,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.LoyaltyCardTypeId = dataReader.GetIntegerValue("LoyaltyCardTypeId");
                         discount.VoucherTypeId = dataReader.GetIntegerValue("VoucherTypeId");
                         discount.PrimaryCategories = dataReader.GetStringValue("PrimaryCategories");
+                        discount.CustomerPhoneNumber = dataReader.GetStringValue("CustomerPhoneNumber");
                         discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
                         discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
                         discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");

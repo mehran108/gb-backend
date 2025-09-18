@@ -365,6 +365,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_SerialNumber", product.Jewellery.SerialNumber);
                 parameters.Add("P_KaatCategoryId", product.KaatCategoryId);
                 parameters.Add("P_VendorAmount", product.VendorAmount);
+                parameters.Add("p_InventoryUploadDate", product.InventoryUploadDate);
 
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
                 parameters.Add("o_JewelleryId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -531,6 +532,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_SerialNumber", product.Jewellery.SerialNumber);
                 parameters.Add("P_KaatCategoryId", product.KaatCategoryId);
                 parameters.Add("P_VendorAmount", product.VendorAmount);
+                parameters.Add("p_InventoryUploadDate", product.InventoryUploadDate);
 
                 // OUT parameters
                 parameters.Add("o_ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -768,6 +770,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.ReferenceOrderId = dataReader.GetIntegerValueNullable("referenceOrderId");                        
                         item.VendorAmount = dataReader.GetDecimalValue("vendorAmount");                        
                         item.KaatCategoryId = dataReader.GetIntegerValue("kaatCategoryId");                        
+                        item.InventoryUploadDate = dataReader.GetDateTimeValue("inventoryUploadDate");                        
 
                         ProductList.Add(item);
                     }
@@ -1165,6 +1168,8 @@ namespace GoldBank.Infrastructure.Infrastructure
 
                         item.VendorAmount = dataReader.GetDecimalValue("vendorAmount");
                         item.KaatCategoryId = dataReader.GetIntegerValue("kaatCategoryId");
+                        item.InventoryUploadDate = dataReader.GetDateTimeValue("inventoryUploadDate");
+
                         item.CustomCharge = new List<CustomCharge>();
                         Product = item;
                     }
