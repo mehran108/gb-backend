@@ -2,6 +2,7 @@
 using GoldBank.Infrastructure.Extension;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
+using GoldBank.Models.Product;
 using System.Data;
 using System.Data.Common;
 
@@ -312,7 +313,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         }
                     }
                 }
-                
+                result.TotalRecord = (int)(totalRecordParamter.Value ?? 0);
             }
             return result;
         }
