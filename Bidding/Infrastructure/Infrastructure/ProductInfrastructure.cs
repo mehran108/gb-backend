@@ -560,6 +560,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 if (product.ProductDocuments?.Count > 0)
                 {
                     deleteDocuments.DocumentIds = string.Join(",", product.ProductDocuments.Select(doc => doc.DocumentId));
+                    await this.DeleteDocuments(deleteDocuments, connection, transaction);
                     foreach (var doc in product.ProductDocuments)
                     {
                         await connection.ExecuteAsync(
@@ -616,9 +617,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                         {
                             if (!string.IsNullOrEmpty(deleteDocuments.DocumentIds))
                             {
-                                deleteDocuments.DocumentIds += "," + string.Join(",", stone.StoneDocuments.Select(doc => doc.DocumentId));
+                                deleteDocuments.DocumentIds = "," + string.Join(",", stone.StoneDocuments.Select(doc => doc.DocumentId));
                             }
-
+                            deleteDocuments.StoneId = stoneId;
+                            await this.DeleteDocuments(deleteDocuments, connection, transaction);
                             foreach (var doc in stone.StoneDocuments)
                             {
                                 await connection.ExecuteAsync(
@@ -633,9 +635,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                                     transaction,
                                     commandType: CommandType.StoredProcedure);
                             }
-                        }
-                        deleteDocuments.StoneId = stoneId;
-                        await this.DeleteDocuments(deleteDocuments, connection, transaction);                        
+                        }                        
                     }
                 }
                 if (product.ProductSourceId == 3)
