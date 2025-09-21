@@ -1516,6 +1516,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         Customer.FirstName = dataReader.GetStringValue("customerName");
 
                         Customer.CustomerId = item.CustomerId;
+                        item.Customer = Customer;
                         // item.Customer = await this.CustomerInfrastructure.Get(Customer);
 
                         item.Product = await this.GetProductById(item.ProductId);
