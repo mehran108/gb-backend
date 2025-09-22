@@ -22,6 +22,7 @@
         public DateTime? EndDate { get; set; }
         public decimal MinWeight { get; set; }
         public decimal MaxWeight { get; set; }
+        public int? DeliveryMethodId { get; set; }
     }
     public class OrderStatusCount
     {
