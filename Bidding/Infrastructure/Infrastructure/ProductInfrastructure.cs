@@ -1455,6 +1455,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                 base.GetParameter("@p_PageNumber", product.Offset),
                 base.GetParameter("@p_PageSize", ToDbValue(product.PageSize)),
+                base.GetParameter("@p_SearchText", ToDbValue(product.SearchText)),
                 base.GetParameter("@p_OrderId", ToDbValue(product.Data.OrderId)),
                 base.GetParameter("@p_CustomerId", ToDbValue(product.Data.CustomerId)),
                 base.GetParameter("@p_ProductId", ToDbValue(product.Data.ProductId)),
@@ -1468,7 +1469,11 @@ namespace GoldBank.Infrastructure.Infrastructure
                 base.GetParameter("@p_PendingPayment", ToDbValue(product.Data.PendingPayment)),
                 base.GetParameter("@p_PaymentReceived", ToDbValue(product.Data.PaymentReceived)),
                 base.GetParameter("@p_OrderStatusId", ToDbValue(product.Data.OrderStatusId)),
-                base.GetParameter("@p_IsFromInventory", ToDbValue(product.Data.IsFromInventory))
+                base.GetParameter("@p_IsFromInventory", ToDbValue(product.Data.IsFromInventory)),
+                base.GetParameter("@p_MetalTypeId", ToDbValue(product.Data.MetalTypeId)),
+                base.GetParameter("@p_CategoryId", ToDbValue(product.Data.CategoryId)),
+                base.GetParameter("@p_StartDate", ToDbValue(product.Data.StartDate)),
+                base.GetParameter("@p_EndDate", ToDbValue(product.Data.EndDate))
             };
 
             using (var dataReader = await base.ExecuteReader(parameters, "GetAllOrdersGb", CommandType.StoredProcedure))

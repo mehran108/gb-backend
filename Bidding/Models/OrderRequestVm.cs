@@ -16,6 +16,10 @@
         public decimal? PaymentReceived { get; set; }
         public int? OrderStatusId { get; set; }
         public bool? IsFromInventory { get; set; }
+        public int? MetalTypeId { get; set; }
+        public int? CategoryId { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
     }
     public class OrderStatusCount
     {
