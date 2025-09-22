@@ -1473,7 +1473,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                 base.GetParameter("@p_MetalTypeId", ToDbValue(product.Data.MetalTypeId)),
                 base.GetParameter("@p_CategoryId", ToDbValue(product.Data.CategoryId)),
                 base.GetParameter("@p_StartDate", ToDbValue(product.Data.StartDate)),
-                base.GetParameter("@p_EndDate", ToDbValue(product.Data.EndDate))
+                base.GetParameter("@p_EndDate", ToDbValue(product.Data.EndDate)),
+                base.GetParameter("@p_MinWeight", ToDbValue(product.Data.MinWeight)),
+                base.GetParameter("@p_MaxWeight", ToDbValue(product.Data.MaxWeight))
             };
 
             using (var dataReader = await base.ExecuteReader(parameters, "GetAllOrdersGb", CommandType.StoredProcedure))
