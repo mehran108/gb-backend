@@ -20,8 +20,8 @@
         public int? CategoryId { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public decimal MinWeight { get; set; }
-        public decimal MaxWeight { get; set; }
+        public decimal? MinWeight { get; set; }
+        public decimal? MaxWeight { get; set; }
         public int? DeliveryMethodId { get; set; }
     }
     public class OrderStatusCount
