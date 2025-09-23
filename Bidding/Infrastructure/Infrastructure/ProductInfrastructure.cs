@@ -1799,6 +1799,26 @@ namespace GoldBank.Infrastructure.Infrastructure
                         }
                     }
                 }
+                if (dataReader.NextResult())
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new AppraisalDocument();
+                        item.AppraisalDetailId = dataReader.GetIntegerValue("appraisalDetailId");
+                        item.AppraisalDocumentId = dataReader.GetIntegerValue("appraisalDocumentId");
+                        item.DocumentId = dataReader.GetIntegerValue("documentId");
+                        item.Url = dataReader.GetStringValue("url");
+                        item.IsPrimary = dataReader.GetBooleanValue("isPrimary");
+                        var OrderItem = OrderList.Find(o => o.AppraisalDetailsId == item.AppraisalDetailId);
+                        if (OrderItem != null && OrderItem.AppraisalDetails != null)
+                        {
+                            if (OrderItem.AppraisalDetails.AppraisalDocuments == null)
+                                OrderItem.AppraisalDetails.AppraisalDocuments = new List<AppraisalDocument> { item };
+
+                            OrderItem.AppraisalDetails.AppraisalDocuments.Add(item);
+                        }
+                    }
+                }
                 //ExchangeDetail
                 if (dataReader.NextResult())
                 {
