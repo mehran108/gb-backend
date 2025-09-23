@@ -1522,7 +1522,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.GoldBookingDetailsId = dataReader.GetIntegerValue("goldBookingDetailId");
                         item.GiftCardDetailsId = dataReader.GetIntegerValue("giftCardDetailId");
                         Customer.FirstName = dataReader.GetStringValue("customerName");
-
+                        Customer.Mobile = dataReader.GetStringValue("Mobile");
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = Customer;
                         // item.Customer = await this.CustomerInfrastructure.Get(Customer);
