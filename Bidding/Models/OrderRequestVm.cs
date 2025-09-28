@@ -17,6 +17,7 @@
         public int? OrderStatusId { get; set; }
         public bool? IsFromInventory { get; set; }
         public int? MetalTypeId { get; set; }
+        public int? StoneTypeId { get; set; }
         public int? CategoryId { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }

@@ -1471,6 +1471,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 base.GetParameter("@p_OrderStatusId", ToDbValue(product.Data.OrderStatusId)),
                 base.GetParameter("@p_IsFromInventory", ToDbValue(product.Data.IsFromInventory)),
                 base.GetParameter("@p_MetalTypeId", ToDbValue(product.Data.MetalTypeId)),
+                base.GetParameter("@p_StoneTypeId", ToDbValue(product.Data.StoneTypeId)),
                 base.GetParameter("@p_CategoryId", ToDbValue(product.Data.CategoryId)),
                 base.GetParameter("@p_StartDate", ToDbValue(product.Data.StartDate)),
                 base.GetParameter("@p_EndDate", ToDbValue(product.Data.EndDate)),
