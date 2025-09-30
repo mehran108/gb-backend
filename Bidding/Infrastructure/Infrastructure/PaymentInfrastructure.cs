@@ -594,6 +594,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         parameters.Add("p_VendorOnlinePaymentId", onlinePaymentId);
                         parameters.Add("p_DocumentId", paymentOrder.DocumentId);
                         parameters.Add("p_IsPrimary", paymentOrder.IsPrimary);
+                        parameters.Add("p_VendorPaymentId", onlinePaymentId);
                         parameters.Add("p_CreatedBy", paymentRM.CreatedBy);
 
                         await connection.ExecuteAsync("InsertVendorOnlinePaymentDocument_Gb", parameters, transaction, commandType: CommandType.StoredProcedure);
