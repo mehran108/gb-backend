@@ -682,6 +682,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         res.PaymentTypeId = dataReader.GetIntegerValue("paymentTypeId");
                         res.VendorPaymentTypeId = dataReader.GetIntegerValue("vendorPaymentTypeId");
                         res.Amount = dataReader.GetDecimalValue("amount");
+                        res.GoldAmount = dataReader.GetDecimalValue("goldAmount");
+                        res.VendorGoldPaymentTypeId = dataReader.GetIntegerValueNullable("vendorGoldPaymentTypeId");
                         res.CashAmount = dataReader.GetDecimalValue("cashAmount");
                         res.IsConfirmed = dataReader.GetBooleanValue("isConfirmed");
                         res.CreatedBy = dataReader.GetIntegerValue("createdBy");
