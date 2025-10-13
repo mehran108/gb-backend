@@ -26,6 +26,9 @@
         public int? ExchangeDetailsId { get; set; }
         public int? GoldBookingDetailsId { get; set; }
         public int? GiftCardDetailsId { get; set; }
+        public bool? IsEcommerceOrder { get; set; }
+        public bool? IsOnlinePosOrder { get; set; }
+
         public OrderStatus? OrderStatus { get; set; }
         public List<CustomCharge>? CustomCharge { get; set; }
         public OrderDelievery? OrderDelievery { get; set; }

@@ -1401,6 +1401,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_ExchangeDetailId", order.ExchangeDetailsId);
                 parameters.Add("p_GoldBookingDetailId", order.GoldBookingDetailsId);
                 parameters.Add("p_GiftCardDetailId", order.GiftCardDetailsId);
+                parameters.Add("p_IsEcommerceOrder", order.IsEcommerceOrder);
+                parameters.Add("p_IsOnlinePosOrder", order.IsOnlinePosOrder);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
@@ -1509,6 +1511,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
                         item.UpdatedAt = dataReader.GetDateTimeValue("updatedAt");
                         item.IsRateLocked = dataReader.GetBooleanValue("IsRateLocked");
+                        item.IsOnlinePosOrder = dataReader.GetBooleanValue("IsOnlinePosOrder");
+                        item.IsEcommerceOrder = dataReader.GetBooleanValue("IsEcommerceOrder");
                         item.PaymentReceived = dataReader.GetDecimalValue("paymentReceived");
                         item.AdvancePayment = dataReader.GetDecimalValue("advancePayment");
                         item.PendingPayment = dataReader.GetDecimalValue("pendingPayment");
@@ -1988,7 +1992,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_OrderTypeId", order.OrderTypeId);
                 parameters.Add("p_AdvancePaymentPct", order.AdvancePaymentPct);
                 parameters.Add("p_TotalPayment", order.TotalPayment);
-                parameters.Add("p_AlterationDetailsId", alterationDetailsId);
+                parameters.Add("p_AlterationDetailsId", alterationDetailsId); 
+                parameters.Add("p_IsEcommerceOrder", order.IsEcommerceOrder);
+                parameters.Add("p_IsOnlinePosOrder", order.IsOnlinePosOrder);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
@@ -2079,6 +2085,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.AdvancePaymentPct = dataReader.GetDecimalValue("advancePaymentPct");
                         item.TotalPayment = dataReader.GetDecimalValue("totalPayment");
 
+                        item.IsOnlinePosOrder = dataReader.GetBooleanValue("IsOnlinePosOrder");
+                        item.IsEcommerceOrder = dataReader.GetBooleanValue("IsEcommerceOrder");
                         item.OrderDelievery.DelieveryMethodId = dataReader.GetIntegerValue("delieveryMethodId");
                         item.OrderDelievery.EstDelieveryDate = dataReader.GetDateTimeValue("estDelieveryDate");
                         item.OrderDelievery.ShippingCost = dataReader.GetIntegerValue("shippingCost");
