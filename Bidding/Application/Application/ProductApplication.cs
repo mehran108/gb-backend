@@ -142,5 +142,13 @@ namespace GoldBank.Application.Application
         {
             return await this.ProductInfrastructure.GetAssetSummary();
         }
+        public async Task<int> AddUpdateLabel(Label label)
+        {
+            return await this.ProductInfrastructure.AddUpdateLabel(label);
+        }
+        public async Task<int> AddProductsLabel(ProductLabel productLabel)
+        {
+            return await this.ProductInfrastructure.AddProductsLabel(productLabel);
+        }
     }
 }

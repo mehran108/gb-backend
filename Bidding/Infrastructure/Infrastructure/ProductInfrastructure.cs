@@ -720,8 +720,9 @@ namespace GoldBank.Infrastructure.Infrastructure
             base.GetParameter("@p_MinWeight", ToDbValue(product.Data.MinWeight)),
             base.GetParameter("@p_MaxWeight", ToDbValue(product.Data.MaxWeight)),
             base.GetParameter("@p_StartDate", ToDbValue(product.Data.StartDate)),
-            base.GetParameter("@p_EndDate", ToDbValue(product.Data.EndDate))
-                };
+            base.GetParameter("@p_EndDate", ToDbValue(product.Data.EndDate)),
+            base.GetParameter("@p_LabelIds", ToDbValue(product.Data.LabelIds))
+            };
             using (var dataReader = await base.ExecuteReader(parameters, "GetAllProductsGb", CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
@@ -3904,6 +3905,61 @@ namespace GoldBank.Infrastructure.Infrastructure
                 }
             }
             return assetSummary;
+        }
+        public async Task<int> AddUpdateLabel(Label label)
+        {
+            var response = 0;
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_Description", label.Description);
+                parameters.Add("p_CreatedBy", label.CreatedBy);
+                parameters.Add("o_labelId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                response = await connection.ExecuteAsync("AddOrUpdateLabel_gb", parameters, transaction, commandType: CommandType.StoredProcedure);
+                var labelId = parameters.Get<int>("o_labelId");
+                await transaction.CommitAsync();
+
+                response = labelId;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+            }
+            finally
+            {
+                await connection.DisposeAsync();
+            }
+            return response;
+        }
+        public async Task<int> AddProductsLabel(ProductLabel productLabel)
+        {
+            var response = 0;
+            using var connection = base.GetConnection();
+            using var transaction = await connection.BeginTransactionAsync();
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("p_LabelId", productLabel.LabelId);
+                parameters.Add("p_ProductIds", productLabel.ProductIds);
+                parameters.Add("p_CreatedBy", productLabel.CreatedBy);
+
+                response = await connection.ExecuteAsync("UpsertProductLabel_gb", parameters, transaction, commandType: CommandType.StoredProcedure);
+                //var labelId = parameters.Get<int>("o_labelId");
+                await transaction.CommitAsync();
+                
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+            }
+            finally
+            {
+                await connection.DisposeAsync();
+            }
+            return response;
         }
         #endregion
     }

@@ -164,6 +164,18 @@ namespace GoldBank.Controllers
         {
             return await ProductApplication.GetMetalPurityHistory(entity);
         }
+
+        [HttpPost("AddUpdateLabel")]
+        public async Task<int> AddUpdateLabel([FromBody]Label label)
+        {
+            return await this.ProductApplication.AddUpdateLabel(label);
+        }
+
+        [HttpPost("AddProductsLabel")]
+        public async Task<int> AddProductsLabel([FromBody]ProductLabel productLabel)
+        {
+            return await this.ProductApplication.AddProductsLabel(productLabel);
+        }
         private async Task<string> ToCSV(DataTable dtDataTable)
         {
             var builder = new StringBuilder();

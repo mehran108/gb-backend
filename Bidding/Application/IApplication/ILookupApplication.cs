@@ -43,6 +43,7 @@ namespace GoldBank.Application.IApplication
         Task<IEnumerable<VendorPaymentType>> GetAllVendorPaymentTypes();
         Task<IEnumerable<CustomerCategory>> GetAllCustomerCategories();
         Task<IEnumerable<VendorGoldPaymentType>> GetAllVendorGoldPaymentTypes();
+        Task<IEnumerable<Label>> GetAllLabels();
 
     }
 }

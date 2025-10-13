@@ -31,5 +31,7 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<bool> RemoveRawGold(RawGold RawGold);
         Task<RawGold> GetRawGoldById(int rawGoldId);
         Task<AssetSummary> GetAssetSummary();
+        Task<int> AddUpdateLabel(Label label);
+        Task<int> AddProductsLabel(ProductLabel productLabel);
     }
 }

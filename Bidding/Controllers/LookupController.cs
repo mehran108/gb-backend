@@ -256,5 +256,12 @@ namespace GoldBank.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetAllLabels")]
+        public async Task<ActionResult<IEnumerable<Label>>> GetAllLabels()
+        {
+            var result = await this.LookupApplication.GetAllLabels();
+            return Ok(result);
+        }
+
     }
 }
