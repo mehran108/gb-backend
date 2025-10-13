@@ -106,6 +106,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             CreatedAt = dataReader.GetDateTimeValue("createdAt"),
                             UpdatedAt = dataReader.GetDateTimeValue("updatedAt"),
                             IsActive = dataReader.GetBooleanValue("isActive"),
+                            Role = dataReader.GetStringValue("role"),
                             PasswordHash = dataReader.GetStringValue("password"),
 
                         };

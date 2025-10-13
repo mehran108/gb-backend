@@ -411,6 +411,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         paymentItem.IsVerficationPassed = dataReader.GetBooleanValue("isVerificationPassed");
                         paymentItem.IsVerficationFailed = dataReader.GetBooleanValue("isVerificationFailed");
                         paymentItem.CustomerFirstName = dataReader.GetStringValue("firstName");
+                        paymentItem.CreatedAt = dataReader.GetDateTimeValue("createdAt");
+                        paymentItem.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        paymentItem.UserName = dataReader.GetStringValue("UserName");
                         paymentItem.CustomerLastName = dataReader.GetStringValue("lastName");
                         paymentItems.Add(paymentItem);
                     }

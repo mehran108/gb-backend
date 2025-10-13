@@ -18,10 +18,12 @@ namespace GoldBank.Controllers
     {
         private readonly JwtSettings jwtSettings;        
         public IAccountApplication AccountApplication { get; set; }
+        public IApplicationUserApplication ApplicationUserApplication { get; set; }
         public IEmailApplication EmailApplication { get; set; }
-        public AccountController(IAccountApplication accountApplication, JwtSettings jwtSettings, IEmailApplication emailApplication)
+        public AccountController(IAccountApplication accountApplication, JwtSettings jwtSettings, IEmailApplication emailApplication, IApplicationUserApplication applicationUserApplication)
         {           
             AccountApplication = accountApplication;
+            ApplicationUserApplication = applicationUserApplication;
             EmailApplication= emailApplication;
             this.jwtSettings = jwtSettings;
         }
@@ -72,11 +74,12 @@ namespace GoldBank.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(Login user)
         {
-            var resultUser = await this.AccountApplication.GetUserByEmail(user.Email);
+            var applicationUser = new ApplicationUser { Email = user.Email };
+            var resultUser = await this.ApplicationUserApplication.Get(applicationUser);
             if (resultUser.Email != null )
                 
             {
-                if (resultUser.Active != false)
+                if (resultUser.IsActive != false)
                 {
 
                     bool verified = BCrypt.Net.BCrypt.Verify(user.Password, resultUser.PasswordHash);
@@ -86,7 +89,7 @@ namespace GoldBank.Controllers
                         Token = JwtHelpers.GenTokenkey(new UserTokens()
                         {
                             Email = user.Email,
-                            UserId = resultUser.UserId,
+                            UserId = resultUser.ApplicationUserId,
                         }, jwtSettings);
                         return Ok(Token);
                     }
@@ -140,16 +143,17 @@ namespace GoldBank.Controllers
 
 
         [HttpGet("GetUserByEmail")]
-        public async Task<User> GetUserByEmail([FromQuery] string email)
+        public async Task<ApplicationUser> GetUserByEmail([FromQuery] string email)
         {
-            return await this.AccountApplication.GetUserByEmail(email);
+            var applicationUser = new ApplicationUser { Email = email };
+            return  await this.ApplicationUserApplication.Get(applicationUser);
         }
 
         [HttpGet("GetUserById")]
-        public async Task<User> GetUserById([FromQuery] int UserId)
+        public async Task<ApplicationUser> GetUserById([FromQuery] int UserId)
         {
-             //await this.EmailApplication.EmailTemplateCreateaccount(UserId);
-            return await this.AccountApplication.GetUserById(UserId);
+            var applicationUser = new ApplicationUser { ApplicationUserId = UserId };
+            return await this.ApplicationUserApplication.Get(applicationUser);
         }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("GetUserList")]
