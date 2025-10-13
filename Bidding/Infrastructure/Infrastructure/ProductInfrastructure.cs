@@ -913,7 +913,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
                             discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
                             discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
-                            discount.LabelTypeIds = dataReader.GetStringValue("LabelTypeIds");
+                            discount.LabelIds = dataReader.GetStringValue("LabelIds");
                             discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
                             discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
                             discount.StartDate = dataReader.GetDateTimeValue("StartDate");
@@ -928,6 +928,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                                 var discountSubCategories = new HashSet<string>((discount.SubCategoryIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
                                 var discountCategories = new HashSet<string>((discount.CategoryIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
                                 var discountCollections = new HashSet<string>((discount.CollectionTypeIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
+                                var discountLabels = new HashSet<string>((discount.LabelIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
 
                                 var filteredProducts = ProductList
                                     .Where(p =>
