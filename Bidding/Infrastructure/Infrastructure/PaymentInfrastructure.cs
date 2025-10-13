@@ -414,6 +414,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         paymentItem.CreatedAt = dataReader.GetDateTimeValue("createdAt");
                         paymentItem.CreatedBy = dataReader.GetIntegerValue("createdBy");
                         paymentItem.UserName = dataReader.GetStringValue("UserName");
+                        paymentItem.BranchName = dataReader.GetStringValue("branchName");
                         paymentItem.CustomerLastName = dataReader.GetStringValue("lastName");
                         paymentItems.Add(paymentItem);
                     }

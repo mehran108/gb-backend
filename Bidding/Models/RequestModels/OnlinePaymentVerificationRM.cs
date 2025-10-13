@@ -25,6 +25,7 @@
         public string CustomerFirstName { get; set; }
         public string CustomerLastName { get; set; }
         public string? UserName { get; set; }
+        public string? BranchName { get; set; }
         
     }
     public class OnlinePaymentSummary
