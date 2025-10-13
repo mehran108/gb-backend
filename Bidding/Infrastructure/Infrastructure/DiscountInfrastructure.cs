@@ -48,7 +48,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             parameters.Add("p_CategoryIds", entity.CategoryIds);
             parameters.Add("p_SubCategoryIds", entity.SubCategoryIds);
             parameters.Add("p_CollectionTypeIds", entity.CollectionTypeIds);
-            parameters.Add("p_LabelTypeIds", entity.LabelTypeIds);
+            parameters.Add("p_LabelIds", entity.LabelIds);
             parameters.Add("p_DiscountAmount", entity.DiscountAmount);
             parameters.Add("p_DiscountPct", entity.DiscountPct);
             parameters.Add("p_StartDate", entity.StartDate);
@@ -116,7 +116,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
                         discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
                         discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
-                        discount.LabelTypeIds = dataReader.GetStringValue("LabelTypeIds");
+                        discount.LabelIds = dataReader.GetStringValue("LabelIds");
                         discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
                         discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
                         discount.StartDate = dataReader.GetDateTimeValue("StartDate");
@@ -181,7 +181,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
                         discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
                         discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
-                        discount.LabelTypeIds = dataReader.GetStringValue("LabelTypeIds");
+                        discount.LabelIds = dataReader.GetStringValue("LabelIds");
                         discount.CustomerFirstName = dataReader.GetStringValue("firstName");
                         discount.CustomerLastName = dataReader.GetStringValue("lastName");
                         discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
@@ -251,7 +251,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             parameters.Add("p_CategoryIds", entity.CategoryIds);
             parameters.Add("p_SubCategoryIds", entity.SubCategoryIds);
             parameters.Add("p_CollectionTypeIds", entity.CollectionTypeIds);
-            parameters.Add("p_LabelTypeIds", entity.LabelTypeIds);
+            parameters.Add("p_LabelIds", entity.LabelIds);
             parameters.Add("p_DiscountAmount", entity.DiscountAmount);
             parameters.Add("p_DiscountPct", entity.DiscountPct);
             parameters.Add("p_StartDate", entity.StartDate);
@@ -300,7 +300,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             parameters.Add("p_CategoryIds", entity.CategoryIds);
             parameters.Add("p_SubCategoryIds", entity.SubCategoryIds);
             parameters.Add("p_CollectionTypeIds", entity.CollectionTypeIds);
-            parameters.Add("p_LabelTypeIds", entity.LabelTypeIds);
+            parameters.Add("p_LabelIds", entity.LabelIds);
             parameters.Add("p_DiscountAmount", entity.DiscountAmount);
             parameters.Add("p_DiscountPct", entity.DiscountPct);
             parameters.Add("p_IsEcommerce", entity.IsEcommerce);
@@ -329,7 +329,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             parameters.Add("p_CategoryIds", entity.CategoryIds);
             parameters.Add("p_SubCategoryIds", entity.SubCategoryIds);
             parameters.Add("p_CollectionTypeIds", entity.CollectionTypeIds);
-            parameters.Add("p_LabelTypeIds", entity.LabelTypeIds);
+            parameters.Add("p_LabelIds", entity.LabelIds);
             parameters.Add("p_DiscountAmount", entity.DiscountAmount);
             parameters.Add("p_DiscountPct", entity.DiscountPct);
             parameters.Add("p_IsEcommerce", entity.IsEcommerce);
@@ -367,7 +367,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
                         discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
                         discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
-                        discount.LabelTypeIds = dataReader.GetStringValue("LabelTypeIds");
+                        discount.LabelIds = dataReader.GetStringValue("LabelIds");
                         discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
                         discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
                         discount.IsEcommerce = dataReader.GetBooleanValue("IsEcommerce");
@@ -409,7 +409,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
                         discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
                         discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
-                        discount.LabelTypeIds = dataReader.GetStringValue("LabelTypeIds");
+                        discount.LabelIds = dataReader.GetStringValue("LabelIds");
                         discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
                         discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
                         discount.IsEcommerce = dataReader.GetBooleanValue("IsEcommerce");
@@ -440,7 +440,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             parameters.Add("p_CategoryIds", entity.CategoryIds);
             parameters.Add("p_SubCategoryIds", entity.SubCategoryIds);
             parameters.Add("p_CollectionTypeIds", entity.CollectionTypeIds);
-            parameters.Add("p_LabelTypeIds", entity.LabelTypeIds);
+            parameters.Add("p_LabelIds", entity.LabelIds);
             parameters.Add("p_DiscountAmount", entity.DiscountAmount);
             parameters.Add("p_DiscountPct", entity.DiscountPct);
             parameters.Add("p_CreatedBy", entity.CreatedBy);
@@ -464,7 +464,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             parameters.Add("p_CategoryIds", entity.CategoryIds);
             parameters.Add("p_SubCategoryIds", entity.SubCategoryIds);
             parameters.Add("p_CollectionTypeIds", entity.CollectionTypeIds);
-            parameters.Add("p_LabelTypeIds", entity.LabelTypeIds);
+            parameters.Add("p_LabelIds", entity.LabelIds);
             parameters.Add("p_DiscountAmount", entity.DiscountAmount);
             parameters.Add("p_DiscountPct", entity.DiscountPct);
             parameters.Add("p_CreatedBy", entity.UpdatedBy);
@@ -496,7 +496,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
                         discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
                         discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
-                        discount.LabelTypeIds = dataReader.GetStringValue("LabelTypeIds");
+                        discount.LabelIds = dataReader.GetStringValue("LabelIds");
                         discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
                         discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
                         discount.IsActive = dataReader.GetBooleanValue("IsActive");
@@ -532,7 +532,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
                         discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
                         discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
-                        discount.LabelTypeIds = dataReader.GetStringValue("LabelTypeIds");
+                        discount.LabelIds = dataReader.GetStringValue("LabelIds");
                         discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
                         discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
                         discount.IsActive = dataReader.GetBooleanValue("IsActive");

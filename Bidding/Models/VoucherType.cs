@@ -8,7 +8,7 @@
         public string CategoryIds { get; set; }
         public string SubCategoryIds { get; set; }
         public string CollectionTypeIds { get; set; }
-        public string LabelTypeIds { get; set; }
+        public string LabelIds { get; set; }
         public decimal? DiscountAmount { get; set; }
         public decimal? DiscountPct { get; set; }
         public int? ExpiryDuration { get; set; }
