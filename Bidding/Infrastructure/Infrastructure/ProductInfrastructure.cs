@@ -673,6 +673,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             var ProductList = new List<Product>();
             var JewelleryList = new List<Jewellery>();
             var StoneProductList = new List<StoneProduct>();
+            var ProductLabelsList = new List<ProductLabel>();
             if (product.SearchText == null)
                 product.SearchText = "";
             var parameters = new List<DbParameter>
@@ -892,6 +893,16 @@ namespace GoldBank.Infrastructure.Infrastructure
                     {
                         while (dataReader.Read())
                         {
+                            var item = new ProductLabel();
+                            item.ProductId = dataReader.GetIntegerValue("productId");
+                            item.LabelId = dataReader.GetIntegerValue("labelId");
+                            ProductLabelsList.Add(item);
+                        }
+                    }
+                    if (dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
                             var discount = new Discount();
                             discount.DiscountId = dataReader.GetIntegerValue("DiscountId");
                             discount.DiscountTypeId = dataReader.GetIntegerValue("DiscountTypeId");
@@ -930,20 +941,32 @@ namespace GoldBank.Infrastructure.Infrastructure
                                 var discountCollections = new HashSet<string>((discount.CollectionTypeIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
                                 var discountLabels = new HashSet<string>((discount.LabelIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
 
+                                var matchingProductIdsByLabels = ProductLabelsList.Where(pl => discountLabels.Contains(pl.LabelId.ToString())).Select(pl => pl.ProductId).ToHashSet();
+
+                                // Step 3: Filter ProductList
                                 var filteredProducts = ProductList
                                     .Where(p =>
-                                        discountCategories.Contains(p.Jewellery.CategoryId.ToString()) ||
-                                        discountSubCategories.Contains(p.Jewellery.SubCategoryId.ToString()) ||
-                                        (p.Jewellery.CollectionIds ?? "")
+                                        // label 
+                                        matchingProductIdsByLabels.Contains(p.ProductId)
+
+                                        //  category 
+                                        || (p.Jewellery?.CategoryId != null &&
+                                            discountCategories.Contains(p.Jewellery.CategoryId.ToString()))
+                                        //  sub category
+                                        || (p.Jewellery?.SubCategoryId != null &&
+                                            discountSubCategories.Contains(p.Jewellery.SubCategoryId.ToString()))
+
+                                        // collection 
+                                        || ((p.Jewellery?.CollectionIds ?? "")
                                             .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                            .Select(x => x.Trim())
-                                            .Any(id => discountCollections.Contains(id)) ||
-                                        (p.Jewellery.PrimaryCategoryIds ?? "")
+                                            .Any(id => discountCollections.Contains(id.Trim())))
+                                        // primary category 
+                                        || ((p.Jewellery?.PrimaryCategoryIds ?? "")
                                             .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                            .Select(x => x.Trim())
-                                            .Any(id => discountPrimaryCategories.Contains(id))
+                                            .Any(id => discountPrimaryCategories.Contains(id.Trim())))
                                     )
-                                    .ToList().Distinct();
+                                    .Distinct()
+                                    .ToList();
 
                                 filteredProducts.ToList().ForEach(p => p.DiscountDetails = discount);
                             }
