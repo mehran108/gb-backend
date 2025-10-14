@@ -734,7 +734,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.ProductSource = new ProductSource();
                         item.Vendor = new Vendor();
                         item.CustomCharge = new List<CustomCharge>();
-
+                        item.ProductLabel = new List<ProductLabel>();
                         item.ProductTypeId = dataReader.GetIntegerValue("productTypeId");
                         item.ProductId = dataReader.GetIntegerValue("productId");
                         item.SKU = dataReader.GetStringValue("sKU");
@@ -897,6 +897,11 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.ProductId = dataReader.GetIntegerValue("productId");
                             item.LabelId = dataReader.GetIntegerValue("labelId");
                             ProductLabelsList.Add(item);
+                            var productItem = ProductList.FirstOrDefault(o => o.ProductId == item.ProductId);
+                            if (productItem != null)
+                            {
+                                productItem?.ProductLabel?.Add(item);
+                            }
                         }
                     }
                     if (dataReader.NextResult())
