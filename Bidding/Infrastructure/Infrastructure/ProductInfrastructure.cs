@@ -674,56 +674,60 @@ namespace GoldBank.Infrastructure.Infrastructure
             var JewelleryList = new List<Jewellery>();
             var StoneProductList = new List<StoneProduct>();
             var ProductLabelsList = new List<ProductLabel>();
+            var DiscountsList = new List<Discount>(); // ✅ store all discounts
+
             if (product.SearchText == null)
                 product.SearchText = "";
+
             var parameters = new List<DbParameter>
-            {
-            base.GetParameter("@p_PageNumber", product.Offset),
-            base.GetParameter("@p_PageSize", ToDbValue(product.PageSize)),
-            base.GetParameter("@P_SearchText", product.SearchText),
-            base.GetParameter("@p_ProductTypeId", ToDbValue(product.Data.ProductTypeId)),
-            base.GetParameter("@p_SKU", ToDbValue(product.Data.SKU)),
-            base.GetParameter("@p_ProductSourceId", ToDbValue(product.Data.ProductSourceId)),
-            base.GetParameter("@p_VendorId", ToDbValue(product.Data.VendorId)),
-            base.GetParameter("@p_PrimaryCategoryIds", ToDbValue(product.Data.PrimaryCategoryIds)),
-            base.GetParameter("@p_CategoryId", ToDbValue(product.Data.CategoryId)),
-            base.GetParameter("@p_SubCategoryId", ToDbValue(product.Data.SubCategoryId)),
-            base.GetParameter("@p_WearingTypeIds", ToDbValue(product.Data.WearingTypeIds)),
-            base.GetParameter("@p_CollectionIds", ToDbValue(product.Data.CollectionIds)),
-            base.GetParameter("@p_GenderId", ToDbValue(product.Data.GenderId)),
-            base.GetParameter("@p_OccasionIds", ToDbValue(product.Data.OccasionIds)),
-            base.GetParameter("@p_Description", ToDbValue(product.Data.Description)),
-            base.GetParameter("@p_MetalTypeId", ToDbValue(product.Data.MetalTypeId)),
-            base.GetParameter("@p_MetalPurityTypeId", ToDbValue(product.Data.MetalPurityTypeId)),
-            base.GetParameter("@p_MetalColorTypeId", ToDbValue(product.Data.MetalColorTypeId)),
-            base.GetParameter("@p_WeightTypeId", ToDbValue(product.Data.WeightTypeId)),
-            base.GetParameter("@p_NetWeight", ToDbValue(product.Data.NetWeight)),
-            base.GetParameter("@p_WastageWeight", ToDbValue(product.Data.WastageWeight)),
-            base.GetParameter("@p_WastagePct", ToDbValue(product.Data.WastagePct)),
-            base.GetParameter("@p_TotalWeight", ToDbValue(product.Data.TotalWeight)),
-            base.GetParameter("@p_Width", ToDbValue(product.Data.Width)),
-            base.GetParameter("@p_Bandwidth", ToDbValue(product.Data.Bandwidth)),
-            base.GetParameter("@p_Thickness", ToDbValue(product.Data.Thickness)),
-            base.GetParameter("@p_Size", ToDbValue(product.Data.Size)),
-            base.GetParameter("@p_IsEcommerce", ToDbValue(product.Data.IsEcommerce) ),
-            base.GetParameter("@p_IsEngravingAvailable", ToDbValue(product.Data.IsEngravingAvailable)),
-            base.GetParameter("@p_IsSizeAlterationAvailable", ToDbValue(product.Data.IsSizeAlterationAvailable)),
-            base.GetParameter("@p_LacquerPrice", ToDbValue(product.Data.LacquerPrice)),
-            base.GetParameter("@p_MakingPrice", ToDbValue(product.Data.MakingPrice)),
-            base.GetParameter("@p_TotalPrice", ToDbValue(product.Data.TotalPrice)),
-            base.GetParameter("@p_StoneTypeId", ToDbValue(product.Data.StoneTypeId)),
-            base.GetParameter("@p_StoneShapeId", ToDbValue(product.Data.StoneShapeId)),
-            base.GetParameter("@p_StoneWeightTypeId", ToDbValue(product.Data.StoneWeightTypeId)),
-            base.GetParameter("@p_ReferenceSKU", ToDbValue(product.Data.ReferenceSKU)),
-            base.GetParameter("@p_IsSold", ToDbValue(product.Data.IsSold)),
-            base.GetParameter("@p_IsReserved", ToDbValue(product.Data.IsReserved)),
-            base.GetParameter("@p_KaatCategoryId", ToDbValue(product.Data.KaatCategoryId)),
-            base.GetParameter("@p_MinWeight", ToDbValue(product.Data.MinWeight)),
-            base.GetParameter("@p_MaxWeight", ToDbValue(product.Data.MaxWeight)),
-            base.GetParameter("@p_StartDate", ToDbValue(product.Data.StartDate)),
-            base.GetParameter("@p_EndDate", ToDbValue(product.Data.EndDate)),
-            base.GetParameter("@p_LabelIds", ToDbValue(product.Data.LabelIds))
-            };
+    {
+        base.GetParameter("@p_PageNumber", product.Offset),
+        base.GetParameter("@p_PageSize", ToDbValue(product.PageSize)),
+        base.GetParameter("@P_SearchText", product.SearchText),
+        base.GetParameter("@p_ProductTypeId", ToDbValue(product.Data.ProductTypeId)),
+        base.GetParameter("@p_SKU", ToDbValue(product.Data.SKU)),
+        base.GetParameter("@p_ProductSourceId", ToDbValue(product.Data.ProductSourceId)),
+        base.GetParameter("@p_VendorId", ToDbValue(product.Data.VendorId)),
+        base.GetParameter("@p_PrimaryCategoryIds", ToDbValue(product.Data.PrimaryCategoryIds)),
+        base.GetParameter("@p_CategoryId", ToDbValue(product.Data.CategoryId)),
+        base.GetParameter("@p_SubCategoryId", ToDbValue(product.Data.SubCategoryId)),
+        base.GetParameter("@p_WearingTypeIds", ToDbValue(product.Data.WearingTypeIds)),
+        base.GetParameter("@p_CollectionIds", ToDbValue(product.Data.CollectionIds)),
+        base.GetParameter("@p_GenderId", ToDbValue(product.Data.GenderId)),
+        base.GetParameter("@p_OccasionIds", ToDbValue(product.Data.OccasionIds)),
+        base.GetParameter("@p_Description", ToDbValue(product.Data.Description)),
+        base.GetParameter("@p_MetalTypeId", ToDbValue(product.Data.MetalTypeId)),
+        base.GetParameter("@p_MetalPurityTypeId", ToDbValue(product.Data.MetalPurityTypeId)),
+        base.GetParameter("@p_MetalColorTypeId", ToDbValue(product.Data.MetalColorTypeId)),
+        base.GetParameter("@p_WeightTypeId", ToDbValue(product.Data.WeightTypeId)),
+        base.GetParameter("@p_NetWeight", ToDbValue(product.Data.NetWeight)),
+        base.GetParameter("@p_WastageWeight", ToDbValue(product.Data.WastageWeight)),
+        base.GetParameter("@p_WastagePct", ToDbValue(product.Data.WastagePct)),
+        base.GetParameter("@p_TotalWeight", ToDbValue(product.Data.TotalWeight)),
+        base.GetParameter("@p_Width", ToDbValue(product.Data.Width)),
+        base.GetParameter("@p_Bandwidth", ToDbValue(product.Data.Bandwidth)),
+        base.GetParameter("@p_Thickness", ToDbValue(product.Data.Thickness)),
+        base.GetParameter("@p_Size", ToDbValue(product.Data.Size)),
+        base.GetParameter("@p_IsEcommerce", ToDbValue(product.Data.IsEcommerce)),
+        base.GetParameter("@p_IsEngravingAvailable", ToDbValue(product.Data.IsEngravingAvailable)),
+        base.GetParameter("@p_IsSizeAlterationAvailable", ToDbValue(product.Data.IsSizeAlterationAvailable)),
+        base.GetParameter("@p_LacquerPrice", ToDbValue(product.Data.LacquerPrice)),
+        base.GetParameter("@p_MakingPrice", ToDbValue(product.Data.MakingPrice)),
+        base.GetParameter("@p_TotalPrice", ToDbValue(product.Data.TotalPrice)),
+        base.GetParameter("@p_StoneTypeId", ToDbValue(product.Data.StoneTypeId)),
+        base.GetParameter("@p_StoneShapeId", ToDbValue(product.Data.StoneShapeId)),
+        base.GetParameter("@p_StoneWeightTypeId", ToDbValue(product.Data.StoneWeightTypeId)),
+        base.GetParameter("@p_ReferenceSKU", ToDbValue(product.Data.ReferenceSKU)),
+        base.GetParameter("@p_IsSold", ToDbValue(product.Data.IsSold)),
+        base.GetParameter("@p_IsReserved", ToDbValue(product.Data.IsReserved)),
+        base.GetParameter("@p_KaatCategoryId", ToDbValue(product.Data.KaatCategoryId)),
+        base.GetParameter("@p_MinWeight", ToDbValue(product.Data.MinWeight)),
+        base.GetParameter("@p_MaxWeight", ToDbValue(product.Data.MaxWeight)),
+        base.GetParameter("@p_StartDate", ToDbValue(product.Data.StartDate)),
+        base.GetParameter("@p_EndDate", ToDbValue(product.Data.EndDate)),
+        base.GetParameter("@p_LabelIds", ToDbValue(product.Data.LabelIds))
+    };
+
             using (var dataReader = await base.ExecuteReader(parameters, "GetAllProductsGb", CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
@@ -753,13 +757,14 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.ReferenceSKU = dataReader.GetStringValue("referenceSKU");
                         item.IsSold = dataReader.GetBooleanValue("isSold");
                         item.IsReserved = dataReader.GetBooleanValue("isReserved");
-                        item.ReferenceOrderId = dataReader.GetIntegerValueNullable("referenceOrderId");                        
-                        item.VendorAmount = dataReader.GetDecimalValue("vendorAmount");                        
-                        item.KaatCategoryId = dataReader.GetIntegerValue("kaatCategoryId");                        
-                        item.InventoryUploadDate = dataReader.GetDateTimeValue("inventoryUploadDate");                        
+                        item.ReferenceOrderId = dataReader.GetIntegerValueNullable("referenceOrderId");
+                        item.VendorAmount = dataReader.GetDecimalValue("vendorAmount");
+                        item.KaatCategoryId = dataReader.GetIntegerValue("kaatCategoryId");
+                        item.InventoryUploadDate = dataReader.GetDateTimeValue("inventoryUploadDate");
 
                         ProductList.Add(item);
                     }
+
                     if (dataReader.NextResult())
                     {
                         while (dataReader.Read())
@@ -904,79 +909,96 @@ namespace GoldBank.Infrastructure.Infrastructure
                             }
                         }
                     }
+
+                    // ✅ Discount Section (rewritten to apply HIGHEST discount)
                     if (dataReader.NextResult())
                     {
                         while (dataReader.Read())
                         {
-                            var discount = new Discount();
-                            discount.DiscountId = dataReader.GetIntegerValue("DiscountId");
-                            discount.DiscountTypeId = dataReader.GetIntegerValue("DiscountTypeId");
-                            discount.Name = dataReader.GetStringValue("Name");
-                            discount.CardDisplayName = dataReader.GetStringValue("CardDisplayName");
-                            discount.Code = dataReader.GetStringValue("Code");
-                            discount.MinInvoiceAmount = dataReader.GetDecimalValue("MinInvoiceAmount");
-                            discount.MaxUsage = dataReader.GetIntegerValue("MaxUsage");
-                            discount.PersonName = dataReader.GetStringValue("PersonName");
-                            discount.Description = dataReader.GetStringValue("Description");
-                            discount.SalesComissionPct = dataReader.GetDecimalValue("SalesComissionPct");
-                            discount.MaxUser = dataReader.GetIntegerValue("MaxUser");
-                            discount.CustomerId = dataReader.GetIntegerValue("CustomerId");
-                            discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");
-                            discount.ExpiryDurationType = dataReader.GetIntegerValue("ExpiryDurationType");
-                            discount.LoyaltyCardTypeId = dataReader.GetIntegerValue("LoyaltyCardTypeId");
-                            discount.VoucherTypeId = dataReader.GetIntegerValue("VoucherTypeId");
-                            discount.PrimaryCategories = dataReader.GetStringValue("PrimaryCategories");
-                            discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
-                            discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
-                            discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
-                            discount.LabelIds = dataReader.GetStringValue("LabelIds");
-                            discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
-                            discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
-                            discount.StartDate = dataReader.GetDateTimeValue("StartDate");
-                            discount.EndDate = dataReader.GetDateTimeValue("EndDate");
-                            discount.IsEcommerce = dataReader.GetBooleanValue("IsEcommerce");
-                            discount.IsInStore = dataReader.GetBooleanValue("IsInStore");
-                            discount.StoreIds = dataReader.GetStringValue("StoreIds");
-
-                            if (ProductList.Count > 0)
+                            var discount = new Discount
                             {
-                                var discountPrimaryCategories = new HashSet<string>((discount.PrimaryCategories ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()) );
-                                var discountSubCategories = new HashSet<string>((discount.SubCategoryIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
-                                var discountCategories = new HashSet<string>((discount.CategoryIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
-                                var discountCollections = new HashSet<string>((discount.CollectionTypeIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
-                                var discountLabels = new HashSet<string>((discount.LabelIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
+                                DiscountId = dataReader.GetIntegerValue("DiscountId"),
+                                DiscountTypeId = dataReader.GetIntegerValue("DiscountTypeId"),
+                                Name = dataReader.GetStringValue("Name"),
+                                CardDisplayName = dataReader.GetStringValue("CardDisplayName"),
+                                Code = dataReader.GetStringValue("Code"),
+                                MinInvoiceAmount = dataReader.GetDecimalValue("MinInvoiceAmount"),
+                                MaxUsage = dataReader.GetIntegerValue("MaxUsage"),
+                                PersonName = dataReader.GetStringValue("PersonName"),
+                                Description = dataReader.GetStringValue("Description"),
+                                SalesComissionPct = dataReader.GetDecimalValue("SalesComissionPct"),
+                                MaxUser = dataReader.GetIntegerValue("MaxUser"),
+                                CustomerId = dataReader.GetIntegerValue("CustomerId"),
+                                ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration"),
+                                ExpiryDurationType = dataReader.GetIntegerValue("ExpiryDurationType"),
+                                LoyaltyCardTypeId = dataReader.GetIntegerValue("LoyaltyCardTypeId"),
+                                VoucherTypeId = dataReader.GetIntegerValue("VoucherTypeId"),
+                                PrimaryCategories = dataReader.GetStringValue("PrimaryCategories"),
+                                CategoryIds = dataReader.GetStringValue("CategoryIds"),
+                                SubCategoryIds = dataReader.GetStringValue("SubCategoryIds"),
+                                CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds"),
+                                LabelIds = dataReader.GetStringValue("LabelIds"),
+                                DiscountAmount = dataReader.GetDecimalValue("DiscountAmount"),
+                                DiscountPct = dataReader.GetDecimalValue("DiscountPct"),
+                                StartDate = dataReader.GetDateTimeValue("StartDate"),
+                                EndDate = dataReader.GetDateTimeValue("EndDate"),
+                                IsEcommerce = dataReader.GetBooleanValue("IsEcommerce"),
+                                IsInStore = dataReader.GetBooleanValue("IsInStore"),
+                                StoreIds = dataReader.GetStringValue("StoreIds")
+                            };
 
-                                var matchingProductIdsByLabels = ProductLabelsList.Where(pl => discountLabels.Contains(pl.LabelId.ToString())).Select(pl => pl.ProductId).ToHashSet();
+                            DiscountsList.Add(discount); // ✅ collect all discounts
+                        }
+                    }
 
-                                // Step 3: Filter ProductList
-                                var filteredProducts = ProductList
-                                    .Where(p =>
-                                        // label 
-                                        matchingProductIdsByLabels.Contains(p.ProductId)
+                    // ✅ Apply highest discount per product
+                    var bestDiscountByProduct = new Dictionary<int, Discount>();
 
-                                        //  category 
-                                        || (p.Jewellery?.CategoryId != null &&
-                                            discountCategories.Contains(p.Jewellery.CategoryId.ToString()))
-                                        //  sub category
-                                        || (p.Jewellery?.SubCategoryId != null &&
-                                            discountSubCategories.Contains(p.Jewellery.SubCategoryId.ToString()))
+                    foreach (var discount in DiscountsList)
+                    {
+                        var discountPrimaryCategories = new HashSet<string>((discount.PrimaryCategories ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
+                        var discountSubCategories = new HashSet<string>((discount.SubCategoryIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
+                        var discountCategories = new HashSet<string>((discount.CategoryIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
+                        var discountCollections = new HashSet<string>((discount.CollectionTypeIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
+                        var discountLabels = new HashSet<string>((discount.LabelIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
 
-                                        // collection 
-                                        || ((p.Jewellery?.CollectionIds ?? "")
-                                            .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                            .Any(id => discountCollections.Contains(id.Trim())))
-                                        // primary category 
-                                        || ((p.Jewellery?.PrimaryCategoryIds ?? "")
-                                            .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                            .Any(id => discountPrimaryCategories.Contains(id.Trim())))
-                                    )
-                                    .Distinct()
-                                    .ToList();
+                        var matchingProductIdsByLabels = ProductLabelsList
+                            .Where(pl => discountLabels.Contains(pl.LabelId.ToString()))
+                            .Select(pl => pl.ProductId)
+                            .ToHashSet();
 
-                                filteredProducts.ToList().ForEach(p => p.DiscountDetails = discount);
+                        var filteredProducts = ProductList
+                            .Where(p =>
+                                matchingProductIdsByLabels.Contains(p.ProductId)
+                                || (p.Jewellery?.CategoryId != null && discountCategories.Contains(p.Jewellery.CategoryId.ToString()))
+                                || (p.Jewellery?.SubCategoryId != null && discountSubCategories.Contains(p.Jewellery.SubCategoryId.ToString()))
+                                || ((p.Jewellery?.CollectionIds ?? "")
+                                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                    .Any(id => discountCollections.Contains(id.Trim())))
+                                || ((p.Jewellery?.PrimaryCategoryIds ?? "")
+                                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                    .Any(id => discountPrimaryCategories.Contains(id.Trim())))
+                            )
+                            .ToList();
+
+                        foreach (var p in filteredProducts)
+                        {
+                            if (!bestDiscountByProduct.TryGetValue(p.ProductId, out var existing) ||
+                                IsHigherDiscount(discount, existing))
+                            {
+                                bestDiscountByProduct[p.ProductId] = discount;
                             }
                         }
                     }
+
+                    foreach (var p in ProductList)
+                    {
+                        if (bestDiscountByProduct.TryGetValue(p.ProductId, out var best))
+                        {
+                            p.DiscountDetails = best;
+                        }
+                    }
+
                     if (dataReader.NextResult())
                     {
                         if (dataReader.Read())
@@ -988,9 +1010,19 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
 
             Response.Data = ProductList;
-
             return Response;
         }
+
+        // ✅ Helper
+        private static bool IsHigherDiscount(Discount newD, Discount oldD)
+        {
+            if (newD.DiscountPct > oldD.DiscountPct)
+                return true;
+            if (newD.DiscountPct < oldD.DiscountPct)
+                return false;
+            return newD.DiscountAmount > oldD.DiscountAmount;
+        }
+
         public async Task<List<Product>> GetAllProductList()
         {
             var Response = new AllResponse<Product>();
