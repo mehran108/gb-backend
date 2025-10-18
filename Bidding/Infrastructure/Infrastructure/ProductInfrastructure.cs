@@ -1083,9 +1083,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.MetalPurityTypeId = dataReader.GetIntegerValue("metalPurityTypeId");
                             item.MetalColorTypeId = dataReader.GetIntegerValue("metalColorTypeId");
                             item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
-                            item.NetWeight = dataReader.GetIntegerValue("netWeight");
-                            item.WastagePct = dataReader.GetIntegerValue("wastagePct");
-                            item.WastageWeight = dataReader.GetIntegerValue("wastageWeight");
+                            item.NetWeight = dataReader.GetDecimalValue("netWeight");
+                            item.WastagePct = dataReader.GetDecimalValue("wastagePct");
+                            item.WastageWeight = dataReader.GetDecimalValue("wastageWeight");
                             item.TotalWeight = dataReader.GetIntegerValue("totalWeight");
                             item.Width = dataReader.GetStringValue("width");
                             item.Bandwidth = dataReader.GetStringValue("bandwidth");
