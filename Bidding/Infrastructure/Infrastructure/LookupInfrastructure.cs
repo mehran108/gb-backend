@@ -254,7 +254,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         list.Add(new StoneType
                         {
                             StoneTypeId = dataReader.GetIntegerValue("StoneTypeId"),
-                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                            Url = dataReader.GetStringValue("url")
                         });
                     }
                 }
