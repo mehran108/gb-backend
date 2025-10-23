@@ -1589,6 +1589,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.ExchangeDetailsId = dataReader.GetIntegerValue("exchangeDetailId");
                         item.GoldBookingDetailsId = dataReader.GetIntegerValue("goldBookingDetailId");
                         item.GiftCardDetailsId = dataReader.GetIntegerValue("giftCardDetailId");
+                        item.Comments = dataReader.GetStringValue("comments");
                         Customer.FirstName = dataReader.GetStringValue("customerName");
                         Customer.Mobile = dataReader.GetStringValue("Mobile");
                         Customer.CustomerId = item.CustomerId;
@@ -2144,7 +2145,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.OrderStatusId = dataReader.GetIntegerValue("OrderStatusId");
                         item.AdvancePaymentPct = dataReader.GetDecimalValue("advancePaymentPct");
                         item.TotalPayment = dataReader.GetDecimalValue("totalPayment");
-
+                        item.Comments = dataReader.GetStringValue("comments");
                         item.IsOnlinePosOrder = dataReader.GetBooleanValue("IsOnlinePosOrder");
                         item.IsEcommerceOrder = dataReader.GetBooleanValue("IsEcommerceOrder");
                         item.OrderDelievery.DelieveryMethodId = dataReader.GetIntegerValue("delieveryMethodId");
@@ -2210,7 +2211,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                 base.GetParameter("p_OrderId",order.OrderId),
                 base.GetParameter("p_OrderStatusId", order.OrderStatusId),
                 base.GetParameter("p_ReservationDate", order.ReservationDate),
-                base.GetParameter("p_UpdatedBy", order.UpdatedBy)
+                base.GetParameter("p_UpdatedBy", order.UpdatedBy),
+                base.GetParameter("p_Comments", order.Comments)
             };
             var ReturnValue = await base.ExecuteNonQuery(parameters, "UpdateOrderById_gb", CommandType.StoredProcedure);
             return ReturnValue > 0;

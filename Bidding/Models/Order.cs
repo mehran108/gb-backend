@@ -28,6 +28,7 @@
         public int? GiftCardDetailsId { get; set; }
         public bool? IsEcommerceOrder { get; set; }
         public bool? IsOnlinePosOrder { get; set; }
+        public string? Comments { get; set; }
 
         public OrderStatus? OrderStatus { get; set; }
         public List<CustomCharge>? CustomCharge { get; set; }
@@ -45,5 +46,6 @@
         public int OrderId { get; set; }
         public int OrderStatusId { get; set; }
         public DateTime? ReservationDate { get; set; }
+        public string? Comments { get; set; }
     }
 }
