@@ -42,5 +42,10 @@ namespace GoldBank.Controllers
             var companyAccount = new CompanyAccount();
             return await this.BankApplication.GetList(companyAccount);
         }
+        [HttpPost("Activate")]
+        public async Task<bool> Activate(CompanyAccount companyAccount)
+        {
+            return await this.BankApplication.Activate(companyAccount);
+        }
     }
 }
