@@ -387,9 +387,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                  base.GetParameter("p_PageNumber", Payment.Offset),
                  base.GetParameter("p_PageSize", Payment.PageSize),
                  base.GetParameter("p_CustomerId", Payment.Data.CustomerId),
-                 base.GetParameter("p_IsVerificationRequested", Payment.Data.IsVerficationRequested),
-                 base.GetParameter("p_IsVerficationFailed", Payment.Data.IsVerficationFailed),
-                 base.GetParameter("p_IsVerficationPassed",Payment.Data.IsVerficationPassed)
+                 base.GetParameter("p_IsVerificationRequested", Payment.Data.IsVerificationRequested),
+                 base.GetParameter("p_IsVerificationFailed", Payment.Data.IsVerificationFailed),
+                 base.GetParameter("p_IsVerificationPassed",Payment.Data.IsVerificationPassed)
             };
             using (var dataReader = await base.ExecuteReader(parameters, "GetAllOnlinePayment_gb", CommandType.StoredProcedure))
             {
