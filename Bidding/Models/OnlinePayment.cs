@@ -10,9 +10,9 @@ namespace GoldBank.Models
         public int CustomerAccountId { get; set; }
         public int CompanyAccountId { get; set; }
         public string CustomerAccountNumber { get; set; }
-        public bool IsVerficationRequested { get; set; }
-        public bool IsVerficationPassed { get; set; }
-        public bool IsVerficationFailed { get; set; }
+        public bool IsVerificationRequested { get; set; }
+        public bool IsVerificationPassed { get; set; }
+        public bool IsVerificationFailed { get; set; }
         public string? CustomerAccount {  get; set; }
         public string? CompanyAccount {  get; set; }
         public List<OnlinePaymentDocument> OnlinePaymentDocument { get;set; }

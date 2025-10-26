@@ -80,11 +80,11 @@ namespace GoldBank.Infrastructure.Infrastructure
                             onlinepayment.CustomerAccountId = dataReader.GetIntegerValue("customerAccountId");
                             onlinepayment.CompanyAccountId = dataReader.GetIntegerValue("companyAccountId");
                             onlinepayment.CustomerAccountNumber = dataReader.GetStringValue("customerAccountNumber");
-                            onlinepayment.IsVerficationRequested = dataReader.GetBooleanValue("isVerificationRequested");
-                            onlinepayment.IsVerficationPassed = dataReader.GetBooleanValue("isVerificationPassed");
+                            onlinepayment.IsVerificationRequested = dataReader.GetBooleanValue("isVerificationRequested");
+                            onlinepayment.IsVerificationPassed = dataReader.GetBooleanValue("isVerificationPassed");
                             onlinepayment.CustomerAccount = dataReader.GetStringValue("customerAccount");
                             onlinepayment.CompanyAccount = dataReader.GetStringValue("CompanyAccount");
-                            onlinepayment.IsVerficationFailed = dataReader.GetBooleanValue("isVerificationFailed");
+                            onlinepayment.IsVerificationFailed = dataReader.GetBooleanValue("isVerificationFailed");
                             onlinepayment.OnlinePaymentDocument = new List<OnlinePaymentDocument>();
                             res.OnlinePayment.Add(onlinepayment);
                         }
@@ -366,9 +366,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                  base.GetParameter("p_PageNumber", Payment.Offset),
                  base.GetParameter("p_PageSize", Payment.PageSize),
                  base.GetParameter("p_CustomerId", Payment.Data.CustomerId),
-                 base.GetParameter("p_IsVerificationRequested", Payment.Data.IsVerficationPassed),
-                 base.GetParameter("p_IsVerficationFailed", Payment.Data.IsVerficationFailed),
-                 base.GetParameter("p_IsVerficationPassed",Payment.Data.IsVerficationPassed)
+                 base.GetParameter("p_IsVerificationRequested", Payment.Data.IsVerificationRequested),
+                 base.GetParameter("p_IsVerificationFailed", Payment.Data.IsVerificationFailed),
+                 base.GetParameter("p_IsVerificationPassed",Payment.Data.IsVerificationPassed)
             };
             using (var dataReader = await base.ExecuteReader(parameters, "GetAllOnlinePayment_gb", CommandType.StoredProcedure))
             {

@@ -2,9 +2,9 @@
 {
     public class OnlinePaymentVerificationRM
     {
-        public bool? IsVerficationRequested { get; set; }
-        public bool? IsVerficationPassed { get; set; }
-        public bool? IsVerficationFailed { get; set; }
+        public bool? IsVerificationRequested { get; set; }
+        public bool? IsVerificationPassed { get; set; }
+        public bool? IsVerificationFailed { get; set; }
         public int? CustomerId { get; set; }
         public int? CompanyAccountId { get; set; }
     }
@@ -19,9 +19,9 @@
         public string CustomerAccountNumber { get; set; }
         public int CompanyAccountId { get; set; }
         public string CompanyAccount { get; set; }
-        public bool IsVerficationRequested { get; set; }
-        public bool IsVerficationPassed { get; set; }
-        public bool IsVerficationFailed { get; set; }
+        public bool IsVerificationRequested { get; set; }
+        public bool IsVerificationPassed { get; set; }
+        public bool IsVerificationFailed { get; set; }
         public string CustomerFirstName { get; set; }
         public string CustomerLastName { get; set; }
         
