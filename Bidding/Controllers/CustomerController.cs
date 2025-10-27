@@ -61,6 +61,18 @@ namespace GoldBank.Controllers
             return await this.customerApplication.GetAll(entity);
         }
 
+        [HttpPost("AddCustomerFeedback")]
+        public async Task<int> AddCustomerFeedback(CustomerFeedback entity)
+        {
+            return await this.customerApplication.AddCustomerFeedback(entity);
+        }
+
+        [HttpPost("AddSalesPersonFeedback")]
+        public async Task<int> AddSalesPersonFeedback(SalesPersonFeedback entity)
+        {
+            return await this.customerApplication.AddSalesPersonFeedback(entity);
+        }
+
         [HttpPut("Delete")]
         public async Task<bool> Activate([FromBody]Customer Customer)
         {

@@ -58,5 +58,13 @@ namespace GoldBank.Application.Application
         {
             return await CustomerInfrastructure.GetCustomerSummary(customerId);
         }
+        public async Task<int> AddCustomerFeedback(CustomerFeedback entity)
+        {
+            return await this.CustomerInfrastructure.AddCustomerFeedback(entity);
+        }
+        public async Task<int> AddSalesPersonFeedback(SalesPersonFeedback entity)
+        {
+            return await this.CustomerInfrastructure.AddSalesPersonFeedback(entity);
+        }
     }
 }

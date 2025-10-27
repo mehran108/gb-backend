@@ -317,5 +317,36 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return result;
         }
+        public async Task<int> AddCustomerFeedback(CustomerFeedback entity)
+        {
+            var custFeedbackParameter = base.GetParameterOut("p_CustomerFeedbackId", SqlDbType.Int, entity.CustomerFeedbackId);
+            var parameters = new List<DbParameter>
+                {
+                     custFeedbackParameter,
+                     base.GetParameter("p_CustomerId", entity.CustomerId),
+                     base.GetParameter("p_Rating", entity.Rating),
+                     base.GetParameter("p_Feedback", entity.Feedback),
+                     base.GetParameter("p_CreatedBy", entity.CreatedBy)
+
+            };
+            await base.ExecuteNonQuery(parameters, "AddCustomerFeedback_gb", CommandType.StoredProcedure);
+            return Convert.ToInt32(custFeedbackParameter.Value);
+        }
+        public async Task<int> AddSalesPersonFeedback(SalesPersonFeedback entity)
+        {
+            var custFeedbackParameter = base.GetParameterOut("p_SalesPersonFeedbackId", SqlDbType.Int, entity.SalesPersonFeedbackId);
+            var parameters = new List<DbParameter>
+                {
+                     custFeedbackParameter,
+                     base.GetParameter("p_UserId", entity.UserId),
+                     base.GetParameter("p_CustomerId", entity.CustomerId),
+                     base.GetParameter("p_Rating", entity.Rating),
+                     base.GetParameter("p_Feedback", entity.Feedback),
+                     base.GetParameter("p_CreatedBy", entity.CreatedBy)
+
+            };
+            await base.ExecuteNonQuery(parameters, "AddSalesPersonFeedback_gb", CommandType.StoredProcedure);
+            return Convert.ToInt32(custFeedbackParameter.Value);
+        }
     }
 }
