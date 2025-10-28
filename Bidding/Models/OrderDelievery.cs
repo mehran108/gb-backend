@@ -11,5 +11,8 @@ namespace GoldBank.Models
         public DateTime? EstDelieveryDate {get; set; }
         public decimal? ShippingCost {get; set; }
         public string? DelieveryAddress { get; set; }
+        public string? CourierService { get; set; }
+        public string? TrackingId { get; set; }
+        public DateTime? ShippingDate { get; set; }
     }
 }

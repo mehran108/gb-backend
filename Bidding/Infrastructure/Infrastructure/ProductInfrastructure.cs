@@ -1585,6 +1585,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.OrderDelievery.EstDelieveryDate = dataReader.GetDateTimeValue("estDelieveryDate");
                         item.OrderDelievery.ShippingCost = dataReader.GetIntegerValue("shippingCost");
                         item.OrderDelievery.DelieveryAddress = dataReader.GetStringValue("delieveryAddress");
+                        item.OrderDelievery.CourierService = dataReader.GetStringValue("CourierService");
+                        item.OrderDelievery.TrackingId = dataReader.GetStringValue("TrackingId");
+                        item.OrderDelievery.ShippingDate = dataReader.GetDateTimeValueNullable("ShippingDate");
                         item.AppraisalDetailsId = dataReader.GetIntegerValue("appraisalDetailId");
                         item.ExchangeDetailsId = dataReader.GetIntegerValue("exchangeDetailId");
                         item.GoldBookingDetailsId = dataReader.GetIntegerValue("goldBookingDetailId");
@@ -2104,6 +2107,19 @@ namespace GoldBank.Infrastructure.Infrastructure
                 return false;
             }
         }
+        public async Task<bool> AddUpdateOrderDeliveryDetails(OrderDelievery order)
+        {
+            var parameters = new List<DbParameter>
+             {
+                base.GetParameter("p_OrderId", order.OrderId),
+                base.GetParameter("p_CourierService", order.CourierService),
+                base.GetParameter("p_TrackingId", order.TrackingId),
+                base.GetParameter("p_ShippingDate", order.ShippingDate),
+                base.GetParameter("p_UpdatedBy",order.UpdatedBy)
+            };
+            return await base.ExecuteNonQuery(parameters, "AddUpdateOrderDeliveryDetails_gb", CommandType.StoredProcedure) > 0;
+           
+        }
         public async Task<Order> GetOrderById(int orderId)
         {
             var item = new Order();
@@ -2152,8 +2168,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.OrderDelievery.EstDelieveryDate = dataReader.GetDateTimeValue("estDelieveryDate");
                         item.OrderDelievery.ShippingCost = dataReader.GetIntegerValue("shippingCost");
                         item.OrderDelievery.DelieveryAddress = dataReader.GetStringValue("delieveryAddress");
-
-
+                        item.OrderDelievery.CourierService = dataReader.GetStringValue("CourierService");
+                        item.OrderDelievery.TrackingId = dataReader.GetStringValue("TrackingId");
+                        item.OrderDelievery.ShippingDate = dataReader.GetDateTimeValueNullable("ShippingDate");
+                        
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = await this.CustomerInfrastructure.Get(Customer);
                         item.Product = await this.GetProductById(item.ProductId);

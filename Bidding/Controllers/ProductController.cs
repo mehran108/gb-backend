@@ -91,6 +91,11 @@ namespace GoldBank.Controllers
         {
             return await ProductApplication.UpdateOrderById(order);
         }
+        [HttpPost("AddUpdateOrderDeliveryDetails")]
+        public async Task<bool> AddUpdateOrderDeliveryDetails([FromBody] OrderDelievery order)
+        {
+            return await ProductApplication.AddUpdateOrderDeliveryDetails(order);
+        }
         [HttpPost("DeleteOrder")]
         public async Task<bool> DeleteOrder(Order orderId)
         {
