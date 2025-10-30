@@ -1934,6 +1934,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.CreatedBy = dataReader.GetIntegerValue("createdBy");
                         item.Sku = dataReader.GetStringValue("sku");
 
+                        item.VendorAmount = dataReader.GetDecimalValue("VendorAmount");
+                        item.VendorId = dataReader.GetIntegerValue("vendorId");
+                        item.KaatCategoryId = dataReader.GetIntegerValue("kaatCategoryId");
                         var OrderItem = OrderList.Find(o => o.GoldBookingDetailsId == item.GoldBookingDetailId);
                         if (OrderItem != null)
                         {
@@ -3377,6 +3380,10 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_BookingPrice", goldBookingDetails.BookingPrice, DbType.Decimal);
                 parameters.Add("p_Notes", goldBookingDetails.Notes, DbType.String, size: 1000);
                 parameters.Add("p_UpdatedBy", goldBookingDetails.UpdatedBy, DbType.Int32);
+                parameters.Add("p_VendorId", goldBookingDetails.VendorId, DbType.Int32);
+                parameters.Add("p_KaatCategoryId", goldBookingDetails.KaatCategoryId, DbType.Int32);
+                parameters.Add("p_VendorAmount", goldBookingDetails.VendorAmount, DbType.Decimal);
+                parameters.Add("p_UpdatedBy", goldBookingDetails.UpdatedBy, DbType.Int32);
                 parameters.Add("o_IsUpdated", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 await connection.ExecuteAsync(
@@ -3425,6 +3432,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                     {
                         var item = new GoldBookingDetail();
                         item.GoldBookingDetailId = dataReader.GetIntegerValue("goldBookingDetailId");
+                        item.Sku = dataReader.GetStringValue("sku");
                         item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
                         item.BookingWeight = dataReader.GetDecimalValue("bookingWeight");
                         item.BookingPrice = dataReader.GetDecimalValue("bookingPrice");
@@ -3434,6 +3442,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.IsDeleted = dataReader.GetBooleanValue("isDeleted");
                         item.CreatedAt = dataReader.GetDateTimeValue("createdAt");
                         item.CreatedBy = dataReader.GetIntegerValue("createdBy");
+                        item.VendorAmount = dataReader.GetDecimalValue("VendorAmount");
+                        item.VendorId = dataReader.GetIntegerValue("vendorId");
+                        item.KaatCategoryId = dataReader.GetIntegerValue("kaatCategoryId");
                         exchange = item;
                     }
                 }

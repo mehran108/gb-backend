@@ -32,6 +32,7 @@
         public string? Tag { get; set; }
         public decimal? TotalWeightPurchased { get; set; }
         public int? TotalPurchase { get; set; }
+        public decimal? Rating { get; set; }
     }
     public class CustomerSummary
     {
