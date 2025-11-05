@@ -84,30 +84,111 @@ namespace GoldBank.Application.Application
         {
             try
             {
+                //string fileName = Path.GetFileNameWithoutExtension(Document.File.FileName);
+                //string extension = Path.GetExtension(Document.File.FileName);
+                //var memoryStream = new MemoryStream();
+                //await Document.File.CopyToAsync(memoryStream);
+
+                //Document.Image64String = Convert.ToBase64String(memoryStream.ToArray());
+                //Document.Image64String = "data:image/png;base64," + Convert.ToBase64String(memoryStream.ToArray());
+
+
+                //if (string.IsNullOrWhiteSpace(Document.Image64String) || string.IsNullOrWhiteSpace(Document.Name))
+                //{
+                //    throw new InvalidOperationException("Missing base64File or filename");
+                //}
+
+                //var match = Regex.Match(Document.Image64String, @"^data:image\/(\w+);base64,(.+)$");
+                //if (!match.Success)
+                //{
+                //    throw new InvalidOperationException("Invalid base64 file format");
+                //}
+
+                //extension = match.Groups[1].Value;
+                //var base64Data = match.Groups[2].Value;
+                //var fileBytes = Convert.FromBase64String(base64Data);
+                //var contentType = $"image/{extension}";
+
+                //var putRequest = new PutObjectRequest
+                //{
+                //    BucketName = _bucketName,
+                //    Key = Document.Name,
+                //    InputStream = new MemoryStream(fileBytes),
+                //    ContentType = contentType,
+                //    AutoCloseStream = true
+                //};
+
+                //try
+                //{
+                //    var response = await _s3Client.PutObjectAsync(putRequest);
+                //    Document.Url = $"{_publicKey}/{_bucketName}/{Document.Name}";
+                //    return await DocumentInfrastructure.Add(Document);
+                //}
+                //catch (Exception ex)
+                //{
+                //    Console.WriteLine("S3 Upload Error: " + ex.Message);
+                //    throw new InvalidOperationException($"S3 upload failed: {ex.Message}", ex);
+                //}
                 string fileName = Path.GetFileNameWithoutExtension(Document.File.FileName);
-                string extension = Path.GetExtension(Document.File.FileName);
+                string extension = Path.GetExtension(Document.File.FileName).TrimStart('.').ToLower(); // e.g., "png", "mp4"
+
                 var memoryStream = new MemoryStream();
                 await Document.File.CopyToAsync(memoryStream);
 
-                Document.Image64String = Convert.ToBase64String(memoryStream.ToArray());
-                Document.Image64String = "data:image/png;base64," + Convert.ToBase64String(memoryStream.ToArray());
+                // Determine MIME type based on extension
+                string mimeType = extension.ToLower() switch
+                {
+                    // Image formats
+                    "png" => "image/png",
+                    "jpg" or "jpeg" => "image/jpeg",
+                    "gif" => "image/gif",
+                    "bmp" => "image/bmp",
+                    "webp" => "image/webp",
+                    "svg" => "image/svg+xml",
+                    "tiff" => "image/tiff",
+                    "ico" => "image/x-icon",
+                    "heic" => "image/heic",
+                    "avif" => "image/avif",
 
+                    // Video formats
+                    "mp4" => "video/mp4",
+                    "mov" => "video/quicktime",
+                    "avi" => "video/x-msvideo",
+                    "wmv" => "video/x-ms-wmv",
+                    "flv" => "video/x-flv",
+                    "mkv" => "video/x-matroska",
+                    "webm" => "video/webm",
+                    "3gp" => "video/3gpp",
+                    "m4v" => "video/x-m4v",
+                    "ts" => "video/mp2t",
+                    "mpg" or "mpeg" => "video/mpeg",
+                    "ogv" => "video/ogg",
+
+                    _ => throw new InvalidOperationException("Unsupported file type")
+                };
+
+
+                // Create base64 string with appropriate prefix
+                string base64Prefix = mimeType.StartsWith("image") ? "data:image" : "data:video";
+                Document.Image64String = $"{base64Prefix}/{extension};base64,{Convert.ToBase64String(memoryStream.ToArray())}";
 
                 if (string.IsNullOrWhiteSpace(Document.Image64String) || string.IsNullOrWhiteSpace(Document.Name))
                 {
                     throw new InvalidOperationException("Missing base64File or filename");
                 }
 
-                var match = Regex.Match(Document.Image64String, @"^data:image\/(\w+);base64,(.+)$");
+                // Match both image and video base64 formats
+                var match = Regex.Match(Document.Image64String, @"^data:(image|video)\/(\w+);base64,(.+)$");
                 if (!match.Success)
                 {
                     throw new InvalidOperationException("Invalid base64 file format");
                 }
 
-                extension = match.Groups[1].Value;
-                var base64Data = match.Groups[2].Value;
+                string mediaType = match.Groups[1].Value; // image or video
+                extension = match.Groups[2].Value;
+                var base64Data = match.Groups[3].Value;
                 var fileBytes = Convert.FromBase64String(base64Data);
-                var contentType = $"image/{extension}";
+                var contentType = $"{mediaType}/{extension}";
 
                 var putRequest = new PutObjectRequest
                 {

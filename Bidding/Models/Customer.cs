@@ -33,6 +33,8 @@
         public decimal? TotalWeightPurchased { get; set; }
         public int? TotalPurchase { get; set; }
         public decimal? Rating { get; set; }
+        public List<Discount>? Discounts { get; set; }
+        public List<SalesPersonFeedback>? SalesPersonFeedbacks { get; set; }
     }
     public class CustomerSummary
     {

@@ -3,6 +3,7 @@ using GoldBank.Infrastructure.Extension;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using GoldBank.Models.Product;
+using GoldBank.Models.RequestModels;
 using System.Data;
 using System.Data.Common;
 
@@ -147,7 +148,65 @@ namespace GoldBank.Infrastructure.Infrastructure
                         customerItem.TotalPurchase = dataReader.GetIntegerValue("totalPurchase");
                         customerItem.Gender = dataReader.GetStringValue("gender");
                         customerItem.Rating = dataReader.GetDecimalValue("rating");
+                        customerItem.Discounts = new List<Discount>();
+                        customerItem.SalesPersonFeedbacks = new List<SalesPersonFeedback>();
                     }
+                    if (dataReader != null && dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var discount = new Discount();
+                            discount.DiscountId = dataReader.GetIntegerValue("DiscountId");
+                            discount.DiscountTypeId = dataReader.GetIntegerValue("DiscountTypeId");
+                            discount.Name = dataReader.GetStringValue("Name");
+                            discount.CardDisplayName = dataReader.GetStringValue("CardDisplayName");
+                            discount.Code = dataReader.GetStringValue("Code");
+                            discount.MinInvoiceAmount = dataReader.GetDecimalValue("MinInvoiceAmount");
+                            discount.MaxUsage = dataReader.GetIntegerValue("MaxUsage");
+                            discount.PersonName = dataReader.GetStringValue("PersonName");
+                            discount.Description = dataReader.GetStringValue("Description");
+                            discount.SalesComissionPct = dataReader.GetDecimalValue("SalesComissionPct");
+                            discount.MaxUser = dataReader.GetIntegerValue("MaxUser");
+                            discount.CustomerId = dataReader.GetIntegerValue("CustomerId");
+                            discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");
+                            discount.ExpiryDurationType = dataReader.GetIntegerValue("ExpiryDurationType");
+                            discount.LoyaltyCardTypeId = dataReader.GetIntegerValue("LoyaltyCardTypeId");
+                            discount.VoucherTypeId = dataReader.GetIntegerValue("VoucherTypeId");
+                            discount.PrimaryCategories = dataReader.GetStringValue("PrimaryCategories");
+                            discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
+                            discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
+                            discount.CollectionTypeIds = dataReader.GetStringValue("CollectionTypeIds");
+                            discount.LabelIds = dataReader.GetStringValue("LabelIds");
+                            discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
+                            discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
+                            discount.StartDate = dataReader.GetDateTimeValue("StartDate");
+                            discount.EndDate = dataReader.GetDateTimeValue("EndDate");
+                            discount.IsEcommerce = dataReader.GetBooleanValue("IsEcommerce");
+                            discount.IsInStore = dataReader.GetBooleanValue("IsInStore");
+                            discount.StoreIds = dataReader.GetStringValue("StoreIds");
+                            discount.IsActive = dataReader.GetBooleanValue("IsActive");
+                            discount.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
+                            discount.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
+                            discount.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
+                            discount.CreatedBy = dataReader.GetIntegerValue("CreatedBy");
+                            customerItem.Discounts.Add(discount);
+                        }
+                    }
+                    if (dataReader != null && dataReader.NextResult())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var salesPersonFeedback = new SalesPersonFeedback();
+                            salesPersonFeedback.SalesPersonFeedbackId = dataReader.GetIntegerValue("salesPersonFeedbackId");
+                            salesPersonFeedback.UserId = dataReader.GetIntegerValue("userId");
+                            salesPersonFeedback.CustomerId = dataReader.GetIntegerValue("customerId");
+                            salesPersonFeedback.Feedback = dataReader.GetStringValue("feedback");
+                            salesPersonFeedback.UserName = dataReader.GetStringValue("name");
+                            salesPersonFeedback.Rating = dataReader.GetIntegerValue("rating");
+                            customerItem.SalesPersonFeedbacks.Add(salesPersonFeedback);
+                        }
+                    }
+
                     if (!dataReader.IsClosed)
                     {
                         dataReader.Close();
