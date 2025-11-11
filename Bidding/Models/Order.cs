@@ -29,6 +29,7 @@
         public bool? IsEcommerceOrder { get; set; }
         public bool? IsOnlinePosOrder { get; set; }
         public string? Comments { get; set; }
+        public string? SizeType { get; set; }
 
         public OrderStatus? OrderStatus { get; set; }
         public List<CustomCharge>? CustomCharge { get; set; }
