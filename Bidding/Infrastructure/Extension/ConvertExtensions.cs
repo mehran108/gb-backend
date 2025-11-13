@@ -261,7 +261,7 @@
             if (value.HasValue)
             {
                 //return value.Value;
-                return Convert.ToDecimal(string.Format("{0:0.00}", value.Value));
+                return Convert.ToDecimal(string.Format("{0:0.0000000000000000}", value.Value));
             }
 
             return default(decimal);
@@ -285,7 +285,7 @@
                 else if (!string.IsNullOrWhiteSpace(sourceValue.ToString()))
                 {
                     //value = Convert.ToDecimal(sourceValue);
-                    value = Convert.ToDecimal(string.Format("{0:0.00}", sourceValue));
+                    value = Convert.ToDecimal(string.Format("{0:0.0000000000000000}", sourceValue));
                 }
             }
 

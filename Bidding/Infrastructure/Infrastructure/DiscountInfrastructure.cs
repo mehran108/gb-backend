@@ -101,17 +101,17 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.Name = dataReader.GetStringValue("Name");
                         discount.CardDisplayName = dataReader.GetStringValue("CardDisplayName");
                         discount.Code = dataReader.GetStringValue("Code");
-                        discount.MinInvoiceAmount = dataReader.GetDecimalValue("MinInvoiceAmount");
-                        discount.MaxUsage = dataReader.GetIntegerValue("MaxUsage");
+                        discount.MinInvoiceAmount = dataReader.GetDecimalValueNullable("MinInvoiceAmount");
+                        discount.MaxUsage = dataReader.GetIntegerValueNullable("MaxUsage");
                         discount.PersonName = dataReader.GetStringValue("PersonName");
                         discount.Description = dataReader.GetStringValue("Description");
                         discount.SalesComissionPct = dataReader.GetDecimalValue("SalesComissionPct");
-                        discount.MaxUser = dataReader.GetIntegerValue("MaxUser");
-                        discount.CustomerId = dataReader.GetIntegerValue("CustomerId");
-                        discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");
-                        discount.ExpiryDurationType = dataReader.GetIntegerValue("ExpiryDurationType");
-                        discount.LoyaltyCardTypeId = dataReader.GetIntegerValue("LoyaltyCardTypeId");
-                        discount.VoucherTypeId = dataReader.GetIntegerValue("VoucherTypeId");
+                        discount.MaxUser = dataReader.GetIntegerValueNullable("MaxUser");
+                        discount.CustomerId = dataReader.GetIntegerValueNullable("CustomerId");
+                        discount.ExpiryDuration = dataReader.GetIntegerValueNullable("ExpiryDuration");
+                        discount.ExpiryDurationType = dataReader.GetIntegerValueNullable("ExpiryDurationType");
+                        discount.LoyaltyCardTypeId = dataReader.GetIntegerValueNullable("LoyaltyCardTypeId");
+                        discount.VoucherTypeId = dataReader.GetIntegerValueNullable("VoucherTypeId");
                         discount.PrimaryCategories = dataReader.GetStringValue("PrimaryCategories");
                         discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
                         discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
@@ -165,17 +165,17 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.Name = dataReader.GetStringValue("Name");
                         discount.CardDisplayName = dataReader.GetStringValue("CardDisplayName");
                         discount.Code = dataReader.GetStringValue("Code");
-                        discount.MinInvoiceAmount = dataReader.GetDecimalValue("MinInvoiceAmount");
-                        discount.MaxUsage = dataReader.GetIntegerValue("MaxUsage");
+                        discount.MinInvoiceAmount = dataReader.GetDecimalValueNullable("MinInvoiceAmount");
+                        discount.MaxUsage = dataReader.GetIntegerValueNullable("MaxUsage");
                         discount.PersonName = dataReader.GetStringValue("PersonName");
                         discount.Description = dataReader.GetStringValue("Description");
                         discount.SalesComissionPct = dataReader.GetDecimalValue("SalesComissionPct");
-                        discount.MaxUser = dataReader.GetIntegerValue("MaxUser");
-                        discount.CustomerId = dataReader.GetIntegerValue("CustomerId");
-                        discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");
-                        discount.ExpiryDurationType = dataReader.GetIntegerValue("ExpiryDurationType");
-                        discount.LoyaltyCardTypeId = dataReader.GetIntegerValue("LoyaltyCardTypeId");
-                        discount.VoucherTypeId = dataReader.GetIntegerValue("VoucherTypeId");
+                        discount.MaxUser = dataReader.GetIntegerValueNullable("MaxUser");
+                        discount.CustomerId = dataReader.GetIntegerValueNullable("CustomerId");
+                        discount.ExpiryDuration = dataReader.GetIntegerValueNullable("ExpiryDuration");
+                        discount.ExpiryDurationType = dataReader.GetIntegerValueNullable("ExpiryDurationType");
+                        discount.LoyaltyCardTypeId = dataReader.GetIntegerValueNullable("LoyaltyCardTypeId");
+                        discount.VoucherTypeId = dataReader.GetIntegerValueNullable("VoucherTypeId");
                         discount.PrimaryCategories = dataReader.GetStringValue("PrimaryCategories");
                         discount.CustomerPhoneNumber = dataReader.GetStringValue("CustomerPhoneNumber");
                         discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
@@ -357,7 +357,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                     {
                         discount.Name = dataReader.GetStringValue("Name");
                         discount.MinInvoiceAmount = dataReader.GetDecimalValue("MinInvoiceAmount");
-                        discount.MaxUsage = dataReader.GetIntegerValue("MaxUsage");
+                        discount.MaxUsage = dataReader.GetIntegerValueNullable("MaxUsage");
                         discount.Description = dataReader.GetStringValue("Description");
                         
                         discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");
@@ -399,7 +399,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         var discount = new VoucherType();
                         discount.Name = dataReader.GetStringValue("Name");
                         discount.MinInvoiceAmount = dataReader.GetDecimalValue("MinInvoiceAmount");
-                        discount.MaxUsage = dataReader.GetIntegerValue("MaxUsage");
+                        discount.MaxUsage = dataReader.GetIntegerValueNullable("MaxUsage");
                         discount.Description = dataReader.GetStringValue("Description");
 
                         discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");

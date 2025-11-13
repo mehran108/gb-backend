@@ -417,6 +417,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         paymentItem.UserName = dataReader.GetStringValue("UserName");
                         paymentItem.BranchName = dataReader.GetStringValue("branchName");
                         paymentItem.CustomerLastName = dataReader.GetStringValue("lastName");
+                        paymentItem.OrderId = dataReader.GetIntegerValueNullable("orderId");
+                        paymentItem.OrderTypeId = dataReader.GetIntegerValueNullable("orderTypeId");
+                        paymentItem.OrderType = dataReader.GetStringValue("orderType");
                         paymentItems.Add(paymentItem);
                     }
                 }

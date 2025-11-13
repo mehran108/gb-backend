@@ -26,6 +26,9 @@
         public string CustomerLastName { get; set; }
         public string? UserName { get; set; }
         public string? BranchName { get; set; }
+        public int? OrderId { get; set; }
+        public int? OrderTypeId { get; set; }
+        public string? OrderType { get; set; }
         
     }
     public class OnlinePaymentSummary
