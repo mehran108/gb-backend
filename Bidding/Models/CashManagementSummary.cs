@@ -22,6 +22,9 @@ namespace GoldBank.Models
        public bool IsCredit { get; set; }
        public bool IsDebit { get; set; }
        public int StoreId { get; set; }
+       public int? OrderId { get; set; }
+       public int? OrderTypeId { get; set; }
+       public string? OrderType { get; set; }
     }
     public class StoreCashManagementRequestVm
     {
