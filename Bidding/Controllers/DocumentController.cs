@@ -28,6 +28,12 @@ namespace GoldBank.Controllers
         {
             return await DocumentApplication.Update(Document);
         }
+
+        [HttpPost("Delete")]
+        public async Task<bool> Delete([FromBody]Document Document)
+        {
+            return await DocumentApplication.Delete(Document);
+        }
         [HttpGet("Get")]
         public async Task<Document> GetById([FromQuery] int DocumentId)
         {

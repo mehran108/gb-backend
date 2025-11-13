@@ -319,6 +319,10 @@ namespace GoldBank.Application.Application
                     File.Delete(tmpFilePath);
             }
         }
+        public async Task<bool> Delete(Document Document)
+        {
+            return await this.DocumentInfrastructure.Delete(Document);
+        }
     }
         
 }

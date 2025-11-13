@@ -119,15 +119,15 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.LabelIds = dataReader.GetStringValue("LabelIds");
                         discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
                         discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
-                        discount.StartDate = dataReader.GetDateTimeValue("StartDate");
-                        discount.EndDate = dataReader.GetDateTimeValue("EndDate");
+                        discount.StartDate = dataReader.GetDateTimeValueNullable("StartDate");
+                        discount.EndDate = dataReader.GetDateTimeValueNullable("EndDate");
                         discount.IsEcommerce = dataReader.GetBooleanValue("IsEcommerce");
                         discount.IsInStore = dataReader.GetBooleanValue("IsInStore");
                         discount.StoreIds = dataReader.GetStringValue("StoreIds");
                         discount.IsActive = dataReader.GetBooleanValue("IsActive");
-                        discount.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
+                        discount.UpdatedAt = dataReader.GetDateTimeValueNullable("UpdatedAt");
                         discount.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
-                        discount.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
+                        discount.CreatedAt = dataReader.GetDateTimeValueNullable("CreatedAt");
                         discount.CreatedBy = dataReader.GetIntegerValue("CreatedBy");
                     }
                 }
@@ -186,15 +186,15 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.CustomerLastName = dataReader.GetStringValue("lastName");
                         discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
                         discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
-                        discount.StartDate = dataReader.GetDateTimeValue("StartDate");
-                        discount.EndDate = dataReader.GetDateTimeValue("EndDate");
+                        discount.StartDate = dataReader.GetDateTimeValueNullable("StartDate");
+                        discount.EndDate = dataReader.GetDateTimeValueNullable("EndDate");
                         discount.IsEcommerce = dataReader.GetBooleanValue("IsEcommerce");
                         discount.IsInStore = dataReader.GetBooleanValue("IsInStore");
                         discount.StoreIds = dataReader.GetStringValue("StoreIds");
                         discount.IsActive = dataReader.GetBooleanValue("IsActive");
-                        discount.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
+                        discount.UpdatedAt = dataReader.GetDateTimeValueNullable("UpdatedAt");
                         discount.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
-                        discount.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
+                        discount.CreatedAt = dataReader.GetDateTimeValueNullable("CreatedAt");
                         discount.CreatedBy = dataReader.GetIntegerValue("CreatedBy");
                         if (discount.DiscountTypeId == 4)
                         {
