@@ -30,9 +30,9 @@ namespace GoldBank.Controllers
         }
 
         [HttpPost("Delete")]
-        public async Task<bool> Delete([FromBody]Document Document)
+        public async Task<bool> Delete([FromBody]string documentIds)
         {
-            return await DocumentApplication.Delete(Document);
+            return await DocumentApplication.Delete(documentIds);
         }
         [HttpGet("Get")]
         public async Task<Document> GetById([FromQuery] int DocumentId)

@@ -94,11 +94,11 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return result;
         }
-        public async Task<bool> Delete(Document Document)
+        public async Task<bool> Delete(string documentIds)
         {
             var parameters = new List<DbParameter>
             {
-                base.GetParameter("p_DocumentId", Document.DocumentId)
+                base.GetParameter("p_DocumentId", documentIds)
             };
             var res = await this.ExecuteNonQuery(parameters, "DeleteDocument_gb", CommandType.StoredProcedure);
             return res > 0;

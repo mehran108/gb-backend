@@ -5,6 +5,6 @@ namespace GoldBank.Infrastructure.IInfrastructure
 {
     public interface IDocumentInfrastructure : IBaseInfrastructure<Document>
     {
-        Task<bool> Delete(Document Document);        
+        Task<bool> Delete(string documentIds);        
     }
 }
