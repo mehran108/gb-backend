@@ -30,6 +30,7 @@
         public bool? IsOnlinePosOrder { get; set; }
         public string? Comments { get; set; }
         public string? SizeType { get; set; }
+        public string? TrackingId { get; set; }
 
         public OrderStatus? OrderStatus { get; set; }
         public List<CustomCharge>? CustomCharge { get; set; }

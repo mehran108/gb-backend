@@ -1464,6 +1464,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_IsEcommerceOrder", order.IsEcommerceOrder);
                 parameters.Add("p_IsOnlinePosOrder", order.IsOnlinePosOrder);
                 parameters.Add("p_SizeType", order.SizeType);
+                parameters.Add("p_TrackingId", order.TrackingId);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
@@ -1582,6 +1583,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.OrderStatusId = dataReader.GetIntegerValue("OrderStatusId");
                         item.RepairDetailsId = dataReader.GetIntegerValue("repairDetailId");
                         item.SizeType = dataReader.GetStringValue("sizeType");
+                        item.TrackingId = dataReader.GetStringValue("trackingId");
                         item.AlterationDetailsId = dataReader.GetIntegerValue("alterationDetailsId");
                         item.OrderDelievery.DelieveryMethodId = dataReader.GetIntegerValue("delieveryMethodId");
                         item.OrderDelievery.EstDelieveryDate = dataReader.GetDateTimeValue("estDelieveryDate");
@@ -2170,6 +2172,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.Comments = dataReader.GetStringValue("comments");
                         item.IsOnlinePosOrder = dataReader.GetBooleanValue("IsOnlinePosOrder");
                         item.SizeType = dataReader.GetStringValue("sizeType");
+                        item.TrackingId = dataReader.GetStringValue("trackingId");
                         item.IsEcommerceOrder = dataReader.GetBooleanValue("IsEcommerceOrder");
                         item.OrderDelievery.DelieveryMethodId = dataReader.GetIntegerValue("delieveryMethodId");
                         item.OrderDelievery.EstDelieveryDate = dataReader.GetDateTimeValue("estDelieveryDate");

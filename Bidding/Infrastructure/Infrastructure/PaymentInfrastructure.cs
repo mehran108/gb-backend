@@ -742,7 +742,12 @@ namespace GoldBank.Infrastructure.Infrastructure
 
         private static string GenerateTransactionId()
         {
-            return Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
+            string datePart = DateTime.Now.ToString("yyMMddHH");
+
+            Random rnd = new Random();
+            string randomPart = rnd.Next(0, 100).ToString("D2");
+
+            return datePart + randomPart;
         }
 
         public async Task<int> AddCashManagementDetail(CashManagementDetails entity)
