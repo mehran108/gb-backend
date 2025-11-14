@@ -924,7 +924,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.IsCredit = dataReader.GetBooleanValue("isCredit");
                         item.IsDebit = dataReader.GetBooleanValue("isDebit");
                         item.StoreId = dataReader.GetIntegerValue("storeId");
-
+                        item.IsVendorPayment = dataReader.GetBooleanValueNullable("isVendorPayment");
+                        item.PaymentId = dataReader.GetIntegerValueNullable("paymentId");
                         item.OrderIds = dataReader.GetStringValue("OrderIds");
                         Summary.Add(item);
                     }         
