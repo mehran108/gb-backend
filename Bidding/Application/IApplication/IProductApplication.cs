@@ -11,6 +11,7 @@ namespace GoldBank.Application.IApplication
         Task<bool> BulkImport(Document document);
         Task<AllResponse<Product>> GetAllProducts(AllRequest<ProductRequestVm> product);
         Task<Product> GetProductById(int productId);
+        Task<bool> DeleteProductStone(StoneProduct stone);
         Task<bool> DeleteProduct(Product product);
         Task<int> AddOrder(Order order);
         Task<AllResponse<Order>> GetAllOrders(AllRequest<OrderRequestVm> order);

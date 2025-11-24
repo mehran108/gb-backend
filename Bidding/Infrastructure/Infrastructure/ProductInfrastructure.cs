@@ -1373,6 +1373,18 @@ namespace GoldBank.Infrastructure.Infrastructure
             return succeed == 1;
 
         }
+        public async Task<bool> DeleteProductStone(StoneProduct stone)
+        {
+            using var connection = base.GetConnection();
+            var parameters = new DynamicParameters();
+            parameters.Add("p_ProductStoneId", stone.ProductStoneIds);
+            parameters.Add("P_UpdatedBy", stone.UpdatedBy);
+            parameters.Add("o_updated", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            await connection.ExecuteAsync("DeleteProductStone_gb", parameters, commandType: CommandType.StoredProcedure);
+            var succeed = parameters.Get<int>("o_updated");
+            return succeed == 1;
+        }
         #endregion
 
         #region Order Details
@@ -1729,28 +1741,28 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.ProductTypeId = dataReader.GetIntegerValue("productTypeId");
                         item.MetalTypeId = dataReader.GetIntegerValue("metalTypeId");
                         item.WeightBeforeRepair = dataReader.GetDecimalValue("weightBeforeRepair");
-                        item.RepairCleaningId = dataReader.GetIntegerValue("repairCleaningId");
+                        item.RepairCleaningId = dataReader.GetIntegerValueNullable("repairCleaningId");
                         item.CleaningNotes = dataReader.GetStringValue("cleaningNotes");
                         item.CleaningPrice = dataReader.GetDecimalValue("cleaningPrice");
-                        item.RepairPolishingId = dataReader.GetIntegerValue("repairPolishingId");
+                        item.RepairPolishingId = dataReader.GetIntegerValueNullable("repairPolishingId");
                         item.PolishingNotes = dataReader.GetStringValue("polishingNotes");
-                        item.PolishingPrice = dataReader.GetDecimalValue("polishingPrice");
+                        item.PolishingPrice = dataReader.GetDecimalValueNullable("polishingPrice");
                         item.CurrentJewellerySize = dataReader.GetStringValue("currentJewellerySize");
                         item.DesiredJewellerySize = dataReader.GetStringValue("desiredJewellerySize");
                         item.ResizingNotes = dataReader.GetStringValue("resizingNotes");
-                        item.ResizingPrice = dataReader.GetDecimalValue("resizingPrice");
+                        item.ResizingPrice = dataReader.GetDecimalValueNullable("resizingPrice");
                         item.RepairDamageTypeIds = dataReader.GetStringValue("repairDamageTypeIds");
                         item.RepairDamageAreaIds = dataReader.GetStringValue("repairDamageAreaIds");
                         item.RepairingNotes = dataReader.GetStringValue("repairingNotes");
-                        item.RepairingPrice = dataReader.GetDecimalValue("repairingPrice");
+                        item.RepairingPrice = dataReader.GetDecimalValueNullable("repairingPrice");
 
-                        item.EstRepairingCost = dataReader.GetDecimalValue("estRepairCost");
-                        item.WeightChange = dataReader.GetDecimalValue("weightChange");
-                        item.WeightChangePrice = dataReader.GetDecimalValue("weightChangePrice");
-                        item.ActualWeight = dataReader.GetDecimalValue("actualWeight");
-                        item.TotalRepairCost = dataReader.GetDecimalValue("totalRepairCost");
+                        item.EstRepairingCost = dataReader.GetDecimalValueNullable("estRepairCost");
+                        item.WeightChange = dataReader.GetDecimalValueNullable("weightChange");
+                        item.WeightChangePrice = dataReader.GetDecimalValueNullable("weightChangePrice");
+                        item.ActualWeight = dataReader.GetDecimalValueNullable("actualWeight");
+                        item.TotalRepairCost = dataReader.GetDecimalValueNullable("totalRepairCost");
                         item.EstDeliveryDate = dataReader.GetDateTimeValue("estDeliveryDate");
-                        item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
+                        item.WeightTypeId = dataReader.GetIntegerValueNullable("weightTypeId");
                         //item.WeightAfterRepair = dataReader.GetIntegerValue("weightAfterRepair");
 
                         item.IsActive = dataReader.GetBooleanValue("isActive");
@@ -2598,28 +2610,28 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.ProductTypeId = dataReader.GetIntegerValue("productTypeId");
                         item.MetalTypeId = dataReader.GetIntegerValue("metalTypeId");
                         item.WeightBeforeRepair = dataReader.GetDecimalValue("weightBeforeRepair");
-                        item.RepairCleaningId = dataReader.GetIntegerValue("repairCleaningId");
+                        item.RepairCleaningId = dataReader.GetIntegerValueNullable("repairCleaningId");
                         item.CleaningNotes = dataReader.GetStringValue("cleaningNotes");
-                        item.CleaningPrice = dataReader.GetDecimalValue("cleaningPrice");
-                        item.RepairPolishingId = dataReader.GetIntegerValue("repairPolishingId");
+                        item.CleaningPrice = dataReader.GetDecimalValueNullable("cleaningPrice");
+                        item.RepairPolishingId = dataReader.GetIntegerValueNullable("repairPolishingId");
                         item.PolishingNotes = dataReader.GetStringValue("polishingNotes");
-                        item.PolishingPrice = dataReader.GetDecimalValue("polishingPrice");
+                        item.PolishingPrice = dataReader.GetDecimalValueNullable("polishingPrice");
                         item.CurrentJewellerySize = dataReader.GetStringValue("currentJewellerySize");
                         item.DesiredJewellerySize = dataReader.GetStringValue("desiredJewellerySize");
                         item.ResizingNotes = dataReader.GetStringValue("resizingNotes");
-                        item.ResizingPrice = dataReader.GetDecimalValue("resizingPrice");
+                        item.ResizingPrice = dataReader.GetDecimalValueNullable("resizingPrice");
                         item.RepairDamageTypeIds = dataReader.GetStringValue("repairDamageTypeIds");
                         item.RepairDamageAreaIds = dataReader.GetStringValue("repairDamageAreaIds");
                         item.RepairingNotes = dataReader.GetStringValue("repairingNotes");
-                        item.RepairingPrice = dataReader.GetDecimalValue("repairingPrice");
+                        item.RepairingPrice = dataReader.GetDecimalValueNullable("repairingPrice");
 
-                        item.EstRepairingCost = dataReader.GetDecimalValue("estRepairCost");
-                        item.WeightChange = dataReader.GetDecimalValue("weightChange");
-                        item.WeightChangePrice = dataReader.GetDecimalValue("weightChangePrice");
-                        item.ActualWeight = dataReader.GetDecimalValue("actualWeight");
-                        item.TotalRepairCost = dataReader.GetDecimalValue("totalRepairCost");
+                        item.EstRepairingCost = dataReader.GetDecimalValueNullable("estRepairCost");
+                        item.WeightChange = dataReader.GetDecimalValueNullable("weightChange");
+                        item.WeightChangePrice = dataReader.GetDecimalValueNullable("weightChangePrice");
+                        item.ActualWeight = dataReader.GetDecimalValueNullable("actualWeight");
+                        item.TotalRepairCost = dataReader.GetDecimalValueNullable("totalRepairCost");
                         item.EstDeliveryDate = dataReader.GetDateTimeValue("estDeliveryDate");
-                        item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
+                        item.WeightTypeId = dataReader.GetIntegerValueNullable("weightTypeId");
                         //item.WeightAfterRepair = dataReader.GetIntegerValue("weightAfterRepair");
 
                         item.IsActive = dataReader.GetBooleanValue("isActive");

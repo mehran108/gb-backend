@@ -64,7 +64,11 @@ namespace GoldBank.Controllers
         {
             return await ProductApplication.UploadImage(Document);
         }
-
+        [HttpPost("DeleteProductStone")]
+        public async Task<bool> DeleteProductStone([FromBody] StoneProduct stone)
+        {
+            return await ProductApplication.DeleteProductStone(stone);
+        }
 
         [HttpPost("AddOrder")]
         public async Task<int> AddOrder(Order order)
