@@ -1478,6 +1478,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_IsOnlinePosOrder", order.IsOnlinePosOrder);
                 parameters.Add("p_SizeType", order.SizeType);
                 parameters.Add("p_TrackingId", order.TrackingId);
+                parameters.Add("p_AppliedDiscount", order.AppliedDiscount);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
@@ -1610,10 +1611,12 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.GoldBookingDetailsId = dataReader.GetIntegerValue("goldBookingDetailId");
                         item.GiftCardDetailsId = dataReader.GetIntegerValue("giftCardDetailId");
                         item.Comments = dataReader.GetStringValue("comments");
+                        item.AppliedDiscount = dataReader.GetStringValue("appliedDiscount");
                         Customer.FirstName = dataReader.GetStringValue("customerName");
                         Customer.Mobile = dataReader.GetStringValue("Mobile");
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = Customer;
+                        
                         // item.Customer = await this.CustomerInfrastructure.Get(Customer);
 
                         item.Product = await this.GetProductById(item.ProductId);
@@ -2080,6 +2083,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_IsEcommerceOrder", order.IsEcommerceOrder);
                 parameters.Add("p_IsOnlinePosOrder", order.IsOnlinePosOrder);
                 parameters.Add("p_SizeType", order.SizeType);
+                parameters.Add("p_AppliedDiscount", order.AppliedDiscount);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
@@ -2194,7 +2198,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.OrderDelievery.CourierService = dataReader.GetStringValue("CourierService");
                         item.OrderDelievery.TrackingId = dataReader.GetStringValue("TrackingId");
                         item.OrderDelievery.ShippingDate = dataReader.GetDateTimeValueNullable("ShippingDate");
-                        
+                        item.AppliedDiscount = dataReader.GetStringValue("appliedDiscount");
+
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = await this.CustomerInfrastructure.Get(Customer);
                         item.Product = await this.GetProductById(item.ProductId);
