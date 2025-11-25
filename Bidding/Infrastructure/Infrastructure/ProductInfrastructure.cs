@@ -762,7 +762,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.VendorAmount = dataReader.GetDecimalValue("vendorAmount");
                         item.KaatCategoryId = dataReader.GetIntegerValue("kaatCategoryId");
                         item.InventoryUploadDate = dataReader.GetDateTimeValue("inventoryUploadDate");
-
+                        item.SoldPrice = dataReader.GetDecimalValueNullable("soldPrice");
                         ProductList.Add(item);
                     }
 

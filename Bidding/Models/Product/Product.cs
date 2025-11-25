@@ -25,5 +25,6 @@ namespace GoldBank.Models.Product
         public Discount? DiscountDetails { get; set; }
         public List<ProductLabel>? ProductLabel { get; set; }
         public DateTime? InventoryUploadDate { get; set; }
+        public decimal? SoldPrice { get; set; }
     }
 }
