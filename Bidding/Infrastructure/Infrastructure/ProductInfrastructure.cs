@@ -406,6 +406,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         p_ProductId = productId,
                         p_StoneTypeId = stone.StoneTypeId,
                         p_StoneShapeId = stone.StoneShapeId,
+                        p_StoneProductId = stone.StoneProductId,
                         p_StoneWeightTypeId = stone.StoneWeightTypeId,
                         p_Quantity = stone.Quantity,
                         p_TotalWeight = stone.TotalWeight,
