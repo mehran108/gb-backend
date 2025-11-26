@@ -687,7 +687,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         base.GetParameter("@P_SearchText", product.SearchText),
         base.GetParameter("@p_ProductTypeId", ToDbValue(product.Data.ProductTypeId)),
         base.GetParameter("@p_SKU", ToDbValue(product.Data.SKU)),
-        base.GetParameter("@p_ProductSourceId", ToDbValue(product.Data.ProductSourceId)),
+        base.GetParameter("@p_ProductSourceIds", ToDbValue(product.Data.ProductSourceId)),
         base.GetParameter("@p_VendorId", ToDbValue(product.Data.VendorId)),
         base.GetParameter("@p_PrimaryCategoryIds", ToDbValue(product.Data.PrimaryCategoryIds)),
         base.GetParameter("@p_CategoryIds", ToDbValue(product.Data.CategoryIds)),
