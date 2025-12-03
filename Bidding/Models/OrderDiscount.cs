@@ -12,6 +12,7 @@
         public int? ProductId {  get; set; }
         public bool? IsEcommerce {  get; set; }
         public bool? IsInStore {  get; set; }
+        public int? CustomerId { get; set; }
     }
     public class DiscountCodeVerification 
     {

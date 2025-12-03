@@ -576,7 +576,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                  base.GetParameter("p_DiscountId", entity.DiscountId),
                  base.GetParameter("p_ProductId", entity.ProductId),
                  base.GetParameter("p_IsEcommerce", entity.IsEcommerce),
-                 base.GetParameter("p_IsInStore", entity.IsInStore)
+                 base.GetParameter("p_IsInStore", entity.IsInStore),
+                 base.GetParameter("p_CustomerId", entity.CustomerId)
             };
 
             using (var dataReader = await base.ExecuteReader(parameters, "GetDiscountDetailsByCode_gb", CommandType.StoredProcedure))
