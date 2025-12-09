@@ -42,6 +42,7 @@
         public GoldBookingDetail? GoldBookingDetails { get; set; }
         public GiftCardDetail? GiftCardDetails { get; set; }
         public string? AppliedDiscount { get; set; }
+        public string? PreviousValue { get; set; }
     }
 
     public class OrderStatusReqVm : BaseDomain
