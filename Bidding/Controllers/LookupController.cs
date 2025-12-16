@@ -142,9 +142,9 @@ namespace GoldBank.Controllers
             return Ok(result);
         }
         [HttpGet("GetAllCategories")]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories([FromQuery] bool isDefault, bool isAppraisal)
         {
-            var result = await this.LookupApplication.GetCategories();
+            var result = await this.LookupApplication.GetCategories(isDefault, isAppraisal);
             return Ok(result);
         }
         [HttpGet("GetAllSubCategories")]
