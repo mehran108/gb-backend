@@ -4,7 +4,6 @@ using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using GoldBank.Models.Product;
 using GoldBank.Models.RequestModels;
-using Microsoft.AspNetCore.Http.HttpResults;
 using System;
 using System.Data;
 using System.Data.Common;
@@ -944,6 +943,42 @@ namespace GoldBank.Infrastructure.Infrastructure
                 //}
             }
             return Summary;
+        }       
+        public async Task<List<OrderInvoiceTemplate>> GetAlInvoiceTemplates()
+        {
+            var result = new List<OrderInvoiceTemplate>();
+            var parameters = new List<DbParameter>
+            {
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAlInvoiceTemplates", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new OrderInvoiceTemplate();
+                        item.Code = dataReader.GetStringValue("code");
+                        item.Template = dataReader.GetStringValue("template");
+                        result.Add(item);
+                    }
+                }
+            }
+
+            return result;
+        }
+        public async Task<bool> UpdatePaymentInvoiceURL(Invoice Invoice)
+        {
+            using var connection = base.GetConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("p_PaymentId", Invoice.PaymentId);
+            parameters.Add("p_Url", Invoice.Url);
+            parameters.Add("o_Succeed", dbType: DbType.Byte, direction: ParameterDirection.Output);
+
+            await connection.ExecuteAsync("UpdatePaymentInvoiceURLGb", parameters, commandType: CommandType.StoredProcedure);
+            byte? succeed = parameters.Get<byte?>("o_Succeed");
+            bool? response = succeed == null ? null : (succeed == 1 ? true : false);
+            return response ?? false;
         }
     }
 }

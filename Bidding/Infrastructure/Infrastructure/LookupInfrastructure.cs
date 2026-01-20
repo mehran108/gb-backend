@@ -483,7 +483,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         list.Add(new OrderType
                         {
                             OrderTypeId = dataReader.GetIntegerValue("orderTypeId"),
-                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                            Template = dataReader.GetStringValue("template")
                         });
                     }
                 }

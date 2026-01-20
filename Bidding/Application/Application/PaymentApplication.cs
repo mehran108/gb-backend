@@ -1,19 +1,26 @@
 ﻿using GoldBank.Application.IApplication;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
-using GoldBank.Models.Product;
 using GoldBank.Models.RequestModels;
+using Syncfusion.HtmlConverter;
+using Syncfusion.Pdf;
+using Syncfusion.Pdf.Graphics;
 
 namespace GoldBank.Application.Application
 {
     public class PaymentApplication : IBaseApplication<Payment>, IPaymentApplication
     {
-        public PaymentApplication(IPaymentInfrastructure PaymentInfrastructure, IConfiguration configuration, ILogger<Payment> logger)
+        private readonly string LogoURL;
+
+        public PaymentApplication(IPaymentInfrastructure PaymentInfrastructure, IConfiguration configuration, ILookupInfrastructure LookupInfrastructure, ILogger<Payment> logger)
         {
             this.PaymentInfrastructure = PaymentInfrastructure;
+            this.LookupInfrastructure = LookupInfrastructure;
+            LogoURL = configuration["LogoURL"];
         }
 
         public IPaymentInfrastructure PaymentInfrastructure { get; }
+        public ILookupInfrastructure LookupInfrastructure { get; }
 
         public Task<bool> Activate(Payment entity)
         {
@@ -132,5 +139,179 @@ namespace GoldBank.Application.Application
         {
             return await this.PaymentInfrastructure.GetAllCashManagementSummary(request);
         }
+        public async Task<byte[]> GenerateInvoice(Invoice invoice)
+        {
+            var intemplates = await this.PaymentInfrastructure.GetAlInvoiceTemplates();
+            string invoiceTemplate = intemplates.Where(x => x.Code == "INVTMPL").Select(x => x.Template).FirstOrDefault() ?? "";
+
+
+            var tokens = BuildInvoiceHeaders(invoice, LogoURL);
+
+            string finalHtml = PopulateTemplate(invoiceTemplate, tokens);
+
+            var templates = await this.LookupInfrastructure.GetAllOrderTypes();
+
+            string ordersSection = "";
+            foreach (var order in invoice.Orders)
+            {
+                var template = templates.Where(x => x.OrderTypeId == order.OrderTypeId).Select(x => x.Template).FirstOrDefault();
+                if (template != null)
+                {
+                    var orderTokens = BuildInvoiceTokens(order, LogoURL);
+                    ordersSection += PopulateTemplate(template, orderTokens);
+                }
+            }
+
+            finalHtml = finalHtml.Replace("{{orderItems}}", ordersSection);
+
+            HtmlToPdfConverter htmlConverter = new HtmlToPdfConverter();
+
+            // Blink converter settings
+            BlinkConverterSettings blinkSettings = new BlinkConverterSettings();
+
+            // Correct way to set page size
+            var settings = new PdfPageSettings
+            {
+                Size = PdfPageSize.A4 // Left, Top, Right, Bottom
+            };
+
+            // Assign settings
+            htmlConverter.ConverterSettings = blinkSettings;
+
+            // Convert HTML string to PDF
+            string finalHtmlhtmlContent = "<html><body><h1>Hello PDF</h1></body></html>";
+            PdfDocument document = htmlConverter.Convert(finalHtml, string.Empty);
+
+            // Save PDF
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                document.Save(memoryStream);
+                document.Close(true);
+
+                // Return byte array
+                return memoryStream.ToArray();
+            }
+
+            //    var res = RenderInvoiceTemplate(invoiceHtmlTemplate, invoice);
+        }
+        //public async Task<byte[]> GenerateInvoiceDink(Invoice invoice)
+        //{
+        //    var intemplates = await this.PaymentInfrastructure.GetAlInvoiceTemplates();
+        //    string invoiceTemplate = intemplates.Where(x => x.Code == "INVTMPL").Select(x => x.Template).FirstOrDefault() ?? "";
+
+
+        //    var tokens = BuildInvoiceHeaders(invoice, LogoURL);
+
+        //    string finalHtml = PopulateTemplate(invoiceTemplate, tokens);
+
+        //    var templates = await this.LookupInfrastructure.GetAllOrderTypes();
+
+        //    string ordersSection = "";
+        //    foreach (var order in invoice.Orders)
+        //    {
+        //        var template = templates.Where(x => x.OrderTypeId == order.OrderTypeId).Select(x => x.Template).FirstOrDefault();
+        //        if (template != null)
+        //        {
+        //            var orderTokens = BuildInvoiceTokens(order, LogoURL);
+        //            ordersSection += PopulateTemplate(template, orderTokens);
+        //        }
+        //    }
+
+        //    finalHtml = finalHtml.Replace("{{orderItems}}", ordersSection);
+
+        //    HtmlToPdfConverter htmlConverter = new HtmlToPdfConverter();
+
+        //    // Blink converter settings
+        //    BlinkConverterSettings blinkSettings = new BlinkConverterSettings();
+
+        //    // Correct way to set page size
+        //    var settings = new PdfPageSettings
+        //    {
+        //        Size = PdfPageSize.A4 // Left, Top, Right, Bottom
+        //    };
+
+        //    // Assign settings
+        //    htmlConverter.ConverterSettings = blinkSettings;
+
+        //    // Convert HTML string to PDF
+        //    string finalHtmlhtmlContent = "<html><body><h1>Hello PDF</h1></body></html>";
+        //    PdfDocument document = htmlConverter.Convert(finalHtml, string.Empty);
+
+        //    // Save PDF
+        //    using (MemoryStream memoryStream = new MemoryStream())
+        //    {
+        //        document.Save(memoryStream);
+        //        document.Close(true);
+
+        //        // Return byte array
+        //        return memoryStream.ToArray();
+        //    }
+
+        //    //    var res = RenderInvoiceTemplate(invoiceHtmlTemplate, invoice);
+        //}
+
+
+        public static string PopulateTemplate(string template, Dictionary<string, string> values)
+        {
+            foreach (var item in values)
+                template = template.Replace($"{{{{{item.Key}}}}}", item.Value ?? "");
+
+            return template;
+        }
+        public static Dictionary<string, string> BuildInvoiceHeaders(Invoice order, string logoURL)
+        {
+            return new Dictionary<string, string>
+        {
+        // Header
+        { "orderId", order.PaymentId.ToString() },
+        { "time", DateTime.Now.ToString("hh:mm tt") },
+        { "date", DateTime.Now.ToString("MMM dd yyyy ") },
+        { "CustomerName", order.CustomerName },
+        { "CustomerPhone", order.Phone },
+        { "salesperson", order.CreatedBy },
+        { "logoURL", logoURL },
+        { "totalPayable", order.TransactionSummary?.GrandTotalPayable ?? ""},
+        { "cashPaid", order.TransactionSummary?.CashPaid ?? ""},
+
+        // Online Transfer
+        { "companyBank", order.TransactionSummary?.OnlineTransfer?.CompanyBank ?? "" },
+        { "customerBank", order.TransactionSummary?.OnlineTransfer?.CustomerBank ?? ""},
+        { "customerAccount", order.TransactionSummary ?.OnlineTransfer ?.CustomerAccount ?? "" },
+        { "transactionId", order.TransactionSummary ?.OnlineTransfer ?.TransactionId ?? "" },
+        { "onlineAmount", order.TransactionSummary ?.OnlineTransfer ?.Amount ?? "" },
+        
+        { "cardCompanyAccount", order.TransactionSummary?.CardMachine?.CompanyBank ?? "" },
+        { "last4Digit", order.TransactionSummary?.CardMachine?.Last4Digits ?? ""},
+        { "cardTrxId", order.TransactionSummary ?.CardMachine ?.TransactionId ?? "" },
+        { "cardAmount", order.TransactionSummary ?.CardMachine ?.Amount ?? "" }
+            };
+        }
+        public static Dictionary<string, string> BuildInvoiceTokens(InvoiceOrder order, string logoURL)
+        {
+            return new Dictionary<string, string>
+        {
+        { "orderType", order.OrderType },
+
+        { "ItemName", order.ItemDetails ?.ItemName ?? "" },
+        { "sku", order.ItemDetails ?.SKU ?? "" },
+        { "quantity", order.ItemDetails?.Quantity?.ToString()?? "" },
+        { "productImage", order.ItemDetails?.Image?.ToString()?? "" },
+        { "metalType", order.MetalDetails?.MetalType ?? ""},
+        { "metalPurity", order.MetalDetails?.MetalPurity ?? ""},
+        { "grossWeight", order.MetalDetails?.Weight?? "" },
+        { "ratePerGram", order.MetalDetails?.RatePerGram ?? "" },
+        { "metalValue", order.MetalDetails?.MetailValue ?? ""},
+        { "itemMetalValue", order.ItemPricing?.MetalValue ?? ""},
+        { "makingCharges", order.ItemPricing?.MakingCharges ?? ""},
+        { "lacquerCharges", order.ItemPricing?.LacquerCharges ?? ""},
+        { "gemstoneValue", order.ItemPricing?.GemStoneValue ?? ""},
+        { "subTotalPrice", order.ItemPricing?.SubTotalPrice ?? ""},
+        { "discountType", order.ItemPricing?.DiscountType ?? ""},
+        { "discountAmount", order.ItemPricing?.DiscountAmount ?? ""},
+        { "totalPrice", order.ItemPricing?.TotalPrice ?? ""},
+        { "amountPayable", order.ItemPricing?.AmountPayable ?? ""}        
+    };
+        }
+
     }
 }

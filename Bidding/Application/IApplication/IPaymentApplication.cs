@@ -28,5 +28,6 @@ namespace GoldBank.Application.IApplication
         Task<int> CancelCashWidrawAmount(int Id, int UserId);
         Task<CashManagementSummary> GetCashManagementSummary();
         Task<List<StoreCashManagementSummary>> GetAllCashManagementSummary(StoreCashManagementRequestVm request);
+        Task<byte[]> GenerateInvoice(Invoice invoice);
     }
 }

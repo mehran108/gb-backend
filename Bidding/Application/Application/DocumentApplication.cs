@@ -163,7 +163,7 @@ namespace GoldBank.Application.Application
                     "ts" => "video/mp2t",
                     "mpg" or "mpeg" => "video/mpeg",
                     "ogv" => "video/ogg",
-
+                    "pdf" => "application/pdf",
                     _ => throw new InvalidOperationException("Unsupported file type")
                 };
 

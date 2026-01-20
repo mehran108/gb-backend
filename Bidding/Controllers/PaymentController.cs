@@ -201,5 +201,17 @@ namespace GoldBank.Controllers
         {
             return await this.PaymentApplication.GetAllCashManagementSummary(request);
         }
+        [HttpPost("GenerateInvoice")]
+        public async Task<IActionResult> GenerateInvoice([FromBody] Invoice invoice)
+        {
+            byte[] pdfBytes = await PaymentApplication.GenerateInvoice(invoice);
+
+            return File(
+                pdfBytes,
+                "application/pdf",
+                "Invoice.pdf"
+            );
+        }
+
     }
 }
