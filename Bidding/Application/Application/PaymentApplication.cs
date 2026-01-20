@@ -142,8 +142,8 @@ namespace GoldBank.Application.Application
         public async Task<byte[]> GenerateInvoice(Invoice invoice)
         {
             var intemplates = await this.PaymentInfrastructure.GetAlInvoiceTemplates();
-            string invoiceTemplate = intemplates.Where(x => x.Code == "INVTMPL").Select(x => x.Template).FirstOrDefault() ?? "";
-
+            string invoiceTemplate = intemplates.Where(x=> x.Code == "INVTMPL").Select(x=> x.Template).FirstOrDefault()??"";
+            
 
             var tokens = BuildInvoiceHeaders(invoice, LogoURL);
 
@@ -154,7 +154,7 @@ namespace GoldBank.Application.Application
             string ordersSection = "";
             foreach (var order in invoice.Orders)
             {
-                var template = templates.Where(x => x.OrderTypeId == order.OrderTypeId).Select(x => x.Template).FirstOrDefault();
+                var template = templates.Where(x=> x.OrderTypeId == order.OrderTypeId).Select(x=> x.Template).FirstOrDefault();
                 if (template != null)
                 {
                     var orderTokens = BuildInvoiceTokens(order, LogoURL);
@@ -162,7 +162,7 @@ namespace GoldBank.Application.Application
                 }
             }
 
-            finalHtml = finalHtml.Replace("{{orderItems}}", ordersSection);
+            finalHtml  = finalHtml.Replace("{{orderItems}}", ordersSection );
 
             HtmlToPdfConverter htmlConverter = new HtmlToPdfConverter();
 
@@ -178,8 +178,7 @@ namespace GoldBank.Application.Application
             // Assign settings
             htmlConverter.ConverterSettings = blinkSettings;
 
-            // Convert HTML string to PDF
-            string finalHtmlhtmlContent = "<html><body><h1>Hello PDF</h1></body></html>";
+            
             PdfDocument document = htmlConverter.Convert(finalHtml, string.Empty);
 
             // Save PDF
@@ -194,63 +193,8 @@ namespace GoldBank.Application.Application
 
             //    var res = RenderInvoiceTemplate(invoiceHtmlTemplate, invoice);
         }
-        //public async Task<byte[]> GenerateInvoiceDink(Invoice invoice)
-        //{
-        //    var intemplates = await this.PaymentInfrastructure.GetAlInvoiceTemplates();
-        //    string invoiceTemplate = intemplates.Where(x => x.Code == "INVTMPL").Select(x => x.Template).FirstOrDefault() ?? "";
 
-
-        //    var tokens = BuildInvoiceHeaders(invoice, LogoURL);
-
-        //    string finalHtml = PopulateTemplate(invoiceTemplate, tokens);
-
-        //    var templates = await this.LookupInfrastructure.GetAllOrderTypes();
-
-        //    string ordersSection = "";
-        //    foreach (var order in invoice.Orders)
-        //    {
-        //        var template = templates.Where(x => x.OrderTypeId == order.OrderTypeId).Select(x => x.Template).FirstOrDefault();
-        //        if (template != null)
-        //        {
-        //            var orderTokens = BuildInvoiceTokens(order, LogoURL);
-        //            ordersSection += PopulateTemplate(template, orderTokens);
-        //        }
-        //    }
-
-        //    finalHtml = finalHtml.Replace("{{orderItems}}", ordersSection);
-
-        //    HtmlToPdfConverter htmlConverter = new HtmlToPdfConverter();
-
-        //    // Blink converter settings
-        //    BlinkConverterSettings blinkSettings = new BlinkConverterSettings();
-
-        //    // Correct way to set page size
-        //    var settings = new PdfPageSettings
-        //    {
-        //        Size = PdfPageSize.A4 // Left, Top, Right, Bottom
-        //    };
-
-        //    // Assign settings
-        //    htmlConverter.ConverterSettings = blinkSettings;
-
-        //    // Convert HTML string to PDF
-        //    string finalHtmlhtmlContent = "<html><body><h1>Hello PDF</h1></body></html>";
-        //    PdfDocument document = htmlConverter.Convert(finalHtml, string.Empty);
-
-        //    // Save PDF
-        //    using (MemoryStream memoryStream = new MemoryStream())
-        //    {
-        //        document.Save(memoryStream);
-        //        document.Close(true);
-
-        //        // Return byte array
-        //        return memoryStream.ToArray();
-        //    }
-
-        //    //    var res = RenderInvoiceTemplate(invoiceHtmlTemplate, invoice);
-        //}
-
-
+       
         public static string PopulateTemplate(string template, Dictionary<string, string> values)
         {
             foreach (var item in values)
