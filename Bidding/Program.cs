@@ -4,7 +4,8 @@ using GoldBank.Application.IApplication;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Application.Application;
 using GoldBank.Infrastructure.Infrastructure;
-
+using DinkToPdf;
+using DinkToPdf.Contracts;
 var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -43,6 +44,9 @@ builder.Services.AddTransient<IPaymentInfrastructure, PaymentInfrastructure>();
 
 builder.Services.AddTransient<IDiscountApplication, DiscountApplication>();
 builder.Services.AddTransient<IDiscountInfrastructure, DiscountInfrastructure>();
+builder.Services.AddSingleton<IConverter>(
+    new SynchronizedConverter(new PdfTools())
+);
 
 builder.Services.AddCors(options =>
 {

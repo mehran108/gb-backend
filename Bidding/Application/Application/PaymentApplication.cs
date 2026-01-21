@@ -1,21 +1,22 @@
-﻿using GoldBank.Application.IApplication;
+﻿using DinkToPdf;
+using DinkToPdf.Contracts;
+using GoldBank.Application.IApplication;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using GoldBank.Models.RequestModels;
-using Syncfusion.HtmlConverter;
-using Syncfusion.Pdf;
-using Syncfusion.Pdf.Graphics;
 
 namespace GoldBank.Application.Application
 {
     public class PaymentApplication : IBaseApplication<Payment>, IPaymentApplication
     {
         private readonly string LogoURL;
+        private readonly IConverter PdfConverter;
 
-        public PaymentApplication(IPaymentInfrastructure PaymentInfrastructure, IConfiguration configuration, ILookupInfrastructure LookupInfrastructure, ILogger<Payment> logger)
+        public PaymentApplication(IPaymentInfrastructure PaymentInfrastructure, IConverter PdfConverter, IConfiguration configuration, ILookupInfrastructure LookupInfrastructure, ILogger<Payment> logger)
         {
             this.PaymentInfrastructure = PaymentInfrastructure;
             this.LookupInfrastructure = LookupInfrastructure;
+            this.PdfConverter = PdfConverter;
             LogoURL = configuration["LogoURL"];
         }
 
@@ -164,37 +165,44 @@ namespace GoldBank.Application.Application
 
             finalHtml  = finalHtml.Replace("{{orderItems}}", ordersSection );
 
-            HtmlToPdfConverter htmlConverter = new HtmlToPdfConverter();
+            var pdf = GeneratePdf(finalHtml);            
+            return pdf;
 
-            // Blink converter settings
-            BlinkConverterSettings blinkSettings = new BlinkConverterSettings();
-
-            // Correct way to set page size
-            var settings = new PdfPageSettings
+        }
+        public byte[] GeneratePdf(string finalHtml)
+        {
+            var doc = new HtmlToPdfDocument()
             {
-                Size = PdfPageSize.A4 // Left, Top, Right, Bottom
+                GlobalSettings = new GlobalSettings
+                {
+                    ColorMode = ColorMode.Color,
+                    Orientation = Orientation.Portrait,
+                    PaperSize = PaperKind.A4,
+                    Margins = new MarginSettings
+                    {
+                        Top = 0,
+                        Bottom = 0,
+                        Left = 0,
+                        Right = 0
+                    }
+                },
+
+                Objects =
+        {
+            new DinkToPdf.ObjectSettings
+            {
+                HtmlContent = finalHtml,
+                WebSettings = new WebSettings
+                {
+                    DefaultEncoding = "utf-8"
+                }
+            }
+        }
             };
 
-            // Assign settings
-            htmlConverter.ConverterSettings = blinkSettings;
-
-            
-            PdfDocument document = htmlConverter.Convert(finalHtml, string.Empty);
-
-            // Save PDF
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                document.Save(memoryStream);
-                document.Close(true);
-
-                // Return byte array
-                return memoryStream.ToArray();
-            }
-
-            //    var res = RenderInvoiceTemplate(invoiceHtmlTemplate, invoice);
+            return PdfConverter.Convert(doc);
         }
 
-       
         public static string PopulateTemplate(string template, Dictionary<string, string> values)
         {
             foreach (var item in values)
