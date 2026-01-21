@@ -1,4 +1,5 @@
-﻿using DinkToPdf;
+﻿using Amazon.Runtime.Internal.Transform;
+using DinkToPdf;
 using DinkToPdf.Contracts;
 using GoldBank.Application.IApplication;
 using GoldBank.Infrastructure.IInfrastructure;
@@ -12,16 +13,18 @@ namespace GoldBank.Application.Application
         private readonly string LogoURL;
         private readonly IConverter PdfConverter;
 
-        public PaymentApplication(IPaymentInfrastructure PaymentInfrastructure, IConverter PdfConverter, IConfiguration configuration, ILookupInfrastructure LookupInfrastructure, ILogger<Payment> logger)
+        public PaymentApplication(IPaymentInfrastructure PaymentInfrastructure, IDocumentApplication DocumentApplication, IConverter PdfConverter, IConfiguration configuration, ILookupInfrastructure LookupInfrastructure, ILogger<Payment> logger)
         {
             this.PaymentInfrastructure = PaymentInfrastructure;
             this.LookupInfrastructure = LookupInfrastructure;
             this.PdfConverter = PdfConverter;
+            this.DocumentApplication = DocumentApplication;
             LogoURL = configuration["LogoURL"];
         }
 
         public IPaymentInfrastructure PaymentInfrastructure { get; }
         public ILookupInfrastructure LookupInfrastructure { get; }
+        public IDocumentApplication DocumentApplication { get; }
 
         public Task<bool> Activate(Payment entity)
         {
@@ -165,7 +168,29 @@ namespace GoldBank.Application.Application
 
             finalHtml  = finalHtml.Replace("{{orderItems}}", ordersSection );
 
-            var pdf = GeneratePdf(finalHtml);            
+            var pdf = GeneratePdf(finalHtml);
+            using var stream = new MemoryStream(pdf);
+
+            IFormFile pdfFile = new FormFile(
+                baseStream: stream,
+                baseStreamOffset: 0,
+                length: pdf.Length,
+                name: "file",
+                fileName: $"Invoice_{invoice.PaymentId}.pdf"
+            )
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = "application/pdf"
+            };
+
+            var document = new Document
+            {
+                File = pdfFile,
+                Name = $"Invoice-for-{invoice.PaymentId}"
+            };
+
+            var documentId = await DocumentApplication.UploadImage(document);
+            await this.PaymentInfrastructure.UpdatePaymentInvoiceURL(invoice.PaymentId, document.DocumentId);
             return pdf;
 
         }
@@ -241,28 +266,31 @@ namespace GoldBank.Application.Application
         public static Dictionary<string, string> BuildInvoiceTokens(InvoiceOrder order, string logoURL)
         {
             return new Dictionary<string, string>
-        {
-        { "orderType", order.OrderType },
+            {
+                { "orderType", order.OrderType },
 
-        { "ItemName", order.ItemDetails ?.ItemName ?? "" },
-        { "sku", order.ItemDetails ?.SKU ?? "" },
-        { "quantity", order.ItemDetails?.Quantity?.ToString()?? "" },
-        { "productImage", order.ItemDetails?.Image?.ToString()?? "" },
-        { "metalType", order.MetalDetails?.MetalType ?? ""},
-        { "metalPurity", order.MetalDetails?.MetalPurity ?? ""},
-        { "grossWeight", order.MetalDetails?.Weight?? "" },
-        { "ratePerGram", order.MetalDetails?.RatePerGram ?? "" },
-        { "metalValue", order.MetalDetails?.MetailValue ?? ""},
-        { "itemMetalValue", order.ItemPricing?.MetalValue ?? ""},
-        { "makingCharges", order.ItemPricing?.MakingCharges ?? ""},
-        { "lacquerCharges", order.ItemPricing?.LacquerCharges ?? ""},
-        { "gemstoneValue", order.ItemPricing?.GemStoneValue ?? ""},
-        { "subTotalPrice", order.ItemPricing?.SubTotalPrice ?? ""},
-        { "discountType", order.ItemPricing?.DiscountType ?? ""},
-        { "discountAmount", order.ItemPricing?.DiscountAmount ?? ""},
-        { "totalPrice", order.ItemPricing?.TotalPrice ?? ""},
-        { "amountPayable", order.ItemPricing?.AmountPayable ?? ""}        
-    };
+                { "ItemName", order.ItemDetails ?.ItemName ?? "" },
+                { "sku", order.ItemDetails ?.SKU ?? "" },
+                { "quantity", order.ItemDetails?.Quantity?.ToString()?? "" },
+                { "productImage", order.ItemDetails?.Image?.ToString()?? "" },
+                { "metalType", order.MetalDetails?.MetalType ?? ""},
+                { "metalPurity", order.MetalDetails?.MetalPurity ?? ""},
+                { "grossWeight", order.MetalDetails?.Weight?? "" },
+                { "ratePerGram", order.MetalDetails?.RatePerGram ?? "" },
+                { "metalValue", order.MetalDetails?.MetailValue ?? ""},
+                { "itemMetalValue", order.ItemPricing?.MetalValue ?? ""},
+                { "makingCharges", order.ItemPricing?.MakingCharges ?? ""},
+                { "lacquerCharges", order.ItemPricing?.LacquerCharges ?? ""},
+                { "gemstoneValue", order.ItemPricing?.GemStoneValue ?? ""},
+                { "subTotalPrice", order.ItemPricing?.SubTotalPrice ?? ""},
+                { "discountType", order.ItemPricing?.DiscountType ?? ""},
+                { "discountAmount", order.ItemPricing?.DiscountAmount ?? ""},
+                { "totalPrice", order.ItemPricing?.TotalPrice ?? ""},
+                { "amountPayable", order.ItemPricing?.AmountPayable ?? ""},
+                { "reservationId", order.ReservationDetails?.ReservationId ?? ""},
+                { "reservationDate", order.ReservationDetails?.ReservationDate ?? ""},
+                { "collectionDate", order.ReservationDetails?.CollectionDate ?? ""}
+            };
         }
 
     }

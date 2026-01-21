@@ -966,13 +966,13 @@ namespace GoldBank.Infrastructure.Infrastructure
 
             return result;
         }
-        public async Task<bool> UpdatePaymentInvoiceURL(Invoice Invoice)
+        public async Task<bool> UpdatePaymentInvoiceURL(int paymentId, int documentId)
         {
             using var connection = base.GetConnection();
 
             var parameters = new DynamicParameters();
-            parameters.Add("p_PaymentId", Invoice.PaymentId);
-            parameters.Add("p_Url", Invoice.Url);
+            parameters.Add("p_PaymentId", paymentId);
+            parameters.Add("p_DocumentId", documentId);
             parameters.Add("o_Succeed", dbType: DbType.Byte, direction: ParameterDirection.Output);
 
             await connection.ExecuteAsync("UpdatePaymentInvoiceURLGb", parameters, commandType: CommandType.StoredProcedure);

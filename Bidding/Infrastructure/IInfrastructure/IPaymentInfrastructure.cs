@@ -28,6 +28,6 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<CashManagementSummary> GetCashManagementSummary();
         Task<List<StoreCashManagementSummary>> GetAllCashManagementSummary(StoreCashManagementRequestVm request);
         Task<List<OrderInvoiceTemplate>> GetAlInvoiceTemplates();
-        Task<bool> UpdatePaymentInvoiceURL(Invoice Invoice);
+        Task<bool> UpdatePaymentInvoiceURL(int paymentId, int documentId);
     }
 }
