@@ -1,4 +1,5 @@
-﻿using GoldBank.Models;
+﻿using GoldBank.Application.Application;
+using GoldBank.Models;
 
 namespace GoldBank.Application.IApplication
 {
@@ -6,5 +7,7 @@ namespace GoldBank.Application.IApplication
     {
         Task<int> UploadImage(Document Document);
         Task<int> UploadFile(Document document);
+        Task<bool> Delete(string documentIds);
+
     }
 }

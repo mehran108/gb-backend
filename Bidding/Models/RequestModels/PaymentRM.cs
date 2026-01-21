@@ -52,7 +52,7 @@
     public class ConfirmPaymentRequest
     {
         public int PaymentId { get; set; }
-        public decimal CashAmount { get; set; }
+        public decimal? CashAmount { get; set; }
         public List<CardPayment> CardPayment { get; set; }
         public int CreatedBy { get; set; }
     }

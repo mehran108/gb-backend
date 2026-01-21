@@ -24,7 +24,7 @@ namespace GoldBank.Application.IApplication
         Task<IEnumerable<Collection>> GetAllCollectionGbAsync();
         Task<IEnumerable<Occasion>> GetAllOccasionGbAsync();
         Task<IEnumerable<PrimaryCategory>> GetPrimaryCategories();
-        Task<IEnumerable<Category>> GetCategories();
+        Task<IEnumerable<Category>> GetCategories(bool isDefault, bool isAppraisal);
         Task<IEnumerable<SubCategory>> GetSubCategories();
         Task<IEnumerable<Store>> GetAllStores();
         Task<IEnumerable<OrderType>> GetAllOrderTypes();

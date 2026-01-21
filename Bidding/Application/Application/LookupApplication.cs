@@ -85,9 +85,9 @@ namespace GoldBank.Application.Application
         {
             return await this.LookupInfrastructure.GetPrimaryCategories();
         }
-        public async Task<IEnumerable<Category>> GetCategories()
+        public async Task<IEnumerable<Category>> GetCategories(bool isDefault, bool isAppraisal)
         {
-            return await this.LookupInfrastructure.GetCategories();
+            return await this.LookupInfrastructure.GetCategories(isDefault, isAppraisal);
         }
         public async Task<IEnumerable<SubCategory>> GetSubCategories()
         {

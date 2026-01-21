@@ -406,6 +406,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         p_ProductId = productId,
                         p_StoneTypeId = stone.StoneTypeId,
                         p_StoneShapeId = stone.StoneShapeId,
+                        p_StoneProductId = stone.StoneProductId,
                         p_StoneWeightTypeId = stone.StoneWeightTypeId,
                         p_Quantity = stone.Quantity,
                         p_TotalWeight = stone.TotalWeight,
@@ -584,6 +585,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                             new
                             {
                                 p_ProductId = productId,
+                                p_StoneProductId = stone.StoneProductId,
                                 p_StoneTypeId = stone.StoneTypeId,
                                 p_StoneShapeId = stone.StoneShapeId,
                                 p_StoneWeightTypeId = stone.StoneWeightTypeId,
@@ -686,7 +688,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         base.GetParameter("@P_SearchText", product.SearchText),
         base.GetParameter("@p_ProductTypeId", ToDbValue(product.Data.ProductTypeId)),
         base.GetParameter("@p_SKU", ToDbValue(product.Data.SKU)),
-        base.GetParameter("@p_ProductSourceId", ToDbValue(product.Data.ProductSourceId)),
+        base.GetParameter("@p_ProductSourceIds", ToDbValue(product.Data.ProductSourceId)),
         base.GetParameter("@p_VendorId", ToDbValue(product.Data.VendorId)),
         base.GetParameter("@p_PrimaryCategoryIds", ToDbValue(product.Data.PrimaryCategoryIds)),
         base.GetParameter("@p_CategoryIds", ToDbValue(product.Data.CategoryIds)),
@@ -761,7 +763,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.VendorAmount = dataReader.GetDecimalValue("vendorAmount");
                         item.KaatCategoryId = dataReader.GetIntegerValue("kaatCategoryId");
                         item.InventoryUploadDate = dataReader.GetDateTimeValue("inventoryUploadDate");
-
+                        item.SoldPrice = dataReader.GetDecimalValueNullable("soldPrice");
                         ProductList.Add(item);
                     }
 
@@ -785,8 +787,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                             item.MetalPurityTypeId = dataReader.GetIntegerValue("metalPurityTypeId");
                             item.MetalColorTypeId = dataReader.GetIntegerValue("metalColorTypeId");
                             item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
-                            item.NetWeight = dataReader.GetIntegerValue("netWeight");
-                            item.WastagePct = dataReader.GetIntegerValue("wastagePct");
+                            item.NetWeight = dataReader.GetDecimalValue("netWeight");
+                            item.WastagePct = dataReader.GetDecimalValue("wastagePct");
                             item.WastageWeight = dataReader.GetDecimalValue("wastageWeight");
                             item.TotalWeight = dataReader.GetDecimalValue("totalWeight");
                             item.Width = dataReader.GetStringValue("width");
@@ -1373,6 +1375,18 @@ namespace GoldBank.Infrastructure.Infrastructure
             return succeed == 1;
 
         }
+        public async Task<bool> DeleteProductStone(StoneProduct stone)
+        {
+            using var connection = base.GetConnection();
+            var parameters = new DynamicParameters();
+            parameters.Add("p_ProductStoneId", stone.ProductStoneIds);
+            parameters.Add("P_UpdatedBy", stone.UpdatedBy);
+            parameters.Add("o_updated", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            await connection.ExecuteAsync("DeleteProductStone_gb", parameters, commandType: CommandType.StoredProcedure);
+            var succeed = parameters.Get<int>("o_updated");
+            return succeed == 1;
+        }
         #endregion
 
         #region Order Details
@@ -1463,6 +1477,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_GiftCardDetailId", order.GiftCardDetailsId);
                 parameters.Add("p_IsEcommerceOrder", order.IsEcommerceOrder);
                 parameters.Add("p_IsOnlinePosOrder", order.IsOnlinePosOrder);
+                parameters.Add("p_SizeType", order.SizeType);
+                parameters.Add("p_TrackingId", order.TrackingId);
+                parameters.Add("p_AppliedDiscount", order.AppliedDiscount);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
@@ -1580,6 +1597,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.TotalPayment = dataReader.GetDecimalValue("totalPayment");
                         item.OrderStatusId = dataReader.GetIntegerValue("OrderStatusId");
                         item.RepairDetailsId = dataReader.GetIntegerValue("repairDetailId");
+                        item.SizeType = dataReader.GetStringValue("sizeType");
+                        item.TrackingId = dataReader.GetStringValue("trackingId");
                         item.AlterationDetailsId = dataReader.GetIntegerValue("alterationDetailsId");
                         item.OrderDelievery.DelieveryMethodId = dataReader.GetIntegerValue("delieveryMethodId");
                         item.OrderDelievery.EstDelieveryDate = dataReader.GetDateTimeValue("estDelieveryDate");
@@ -1593,10 +1612,13 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.GoldBookingDetailsId = dataReader.GetIntegerValue("goldBookingDetailId");
                         item.GiftCardDetailsId = dataReader.GetIntegerValue("giftCardDetailId");
                         item.Comments = dataReader.GetStringValue("comments");
+                        item.AppliedDiscount = dataReader.GetStringValue("appliedDiscount");
+                        item.PreviousValue = dataReader.GetStringValue("previousValue");
                         Customer.FirstName = dataReader.GetStringValue("customerName");
                         Customer.Mobile = dataReader.GetStringValue("Mobile");
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = Customer;
+                        
                         // item.Customer = await this.CustomerInfrastructure.Get(Customer);
 
                         item.Product = await this.GetProductById(item.ProductId);
@@ -1725,28 +1747,28 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.ProductTypeId = dataReader.GetIntegerValue("productTypeId");
                         item.MetalTypeId = dataReader.GetIntegerValue("metalTypeId");
                         item.WeightBeforeRepair = dataReader.GetDecimalValue("weightBeforeRepair");
-                        item.RepairCleaningId = dataReader.GetIntegerValue("repairCleaningId");
+                        item.RepairCleaningId = dataReader.GetIntegerValueNullable("repairCleaningId");
                         item.CleaningNotes = dataReader.GetStringValue("cleaningNotes");
                         item.CleaningPrice = dataReader.GetDecimalValue("cleaningPrice");
-                        item.RepairPolishingId = dataReader.GetIntegerValue("repairPolishingId");
+                        item.RepairPolishingId = dataReader.GetIntegerValueNullable("repairPolishingId");
                         item.PolishingNotes = dataReader.GetStringValue("polishingNotes");
-                        item.PolishingPrice = dataReader.GetDecimalValue("polishingPrice");
+                        item.PolishingPrice = dataReader.GetDecimalValueNullable("polishingPrice");
                         item.CurrentJewellerySize = dataReader.GetStringValue("currentJewellerySize");
                         item.DesiredJewellerySize = dataReader.GetStringValue("desiredJewellerySize");
                         item.ResizingNotes = dataReader.GetStringValue("resizingNotes");
-                        item.ResizingPrice = dataReader.GetDecimalValue("resizingPrice");
+                        item.ResizingPrice = dataReader.GetDecimalValueNullable("resizingPrice");
                         item.RepairDamageTypeIds = dataReader.GetStringValue("repairDamageTypeIds");
                         item.RepairDamageAreaIds = dataReader.GetStringValue("repairDamageAreaIds");
                         item.RepairingNotes = dataReader.GetStringValue("repairingNotes");
-                        item.RepairingPrice = dataReader.GetDecimalValue("repairingPrice");
+                        item.RepairingPrice = dataReader.GetDecimalValueNullable("repairingPrice");
 
-                        item.EstRepairingCost = dataReader.GetDecimalValue("estRepairCost");
-                        item.WeightChange = dataReader.GetDecimalValue("weightChange");
-                        item.WeightChangePrice = dataReader.GetDecimalValue("weightChangePrice");
-                        item.ActualWeight = dataReader.GetDecimalValue("actualWeight");
-                        item.TotalRepairCost = dataReader.GetDecimalValue("totalRepairCost");
+                        item.EstRepairingCost = dataReader.GetDecimalValueNullable("estRepairCost");
+                        item.WeightChange = dataReader.GetDecimalValueNullable("weightChange");
+                        item.WeightChangePrice = dataReader.GetDecimalValueNullable("weightChangePrice");
+                        item.ActualWeight = dataReader.GetDecimalValueNullable("actualWeight");
+                        item.TotalRepairCost = dataReader.GetDecimalValueNullable("totalRepairCost");
                         item.EstDeliveryDate = dataReader.GetDateTimeValue("estDeliveryDate");
-                        item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
+                        item.WeightTypeId = dataReader.GetIntegerValueNullable("weightTypeId");
                         //item.WeightAfterRepair = dataReader.GetIntegerValue("weightAfterRepair");
 
                         item.IsActive = dataReader.GetBooleanValue("isActive");
@@ -2062,6 +2084,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                 parameters.Add("p_AlterationDetailsId", alterationDetailsId); 
                 parameters.Add("p_IsEcommerceOrder", order.IsEcommerceOrder);
                 parameters.Add("p_IsOnlinePosOrder", order.IsOnlinePosOrder);
+                parameters.Add("p_SizeType", order.SizeType);
+                parameters.Add("p_AppliedDiscount", order.AppliedDiscount);
+                parameters.Add("p_PreviousValue", order.PreviousValue);
                 parameters.Add("o_OrderId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 // Insert Order
@@ -2166,6 +2191,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.TotalPayment = dataReader.GetDecimalValue("totalPayment");
                         item.Comments = dataReader.GetStringValue("comments");
                         item.IsOnlinePosOrder = dataReader.GetBooleanValue("IsOnlinePosOrder");
+                        item.SizeType = dataReader.GetStringValue("sizeType");
+                        item.TrackingId = dataReader.GetStringValue("trackingId");
                         item.IsEcommerceOrder = dataReader.GetBooleanValue("IsEcommerceOrder");
                         item.OrderDelievery.DelieveryMethodId = dataReader.GetIntegerValue("delieveryMethodId");
                         item.OrderDelievery.EstDelieveryDate = dataReader.GetDateTimeValue("estDelieveryDate");
@@ -2174,7 +2201,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.OrderDelievery.CourierService = dataReader.GetStringValue("CourierService");
                         item.OrderDelievery.TrackingId = dataReader.GetStringValue("TrackingId");
                         item.OrderDelievery.ShippingDate = dataReader.GetDateTimeValueNullable("ShippingDate");
-                        
+                        item.AppliedDiscount = dataReader.GetStringValue("appliedDiscount");
+                        item.PreviousValue = dataReader.GetStringValue("previousValue");
+
                         Customer.CustomerId = item.CustomerId;
                         item.Customer = await this.CustomerInfrastructure.Get(Customer);
                         item.Product = await this.GetProductById(item.ProductId);
@@ -2591,28 +2620,28 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.ProductTypeId = dataReader.GetIntegerValue("productTypeId");
                         item.MetalTypeId = dataReader.GetIntegerValue("metalTypeId");
                         item.WeightBeforeRepair = dataReader.GetDecimalValue("weightBeforeRepair");
-                        item.RepairCleaningId = dataReader.GetIntegerValue("repairCleaningId");
+                        item.RepairCleaningId = dataReader.GetIntegerValueNullable("repairCleaningId");
                         item.CleaningNotes = dataReader.GetStringValue("cleaningNotes");
-                        item.CleaningPrice = dataReader.GetDecimalValue("cleaningPrice");
-                        item.RepairPolishingId = dataReader.GetIntegerValue("repairPolishingId");
+                        item.CleaningPrice = dataReader.GetDecimalValueNullable("cleaningPrice");
+                        item.RepairPolishingId = dataReader.GetIntegerValueNullable("repairPolishingId");
                         item.PolishingNotes = dataReader.GetStringValue("polishingNotes");
-                        item.PolishingPrice = dataReader.GetDecimalValue("polishingPrice");
+                        item.PolishingPrice = dataReader.GetDecimalValueNullable("polishingPrice");
                         item.CurrentJewellerySize = dataReader.GetStringValue("currentJewellerySize");
                         item.DesiredJewellerySize = dataReader.GetStringValue("desiredJewellerySize");
                         item.ResizingNotes = dataReader.GetStringValue("resizingNotes");
-                        item.ResizingPrice = dataReader.GetDecimalValue("resizingPrice");
+                        item.ResizingPrice = dataReader.GetDecimalValueNullable("resizingPrice");
                         item.RepairDamageTypeIds = dataReader.GetStringValue("repairDamageTypeIds");
                         item.RepairDamageAreaIds = dataReader.GetStringValue("repairDamageAreaIds");
                         item.RepairingNotes = dataReader.GetStringValue("repairingNotes");
-                        item.RepairingPrice = dataReader.GetDecimalValue("repairingPrice");
+                        item.RepairingPrice = dataReader.GetDecimalValueNullable("repairingPrice");
 
-                        item.EstRepairingCost = dataReader.GetDecimalValue("estRepairCost");
-                        item.WeightChange = dataReader.GetDecimalValue("weightChange");
-                        item.WeightChangePrice = dataReader.GetDecimalValue("weightChangePrice");
-                        item.ActualWeight = dataReader.GetDecimalValue("actualWeight");
-                        item.TotalRepairCost = dataReader.GetDecimalValue("totalRepairCost");
+                        item.EstRepairingCost = dataReader.GetDecimalValueNullable("estRepairCost");
+                        item.WeightChange = dataReader.GetDecimalValueNullable("weightChange");
+                        item.WeightChangePrice = dataReader.GetDecimalValueNullable("weightChangePrice");
+                        item.ActualWeight = dataReader.GetDecimalValueNullable("actualWeight");
+                        item.TotalRepairCost = dataReader.GetDecimalValueNullable("totalRepairCost");
                         item.EstDeliveryDate = dataReader.GetDateTimeValue("estDeliveryDate");
-                        item.WeightTypeId = dataReader.GetIntegerValue("weightTypeId");
+                        item.WeightTypeId = dataReader.GetIntegerValueNullable("weightTypeId");
                         //item.WeightAfterRepair = dataReader.GetIntegerValue("weightAfterRepair");
 
                         item.IsActive = dataReader.GetBooleanValue("isActive");
@@ -3921,6 +3950,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         rawGold.Value = dataReader.GetDecimalValue("value");
                         rawGold.RawGoldId = dataReader.GetIntegerValue("rawGoldId");
                         rawGold.Description = dataReader.GetStringValue("description");
+                        rawGold.UserName = dataReader.GetStringValue("UserName");
                         rawGold.IsActive = dataReader.GetBooleanValue("isActive");
                         rawGold.IsDeleted = dataReader.GetBooleanValue("isDeleted");
                         rawGold.CreatedAt = dataReader.GetDateTime("createdAt");

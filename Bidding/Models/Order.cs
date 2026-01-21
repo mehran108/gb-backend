@@ -29,6 +29,8 @@
         public bool? IsEcommerceOrder { get; set; }
         public bool? IsOnlinePosOrder { get; set; }
         public string? Comments { get; set; }
+        public string? SizeType { get; set; }
+        public string? TrackingId { get; set; }
 
         public OrderStatus? OrderStatus { get; set; }
         public List<CustomCharge>? CustomCharge { get; set; }
@@ -39,6 +41,8 @@
         public ExchangeDetail? ExchangeDetails { get; set; }
         public GoldBookingDetail? GoldBookingDetails { get; set; }
         public GiftCardDetail? GiftCardDetails { get; set; }
+        public string? AppliedDiscount { get; set; }
+        public string? PreviousValue { get; set; }
     }
 
     public class OrderStatusReqVm : BaseDomain
@@ -48,4 +52,13 @@
         public DateTime? ReservationDate { get; set; }
         public string? Comments { get; set; }
     }
+    //public class AppliedDiscount
+    //{
+    //    public string Code { get; set; }
+    //    public string Description { get; set; }
+    //    public int DiscountId { get; set; }
+    //    public bool IsValid { get; set; }
+    //    public string Status { get; set; }
+    //    public Discount DiscountDetails { get; set; }
+    //}
 }

@@ -401,10 +401,15 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return list;
         }
-        public async Task<IEnumerable<Category>> GetCategories()
+        public async Task<IEnumerable<Category>> GetCategories(bool isDefault, bool isAppraisal)
         {
             var list = new List<Category>();
-            using (var dataReader = await ExecuteReader(null, "GetAllCategoryGb", CommandType.StoredProcedure))
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_IsDefault", isDefault),
+                base.GetParameter("p_IsAppraisal", isAppraisal),
+            };
+            using (var dataReader = await ExecuteReader(parameters, "GetAllCategoryGb", CommandType.StoredProcedure))
             {
                 if (dataReader != null && dataReader.HasRows)
                 {
@@ -414,7 +419,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         {
                             CategoryId = dataReader.GetIntegerValue("CategoryId"),
                             Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
-                            ImageUrl = dataReader.GetStringValue("Url")
+                            ImageUrl = dataReader.GetStringValue("Url"),
+                            IsDefault = dataReader.GetBooleanValue("isDefault"),
+                            IsAppraisal = dataReader.GetBooleanValue("isAppraisal")
                         });
                     }
                 }
@@ -476,7 +483,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                         list.Add(new OrderType
                         {
                             OrderTypeId = dataReader.GetIntegerValue("orderTypeId"),
-                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName)
+                            Description = dataReader.GetStringValue(LookupInfrastructure.DescriptionColumnName),
+                            Template = dataReader.GetStringValue("template")
                         });
                     }
                 }

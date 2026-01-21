@@ -4,6 +4,6 @@
     {
         public int OrderTypeId { get; set; }
         public string? Description { get; set; }
-
+        public string? Template {  get; set; }
     }
 }

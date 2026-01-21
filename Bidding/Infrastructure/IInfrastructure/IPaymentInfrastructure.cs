@@ -27,5 +27,7 @@ namespace GoldBank.Infrastructure.IInfrastructure
         Task<int> CancelCashWidrawAmount(int Id, int UserId);
         Task<CashManagementSummary> GetCashManagementSummary();
         Task<List<StoreCashManagementSummary>> GetAllCashManagementSummary(StoreCashManagementRequestVm request);
+        Task<List<OrderInvoiceTemplate>> GetAlInvoiceTemplates();
+        Task<bool> UpdatePaymentInvoiceURL(int paymentId, int documentId);
     }
 }

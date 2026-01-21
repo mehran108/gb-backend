@@ -45,6 +45,10 @@ namespace GoldBank.Application.Application
         {
             return await DocumentApplication.UploadImage(Document);            
         }
+        public async Task<bool> DeleteProductStone(StoneProduct stone)
+        {
+            return await this.ProductInfrastructure.DeleteProductStone(stone);
+        }
         public Task<AllResponse<Product>> GetAll(AllRequest<Product> entity)
         {
             throw new NotImplementedException();

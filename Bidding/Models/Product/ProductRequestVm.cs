@@ -4,7 +4,7 @@
     {       
         public int? ProductTypeId { get; set; }
         public string? SKU { get; set; }
-        public int? ProductSourceId { get; set; }
+        public string? ProductSourceId { get; set; }
         public int? VendorId { get; set; }
         public string? PrimaryCategoryIds { get; set; }
         public int? CategoryIds { get; set; }

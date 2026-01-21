@@ -101,17 +101,17 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.Name = dataReader.GetStringValue("Name");
                         discount.CardDisplayName = dataReader.GetStringValue("CardDisplayName");
                         discount.Code = dataReader.GetStringValue("Code");
-                        discount.MinInvoiceAmount = dataReader.GetDecimalValue("MinInvoiceAmount");
-                        discount.MaxUsage = dataReader.GetIntegerValue("MaxUsage");
+                        discount.MinInvoiceAmount = dataReader.GetDecimalValueNullable("MinInvoiceAmount");
+                        discount.MaxUsage = dataReader.GetIntegerValueNullable("MaxUsage");
                         discount.PersonName = dataReader.GetStringValue("PersonName");
                         discount.Description = dataReader.GetStringValue("Description");
                         discount.SalesComissionPct = dataReader.GetDecimalValue("SalesComissionPct");
-                        discount.MaxUser = dataReader.GetIntegerValue("MaxUser");
-                        discount.CustomerId = dataReader.GetIntegerValue("CustomerId");
-                        discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");
-                        discount.ExpiryDurationType = dataReader.GetIntegerValue("ExpiryDurationType");
-                        discount.LoyaltyCardTypeId = dataReader.GetIntegerValue("LoyaltyCardTypeId");
-                        discount.VoucherTypeId = dataReader.GetIntegerValue("VoucherTypeId");
+                        discount.MaxUser = dataReader.GetIntegerValueNullable("MaxUser");
+                        discount.CustomerId = dataReader.GetIntegerValueNullable("CustomerId");
+                        discount.ExpiryDuration = dataReader.GetIntegerValueNullable("ExpiryDuration");
+                        discount.ExpiryDurationType = dataReader.GetIntegerValueNullable("ExpiryDurationType");
+                        discount.LoyaltyCardTypeId = dataReader.GetIntegerValueNullable("LoyaltyCardTypeId");
+                        discount.VoucherTypeId = dataReader.GetIntegerValueNullable("VoucherTypeId");
                         discount.PrimaryCategories = dataReader.GetStringValue("PrimaryCategories");
                         discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
                         discount.SubCategoryIds = dataReader.GetStringValue("SubCategoryIds");
@@ -119,15 +119,15 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.LabelIds = dataReader.GetStringValue("LabelIds");
                         discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
                         discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
-                        discount.StartDate = dataReader.GetDateTimeValue("StartDate");
-                        discount.EndDate = dataReader.GetDateTimeValue("EndDate");
+                        discount.StartDate = dataReader.GetDateTimeValueNullable("StartDate");
+                        discount.EndDate = dataReader.GetDateTimeValueNullable("EndDate");
                         discount.IsEcommerce = dataReader.GetBooleanValue("IsEcommerce");
                         discount.IsInStore = dataReader.GetBooleanValue("IsInStore");
                         discount.StoreIds = dataReader.GetStringValue("StoreIds");
                         discount.IsActive = dataReader.GetBooleanValue("IsActive");
-                        discount.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
+                        discount.UpdatedAt = dataReader.GetDateTimeValueNullable("UpdatedAt");
                         discount.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
-                        discount.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
+                        discount.CreatedAt = dataReader.GetDateTimeValueNullable("CreatedAt");
                         discount.CreatedBy = dataReader.GetIntegerValue("CreatedBy");
                     }
                 }
@@ -165,17 +165,17 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.Name = dataReader.GetStringValue("Name");
                         discount.CardDisplayName = dataReader.GetStringValue("CardDisplayName");
                         discount.Code = dataReader.GetStringValue("Code");
-                        discount.MinInvoiceAmount = dataReader.GetDecimalValue("MinInvoiceAmount");
-                        discount.MaxUsage = dataReader.GetIntegerValue("MaxUsage");
+                        discount.MinInvoiceAmount = dataReader.GetDecimalValueNullable("MinInvoiceAmount");
+                        discount.MaxUsage = dataReader.GetIntegerValueNullable("MaxUsage");
                         discount.PersonName = dataReader.GetStringValue("PersonName");
                         discount.Description = dataReader.GetStringValue("Description");
                         discount.SalesComissionPct = dataReader.GetDecimalValue("SalesComissionPct");
-                        discount.MaxUser = dataReader.GetIntegerValue("MaxUser");
-                        discount.CustomerId = dataReader.GetIntegerValue("CustomerId");
-                        discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");
-                        discount.ExpiryDurationType = dataReader.GetIntegerValue("ExpiryDurationType");
-                        discount.LoyaltyCardTypeId = dataReader.GetIntegerValue("LoyaltyCardTypeId");
-                        discount.VoucherTypeId = dataReader.GetIntegerValue("VoucherTypeId");
+                        discount.MaxUser = dataReader.GetIntegerValueNullable("MaxUser");
+                        discount.CustomerId = dataReader.GetIntegerValueNullable("CustomerId");
+                        discount.ExpiryDuration = dataReader.GetIntegerValueNullable("ExpiryDuration");
+                        discount.ExpiryDurationType = dataReader.GetIntegerValueNullable("ExpiryDurationType");
+                        discount.LoyaltyCardTypeId = dataReader.GetIntegerValueNullable("LoyaltyCardTypeId");
+                        discount.VoucherTypeId = dataReader.GetIntegerValueNullable("VoucherTypeId");
                         discount.PrimaryCategories = dataReader.GetStringValue("PrimaryCategories");
                         discount.CustomerPhoneNumber = dataReader.GetStringValue("CustomerPhoneNumber");
                         discount.CategoryIds = dataReader.GetStringValue("CategoryIds");
@@ -186,15 +186,15 @@ namespace GoldBank.Infrastructure.Infrastructure
                         discount.CustomerLastName = dataReader.GetStringValue("lastName");
                         discount.DiscountAmount = dataReader.GetDecimalValue("DiscountAmount");
                         discount.DiscountPct = dataReader.GetDecimalValue("DiscountPct");
-                        discount.StartDate = dataReader.GetDateTimeValue("StartDate");
-                        discount.EndDate = dataReader.GetDateTimeValue("EndDate");
+                        discount.StartDate = dataReader.GetDateTimeValueNullable("StartDate");
+                        discount.EndDate = dataReader.GetDateTimeValueNullable("EndDate");
                         discount.IsEcommerce = dataReader.GetBooleanValue("IsEcommerce");
                         discount.IsInStore = dataReader.GetBooleanValue("IsInStore");
                         discount.StoreIds = dataReader.GetStringValue("StoreIds");
                         discount.IsActive = dataReader.GetBooleanValue("IsActive");
-                        discount.UpdatedAt = dataReader.GetDateTimeValue("UpdatedAt");
+                        discount.UpdatedAt = dataReader.GetDateTimeValueNullable("UpdatedAt");
                         discount.UpdatedBy = dataReader.GetIntegerValue("UpdatedBy");
-                        discount.CreatedAt = dataReader.GetDateTimeValue("CreatedAt");
+                        discount.CreatedAt = dataReader.GetDateTimeValueNullable("CreatedAt");
                         discount.CreatedBy = dataReader.GetIntegerValue("CreatedBy");
                         if (discount.DiscountTypeId == 4)
                         {
@@ -357,7 +357,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                     {
                         discount.Name = dataReader.GetStringValue("Name");
                         discount.MinInvoiceAmount = dataReader.GetDecimalValue("MinInvoiceAmount");
-                        discount.MaxUsage = dataReader.GetIntegerValue("MaxUsage");
+                        discount.MaxUsage = dataReader.GetIntegerValueNullable("MaxUsage");
                         discount.Description = dataReader.GetStringValue("Description");
                         
                         discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");
@@ -399,7 +399,7 @@ namespace GoldBank.Infrastructure.Infrastructure
                         var discount = new VoucherType();
                         discount.Name = dataReader.GetStringValue("Name");
                         discount.MinInvoiceAmount = dataReader.GetDecimalValue("MinInvoiceAmount");
-                        discount.MaxUsage = dataReader.GetIntegerValue("MaxUsage");
+                        discount.MaxUsage = dataReader.GetIntegerValueNullable("MaxUsage");
                         discount.Description = dataReader.GetStringValue("Description");
 
                         discount.ExpiryDuration = dataReader.GetIntegerValue("ExpiryDuration");
@@ -576,7 +576,8 @@ namespace GoldBank.Infrastructure.Infrastructure
                  base.GetParameter("p_DiscountId", entity.DiscountId),
                  base.GetParameter("p_ProductId", entity.ProductId),
                  base.GetParameter("p_IsEcommerce", entity.IsEcommerce),
-                 base.GetParameter("p_IsInStore", entity.IsInStore)
+                 base.GetParameter("p_IsInStore", entity.IsInStore),
+                 base.GetParameter("p_CustomerId", entity.CustomerId)
             };
 
             using (var dataReader = await base.ExecuteReader(parameters, "GetDiscountDetailsByCode_gb", CommandType.StoredProcedure))

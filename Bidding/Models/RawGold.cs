@@ -5,6 +5,7 @@
         public int RawGoldId { get; set; }
         public decimal Value { get; set; }
         public string Description { get; set; }
+        public string? UserName { get; set; }
     }
     public class AssetSummary
     {

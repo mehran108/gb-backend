@@ -4,7 +4,6 @@ using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using GoldBank.Models.Product;
 using GoldBank.Models.RequestModels;
-using Microsoft.AspNetCore.Http.HttpResults;
 using System;
 using System.Data;
 using System.Data.Common;
@@ -742,9 +741,12 @@ namespace GoldBank.Infrastructure.Infrastructure
 
         private static string GenerateTransactionId()
         {
-            string timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
-            string randomPart = Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
-            return $"{timestamp}{randomPart}";
+            string datePart = DateTime.Now.ToString("yyMMddHH");
+
+            Random rnd = new Random();
+            string randomPart = rnd.Next(0, 100).ToString("D2");
+
+            return datePart + randomPart;
         }
 
         public async Task<int> AddCashManagementDetail(CashManagementDetails entity)
@@ -926,7 +928,9 @@ namespace GoldBank.Infrastructure.Infrastructure
                         item.IsCredit = dataReader.GetBooleanValue("isCredit");
                         item.IsDebit = dataReader.GetBooleanValue("isDebit");
                         item.StoreId = dataReader.GetIntegerValue("storeId");
-
+                        item.IsVendorPayment = dataReader.GetBooleanValueNullable("isVendorPayment");
+                        item.PaymentId = dataReader.GetIntegerValueNullable("paymentId");
+                        item.OrderIds = dataReader.GetStringValue("OrderIds");
                         Summary.Add(item);
                     }         
                 }
@@ -939,6 +943,42 @@ namespace GoldBank.Infrastructure.Infrastructure
                 //}
             }
             return Summary;
+        }       
+        public async Task<List<OrderInvoiceTemplate>> GetAlInvoiceTemplates()
+        {
+            var result = new List<OrderInvoiceTemplate>();
+            var parameters = new List<DbParameter>
+            {
+            };
+            using (var dataReader = await base.ExecuteReader(parameters, "GetAlInvoiceTemplates", CommandType.StoredProcedure))
+            {
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        var item = new OrderInvoiceTemplate();
+                        item.Code = dataReader.GetStringValue("code");
+                        item.Template = dataReader.GetStringValue("template");
+                        result.Add(item);
+                    }
+                }
+            }
+
+            return result;
+        }
+        public async Task<bool> UpdatePaymentInvoiceURL(int paymentId, int documentId)
+        {
+            using var connection = base.GetConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("p_PaymentId", paymentId);
+            parameters.Add("p_DocumentId", documentId);
+            parameters.Add("o_Succeed", dbType: DbType.Byte, direction: ParameterDirection.Output);
+
+            await connection.ExecuteAsync("UpdatePaymentInvoiceURLGb", parameters, commandType: CommandType.StoredProcedure);
+            byte? succeed = parameters.Get<byte?>("o_Succeed");
+            bool? response = succeed == null ? null : (succeed == 1 ? true : false);
+            return response ?? false;
         }
     }
 }

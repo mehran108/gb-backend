@@ -1,4 +1,5 @@
-﻿using GoldBank.Infrastructure.Extension;
+﻿using GoldBank.Application.Application;
+using GoldBank.Infrastructure.Extension;
 using GoldBank.Infrastructure.IInfrastructure;
 using GoldBank.Models;
 using System.Data;
@@ -93,7 +94,15 @@ namespace GoldBank.Infrastructure.Infrastructure
             }
             return result;
         }
-
+        public async Task<bool> Delete(string documentIds)
+        {
+            var parameters = new List<DbParameter>
+            {
+                base.GetParameter("p_DocumentId", documentIds)
+            };
+            var res = await this.ExecuteNonQuery(parameters, "DeleteDocument_gb", CommandType.StoredProcedure);
+            return res > 0;
+        }
         public Task<bool> Update(Document entity)
         {
             throw new NotImplementedException();

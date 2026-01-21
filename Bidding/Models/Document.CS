@@ -8,6 +8,7 @@
         public string? Extension { get; set; }
         public string? Image64String { get; set; }
         public int? DocumentTypeId { get; set; }
-        public IFormFile File { get; set; }
+        public IFormFile? File { get; set; }
+        public string? DocumentIds { get; set; }
     }
 }
