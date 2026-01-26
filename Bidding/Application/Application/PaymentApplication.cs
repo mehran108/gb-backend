@@ -145,53 +145,59 @@ namespace GoldBank.Application.Application
         }
         public async Task<byte[]> GenerateInvoice(Invoice invoice)
         {
-            var intemplates = await this.PaymentInfrastructure.GetAlInvoiceTemplates();
-            string invoiceTemplate = intemplates.Where(x=> x.Code == "INVTMPL").Select(x=> x.Template).FirstOrDefault()??"";
-            
-
-            var tokens = BuildInvoiceHeaders(invoice, LogoURL);
-
-            string finalHtml = PopulateTemplate(invoiceTemplate, tokens);
-
-            var templates = await this.LookupInfrastructure.GetAllOrderTypes();
-
-            string ordersSection = "";
-            foreach (var order in invoice.Orders)
+            try
             {
-                var template = templates.Where(x=> x.OrderTypeId == order.OrderTypeId).Select(x=> x.Template).FirstOrDefault();
-                if (template != null)
+                var intemplates = await this.PaymentInfrastructure.GetAlInvoiceTemplates();
+                string invoiceTemplate = intemplates.Where(x => x.Code == "INVTMPL").Select(x => x.Template).FirstOrDefault() ?? "";
+
+                var tokens = BuildInvoiceHeaders(invoice, LogoURL);
+
+                string finalHtml = PopulateTemplate(invoiceTemplate, tokens);
+
+                var templates = await this.LookupInfrastructure.GetAllOrderTypes();
+
+                string ordersSection = "";
+                foreach (var order in invoice.Orders)
                 {
-                    var orderTokens = BuildInvoiceTokens(order, LogoURL);
-                    ordersSection += PopulateTemplate(template, orderTokens);
+                    var template = templates.Where(x => x.OrderTypeId == order.OrderTypeId).Select(x => x.Template).FirstOrDefault();
+                    if (template != null)
+                    {
+                        var orderTokens = BuildInvoiceTokens(order, LogoURL);
+                        ordersSection += PopulateTemplate(template, orderTokens);
+                    }
                 }
+
+                finalHtml = finalHtml.Replace("{{orderItems}}", ordersSection);
+
+                var pdf = GeneratePdf(finalHtml);
+                using var stream = new MemoryStream(pdf);
+
+                IFormFile pdfFile = new FormFile(
+                    baseStream: stream,
+                    baseStreamOffset: 0,
+                    length: pdf.Length,
+                    name: "file",
+                    fileName: $"Invoice_{invoice.PaymentId}.pdf"
+                )
+                {
+                    Headers = new HeaderDictionary(),
+                    ContentType = "application/pdf"
+                };
+
+                var document = new Document
+                {
+                    File = pdfFile,
+                    Name = $"Invoice-for-{invoice.PaymentId}"
+                };
+
+                var documentId = await DocumentApplication.UploadImage(document);
+                await this.PaymentInfrastructure.UpdatePaymentInvoiceURL(invoice.PaymentId, document.DocumentId);
+                return pdf;
             }
-
-            finalHtml  = finalHtml.Replace("{{orderItems}}", ordersSection );
-
-            var pdf = GeneratePdf(finalHtml);
-            using var stream = new MemoryStream(pdf);
-
-            IFormFile pdfFile = new FormFile(
-                baseStream: stream,
-                baseStreamOffset: 0,
-                length: pdf.Length,
-                name: "file",
-                fileName: $"Invoice_{invoice.PaymentId}.pdf"
-            )
+            catch (Exception ex)
             {
-                Headers = new HeaderDictionary(),
-                ContentType = "application/pdf"
-            };
-
-            var document = new Document
-            {
-                File = pdfFile,
-                Name = $"Invoice-for-{invoice.PaymentId}"
-            };
-
-            var documentId = await DocumentApplication.UploadImage(document);
-            await this.PaymentInfrastructure.UpdatePaymentInvoiceURL(invoice.PaymentId, document.DocumentId);
-            return pdf;
+                throw;
+            }
 
         }
         public byte[] GeneratePdf(string finalHtml)
@@ -266,32 +272,104 @@ namespace GoldBank.Application.Application
         public static Dictionary<string, string> BuildInvoiceTokens(InvoiceOrder order, string logoURL)
         {
             return new Dictionary<string, string>
-            {
-                { "orderType", order.OrderType },
+    {
+        // Order
+        { "orderType", order.OrderType },
 
-                { "ItemName", order.ItemDetails ?.ItemName ?? "" },
-                { "sku", order.ItemDetails ?.SKU ?? "" },
-                { "quantity", order.ItemDetails?.Quantity?.ToString()?? "" },
-                { "productImage", order.ItemDetails?.Image?.ToString()?? "" },
-                { "metalType", order.MetalDetails?.MetalType ?? ""},
-                { "metalPurity", order.MetalDetails?.MetalPurity ?? ""},
-                { "grossWeight", order.MetalDetails?.Weight?? "" },
-                { "ratePerGram", order.MetalDetails?.RatePerGram ?? "" },
-                { "metalValue", order.MetalDetails?.MetailValue ?? ""},
-                { "itemMetalValue", order.ItemPricing?.MetalValue ?? ""},
-                { "makingCharges", order.ItemPricing?.MakingCharges ?? ""},
-                { "lacquerCharges", order.ItemPricing?.LacquerCharges ?? ""},
-                { "gemstoneValue", order.ItemPricing?.GemStoneValue ?? ""},
-                { "subTotalPrice", order.ItemPricing?.SubTotalPrice ?? ""},
-                { "discountType", order.ItemPricing?.DiscountType ?? ""},
-                { "discountAmount", order.ItemPricing?.DiscountAmount ?? ""},
-                { "totalPrice", order.ItemPricing?.TotalPrice ?? ""},
-                { "amountPayable", order.ItemPricing?.AmountPayable ?? ""},
-                { "reservationId", order.ReservationDetails?.ReservationId ?? ""},
-                { "reservationDate", order.ReservationDetails?.ReservationDate ?? ""},
-                { "collectionDate", order.ReservationDetails?.CollectionDate ?? ""}
-            };
+        // Item
+        { "ItemName", order.ItemDetails?.ItemName ?? "" },
+        { "sku", order.ItemDetails?.SKU ?? "" },
+        { "quantity", order.ItemDetails?.Quantity?.ToString() ?? "" },
+        { "productImage", order.ItemDetails?.Image ?? "" },
+        { "itemCategory", order.ItemDetails?.ItemCategory ?? "" },
+        { "imageBeforeRepair", order.ItemDetails?.ImageBeforeRepair ?? "" },
+        { "imageAfterRepair", order.ItemDetails?.ImageAfterRepair ?? "" },
+
+        // Metal
+        { "metalType", order.MetalDetails?.MetalType ?? "" },
+        { "metalPurity", order.MetalDetails?.MetalPurity ?? "" },
+        { "grossWeight", order.MetalDetails?.GrossWeight ?? "" },
+        { "netWeight", order.MetalDetails?.NetWeight ?? "" },
+        { "weightVariance", order.MetalDetails?.WeightVariance ?? "" },
+        { "ratePerGram", order.MetalDetails?.RatePerGram ?? "" },
+        { "metalValue", order.MetalDetails?.MetailValue ?? "" },
+
+        { "metalRateLockStatus", order.MetalDetails?.MetalRateLockStatus ?? "" },
+        { "lockedRatePerGram", order.MetalDetails?.LockedRatePerGram ?? "" },
+        { "currentRatePerGram", order.MetalDetails?.CurrentRatePerGram ?? "" },
+
+        { "deductionPercentage", order.MetalDetails?.DeductionPercentage ?? "" },
+        { "deductionValue", order.MetalDetails?.DeductionValue ?? "" },
+        { "gold24KWeight", order.MetalDetails?.Gold24KWeight ?? "" },
+
+        // Pricing
+        { "itemMetalValue", order.ItemPricing?.MetalValue ?? "" },
+        { "makingCharges", order.ItemPricing?.MakingCharges ?? "" },
+        { "lacquerCharges", order.ItemPricing?.LacquerCharges ?? "" },
+        { "gemstoneValue", order.ItemPricing?.GemStoneValue ?? "" },
+
+        { "subtotalMetalPrice", order.ItemPricing?.SubtotalMetalPrice ?? "" },
+        { "subtotalStonePrice", order.ItemPricing?.SubtotalStonePrice ?? "" },
+
+        { "subTotalPrice", order.ItemPricing?.SubTotalPrice ?? "" },
+
+        { "discountType", order.ItemPricing?.DiscountType ?? "" },
+        { "discountAmount", order.ItemPricing?.DiscountAmount ?? "" },
+        { "discountCode", order.ItemPricing?.DiscountCode ?? "" },
+
+        { "baselineTotalPrice", order.ItemPricing?.BaselineTotalPrice ?? "" },
+        { "totalPrice", order.ItemPricing?.TotalPrice ?? "" },
+
+        { "advanceAmount", order.ItemPricing?.AdvanceAmount ?? "" },
+        { "balanceAmount", order.ItemPricing?.BalanceAmount ?? "" },
+
+        { "amountPayable", order.ItemPricing?.AmountPayable ?? "" },
+
+        // Reservation
+        { "reservationId", order.ReservationDetails?.ReservationId ?? "" },
+        { "reservationDate", order.ReservationDetails?.ReservationDate ?? "" },
+        { "collectionDate", order.ReservationDetails?.CollectionDate ?? "" },
+
+        // Booking
+        { "bookingId", order.BookingDetails?.BookingId ?? "" },
+        { "bookingRateLockStatus", order.BookingDetails?.RateLockStatus ?? "" },
+        { "bookingLockedRatePerGram", order.BookingDetails?.LockedRatePerGram ?? "" },
+        { "bookingCurrentRatePerGram", order.BookingDetails?.CurrentRatePerGram ?? "" },
+        { "bookingPrice", order.BookingDetails?.BookingPrice ?? "" },
+        { "bookingAdvanceAmount", order.BookingDetails?.AdvanceAmount ?? "" },
+        { "bookingBalanceAmount", order.BookingDetails?.BalanceAmount ?? "" },
+        { "bookingBalanceAmountEstimated", order.BookingDetails?.BalanceAmountEstimated ?? "" },
+
+        // Repair
+        { "repairId", order.RepairDetails?.RepairId ?? "" },
+        { "repairServiceTypeOne", order.RepairDetails?.ServiceTypeOne ?? "" },
+        { "repairServiceTypeTwo", order.RepairDetails?.ServiceTypeTwo ?? "" },
+        { "repairNotes", order.RepairDetails?.Notes ?? "" },
+        { "subtotalRepairPrice", order.RepairDetails?.SubtotalRepairPrice ?? "" },
+        { "repairAdvanceAmount", order.RepairDetails?.AdvanceAmount ?? "" },
+        { "repairBalanceAmount", order.RepairDetails?.BalanceAmount ?? "" },
+        { "repairAmountPayable", order.RepairDetails?.AmountPayable ?? "" },
+
+        // Alteration
+        { "alterationId", order.AlterationDetails?.AlterationId ?? "" },
+        { "alterationServiceTypeOne", order.AlterationDetails?.ServiceTypeOne ?? "" },
+        { "alterationServiceTypeTwo", order.AlterationDetails?.ServiceTypeTwo ?? "" },
+        { "alterationNotes", order.AlterationDetails?.Notes ?? "" },
+        { "subtotalAlterationPrice", order.AlterationDetails?.SubtotalAlterationPrice ?? "" },
+        { "alterationAdvanceAmount", order.AlterationDetails?.AdvanceAmount ?? "" },
+        { "alterationBalanceAmount", order.AlterationDetails?.BalanceAmount ?? "" },
+        { "alterationAmountPayable", order.AlterationDetails?.AmountPayable ?? "" },
+
+        // Appraisal
+        { "appraisalId", order.AppraisalDetails?.AppraisalId ?? "" },
+        { "appraisedPrice", order.AppraisalDetails?.AppraisedPrice ?? "" },
+        { "itemValuation", order.AppraisalDetails?.ItemValuation ?? "" },
+
+        // Common
+        { "logoUrl", logoURL }
+    };
         }
+
 
     }
 }

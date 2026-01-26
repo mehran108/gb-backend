@@ -1524,7 +1524,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                 await transaction.RollbackAsync();
                 Console.WriteLine("Error in AddOrder(): " + ex.Message);
-                return 0;
+                throw;
             }
         }
         public async Task<AllResponse<Order>> GetAllOrders(AllRequest<OrderRequestVm> product)
@@ -2132,7 +2132,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             {
                 await transaction.RollbackAsync();
                 Console.WriteLine("Error in AddOrder(): " + ex.Message);
-                return false;
+                throw;
             }
         }
         public async Task<bool> AddUpdateOrderDeliveryDetails(OrderDelievery order)
@@ -3671,6 +3671,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             catch
             {
                 await transaction.RollbackAsync();
+                throw;
             }
             finally
             {
@@ -3726,6 +3727,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             catch
             {
                 await transaction.RollbackAsync();
+                throw;
             }
             finally
             {
@@ -3858,6 +3860,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             catch
             {
                 await transaction.RollbackAsync();
+                throw;
             }
             finally
             {
@@ -3926,6 +3929,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             catch
             {
                 await transaction.RollbackAsync();
+                throw;
             }
             finally
             {
@@ -3983,6 +3987,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             catch
             {
                 await transaction.RollbackAsync();
+                throw;
             }
             finally
             {
@@ -4057,6 +4062,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             catch
             {
                 await transaction.RollbackAsync();
+                throw;
             }
             finally
             {
@@ -4084,6 +4090,7 @@ namespace GoldBank.Infrastructure.Infrastructure
             catch
             {
                 await transaction.RollbackAsync();
+                throw;
             }
             finally
             {

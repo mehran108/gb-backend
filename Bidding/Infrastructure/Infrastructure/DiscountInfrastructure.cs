@@ -25,7 +25,7 @@ namespace GoldBank.Infrastructure.Infrastructure
         }
 
         public async Task<int> Add(Discount entity)
-        {
+        {            
             using var connection = base.GetConnection();
 
             var parameters = new DynamicParameters();
